@@ -1,1 +1,5 @@
-Add answers by hand: tap + under Saved Data, give the answer a label, and type its value on as many lines as you like, for things like a medication list. Tap any saved answer to edit it.
+Add answers by hand: tap + under Saved Data, give the answer a label and a type like Date or Phone, and type its value on as many lines as you like, for things like a medication list. Tap any saved answer to edit it.
+
+Find Umete by searching for “autofill” in Spotlight.
+
+Using your own OpenAI key? AI Matching now offers two modes: GPT-6.1 Sol and the Decisions API.
