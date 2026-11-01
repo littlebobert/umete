@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ScreenshotDemo.seed()
         }
         #endif
+        SpotlightIndex.update()
         return true
     }
 

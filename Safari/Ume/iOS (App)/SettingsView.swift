@@ -46,6 +46,7 @@ struct SavedAnswer: Identifiable {
     /// The value as typed when it is plain text, which the app can edit; addresses,
     /// contacts, and yes-or-no answers are shown but edited on the Mac.
     let text: String?
+    let type: String
 }
 
 /// An answer being added or edited in the sheet; a nil answerID means a new one.
@@ -53,8 +54,12 @@ struct AnswerEdit: Identifiable {
     let answerID: String?
     let label: String
     let value: String
+    var type = ""
     var id: String { answerID ?? "new" }
 }
+
+/// The types a plain text answer can have; addresses and contacts are added on the Mac.
+private let textAnswerTypes = [("", "Default"), ("date", "Date"), ("gender", "Gender"), ("phone", "Phone")]
 
 enum AIProvider: String, CaseIterable, Identifiable {
     case umete, openai, anthropic
@@ -67,14 +72,19 @@ enum AIProvider: String, CaseIterable, Identifiable {
         case .umete: return "Umete (free)"
         case .openai: return "OpenAI"
         case .anthropic: return "Anthropic"
-        case .openAIDecisions: return "OpenAI Decisions (your key)"
+        case .openAIDecisions: return "OpenAI"
         }
     }
+
+    /// The Provider menu's entries; OpenAI's two APIs are modes under one entry.
+    static let menuChoices: [AIProvider] = [.umete, .openai, .anthropic]
+    var menuChoice: AIProvider { self == .openAIDecisions ? .openai : self }
+    var modeName: String { self == .openAIDecisions ? "Decisions API" : "GPT-6.1 Sol (medium, fast)" }
 
     var defaultModel: String {
         switch self {
         case .umete: return ""
-        case .openai: return "gpt-5.6-sol"
+        case .openai: return SafariWebExtensionHandlerProviders.iOSOpenAIModel
         case .anthropic: return "claude-opus-5"
         case .openAIDecisions: return "gpt-6-luna"
         }
@@ -105,7 +115,8 @@ final class SettingsModel: ObservableObject {
     func load() async {
         let settings = SettingsStore.load()
         provider = AIProvider(rawValue: settings?.provider ?? "") ?? .umete
-        modelName = settings?.model.isEmpty == false ? settings!.model : provider.defaultModel
+        // Only Anthropic's model can be typed; OpenAI's follows its mode.
+        modelName = provider == .anthropic && settings?.model.isEmpty == false ? settings!.model : provider.defaultModel
         hasKey = !(settings?.apiKey.isEmpty ?? true)
         needsOnboarding = !OnboardingStore.isComplete
         answers = ((try? AnswerStore.load()) ?? []).enumerated().map { index, answer in
@@ -113,7 +124,8 @@ final class SettingsModel: ObservableObject {
                 id: answer["answerID"] as? String ?? "answer-\(index)",
                 label: Self.label(of: answer, index: index),
                 value: Self.valueText(of: answer, label: Self.label(of: answer, index: index)),
-                text: answer["value"] as? String
+                text: answer["value"] as? String,
+                type: answer["answerType"] as? String ?? ""
             )
         }
         syncEnabled = CloudSync.isEnabled
@@ -135,11 +147,11 @@ final class SettingsModel: ObservableObject {
     /// Saves the provider, model, and (when typed) a new key. Returns whether it saved.
     @discardableResult
     func saveSettings(completingOnboarding: Bool = false, quietly: Bool = false) async -> Bool {
-        let model = modelName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let model = provider == .anthropic ? modelName.trimmingCharacters(in: .whitespacesAndNewlines) : provider.defaultModel
         let typedKey = apiKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         let key = typedKey.isEmpty ? SettingsStore.load()?.apiKey ?? "" : typedKey
         guard !provider.needsKey || (!model.isEmpty && !key.isEmpty) else {
-            show("Missing Details", "Enter a model and an API key for \(provider.name), or choose Umete (free).")
+            show("Missing Details", "Enter \(provider == .anthropic ? "a model and an API key" : "an API key") for \(provider.name), or choose Umete (free).")
             return false
         }
         do {
@@ -170,9 +182,9 @@ final class SettingsModel: ObservableObject {
         guard !label.isEmpty, !value.isEmpty else { return "Enter both a label and a value." }
         do {
             if let id = edit.answerID {
-                try AnswerStore.update(id: id, userLabel: label, value: value)
+                try AnswerStore.update(id: id, userLabel: label, value: value, answerType: edit.type)
             } else {
-                try AnswerStore.add(userLabel: label, value: value)
+                try AnswerStore.add(userLabel: label, value: value, answerType: edit.type)
             }
         } catch {
             return error.localizedDescription
@@ -277,13 +289,22 @@ struct ProviderFields: View {
     @EnvironmentObject private var model: SettingsModel
 
     var body: some View {
-        Picker("Provider", selection: Binding(get: { model.provider }, set: { model.chooseProvider($0) })) {
-            ForEach(AIProvider.allCases) { Text($0.name).tag($0) }
+        Picker("Provider", selection: Binding(get: { model.provider.menuChoice }, set: { choice in
+            if choice != model.provider.menuChoice { model.chooseProvider(choice) }
+        })) {
+            ForEach(AIProvider.menuChoices) { Text($0.name).tag($0) }
         }
-        if model.provider.needsKey {
+        if model.provider.menuChoice == .openai {
+            Picker("Mode", selection: Binding(get: { model.provider }, set: { model.chooseProvider($0) })) {
+                ForEach([AIProvider.openai, .openAIDecisions]) { Text($0.modeName).tag($0) }
+            }
+        }
+        if model.provider == .anthropic {
             TextField("Model", text: $model.modelName)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
+        }
+        if model.provider.needsKey {
             SecureField(model.hasKey ? "API key (saved)" : "API key", text: $model.apiKeyDraft)
                 .textContentType(.password)
         }
@@ -337,6 +358,11 @@ struct GeneralTab: View {
                 } header: {
                     Text("How Umete Fills Forms")
                 }
+                Section {
+                    Link("Get Umete for Mac", destination: URL(string: "https://umete.jp")!)
+                } footer: {
+                    Text("Add addresses and contacts on the Mac. Saved answers sync through iCloud; AI settings stay on each device.")
+                }
             }
             .navigationTitle("General")
         }
@@ -364,7 +390,7 @@ struct AIMatchingTab: View {
                     ProviderFields()
                 } footer: {
                     Text(model.provider.needsKey
-                        ? "Your key is stored in Apple Keychain on this device. It isn’t synced."
+                        ? "Your key is stored in Apple Keychain on this device. It isn’t synced.\(model.provider == .openai ? " Fast mode costs twice OpenAI’s standard rate." : "")"
                         : "Free, with a daily limit. No key needed.")
                 }
                 if model.provider.needsKey {
@@ -403,7 +429,7 @@ struct SavedDataTab: View {
                     ForEach(model.answers) { answer in
                         if let text = answer.text {
                             Button {
-                                editing = AnswerEdit(answerID: answer.id, label: answer.label, value: text)
+                                editing = AnswerEdit(answerID: answer.id, label: answer.label, value: text, type: answer.type)
                             } label: {
                                 AnswerRow(answer: answer)
                             }
@@ -475,6 +501,7 @@ struct AnswerEditorSheet: View {
     private let answerID: String?
     @State private var label: String
     @State private var value: String
+    @State private var type: String
     @State private var problem: String?
     @State private var isSaving = false
 
@@ -482,6 +509,16 @@ struct AnswerEditorSheet: View {
         answerID = edit.answerID
         _label = State(initialValue: edit.label)
         _value = State(initialValue: edit.value)
+        _type = State(initialValue: edit.type)
+    }
+
+    private var valueHint: String {
+        switch type {
+        case "date": return "Year, month, and day, like 1990-04-12."
+        case "gender": return "As you’d answer on a form, like Female."
+        case "phone": return "With the country code, like +81 90-1234-5678."
+        default: return "For a list, put each item on its own line."
+        }
     }
 
     private var canSave: Bool {
@@ -500,12 +537,17 @@ struct AnswerEditorSheet: View {
                     Text("What a form calls it, like Medications or Passport number.")
                 }
                 Section {
+                    Picker("Type", selection: $type) {
+                        ForEach(textAnswerTypes, id: \.0) { Text($0.1).tag($0.0) }
+                    }
+                }
+                Section {
                     TextEditor(text: $value)
                         .frame(minHeight: 140)
                 } header: {
                     Text("Value")
                 } footer: {
-                    Text("For a list, put each item on its own line.")
+                    Text(valueHint)
                 }
                 if let problem {
                     Section { Text(problem).foregroundColor(.red) }
@@ -528,7 +570,7 @@ struct AnswerEditorSheet: View {
 
     private func save() async {
         isSaving = true
-        problem = await model.save(AnswerEdit(answerID: answerID, label: label, value: value))
+        problem = await model.save(AnswerEdit(answerID: answerID, label: label, value: value, type: type))
         isSaving = false
         if problem == nil { dismiss() }
     }

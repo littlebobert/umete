@@ -705,12 +705,15 @@ private func settingsPaneView() -> NSView {
 }
 
 private func paneStack(title: String, description: String) -> NSStackView {
-    let stack = NSStackView(views: [titleLabel(title), descriptionLabel(description)])
+    let descriptionField = descriptionLabel(description)
+    let stack = NSStackView(views: [titleLabel(title), descriptionField])
     stack.orientation = .vertical
     stack.alignment = .leading
     stack.spacing = 5
     stack.edgeInsets = NSEdgeInsets(top: 28, left: 30, bottom: 28, right: 30)
     stack.translatesAutoresizingMaskIntoConstraints = false
+    // Wrap to the pane, so a long description can't widen it.
+    descriptionField.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -60).isActive = true
     return stack
 }
 
@@ -1164,6 +1167,8 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
     private let debugNote = descriptionLabel("Your logs are never sent automatically. Open Debug Logs… in the Safari extension to review or email them.")
     private let hideSensitive = NSButton(checkboxWithTitle: "Hide potentially sensitive info in AI debug logs", target: nil, action: nil)
     private let debugButtons = NSStackView()
+    private var keyRows: [NSGridRow] = []
+    private let deleteButton = NSButton(title: "Delete Saved Key", target: nil, action: nil)
 
     override func loadView() {
         view = settingsPaneView()
@@ -1188,10 +1193,12 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         for rowIndex in 0..<form.numberOfRows {
             form.row(at: rowIndex).yPlacement = .center
         }
+        keyRows = [form.row(at: 1), form.row(at: 2)]
 
-        let delete = NSButton(title: "Delete Saved Key", target: self, action: #selector(deleteKey))
-        delete.bezelStyle = .rounded
-        let buttons = NSStackView(views: [delete])
+        deleteButton.target = self
+        deleteButton.action = #selector(deleteKey)
+        deleteButton.bezelStyle = .rounded
+        let buttons = NSStackView(views: [deleteButton])
         buttons.orientation = .horizontal
         buttons.alignment = .centerY
         buttons.distribution = .gravityAreas
@@ -1222,10 +1229,10 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
             stack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             stack.topAnchor.constraint(equalTo: view.topAnchor),
-            form.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -60),
-            status.widthAnchor.constraint(equalTo: form.widthAnchor),
-            buttons.widthAnchor.constraint(equalTo: form.widthAnchor),
-            debugSection.widthAnchor.constraint(equalTo: form.widthAnchor)
+            status.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -60),
+            buttons.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -60),
+            debugSection.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -60),
+            debugNote.widthAnchor.constraint(equalTo: debugSection.widthAnchor)
         ])
         loadSettings()
     }
@@ -1235,6 +1242,7 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         provider.selectItem(at: aiProviderIndex(settings?.provider))
         model.stringValue = settings?.model ?? defaultModel
         updateKeyFields(provider: selectedProvider, model: model, apiKey: apiKey)
+        updateKeyRows()
         if !SafariWebExtensionHandlerProviders.requiresKey(selectedProvider) {
             status.stringValue = "Free, with a daily limit. No key needed."
         } else {
@@ -1243,6 +1251,13 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         debugLogging.state = AIDebugLogStore.isEnabled ? .on : .off
         hideSensitive.state = AIDebugLogStore.hidesSensitiveInfo ? .on : .off
         updateDebugDependentControls()
+    }
+
+    /// The free service needs no model or key, so their rows and Delete go away while it's selected.
+    private func updateKeyRows() {
+        let needsKey = SafariWebExtensionHandlerProviders.requiresKey(selectedProvider)
+        keyRows.forEach { $0.isHidden = !needsKey }
+        deleteButton.isHidden = !needsKey
     }
 
     private func updateDebugDependentControls() {
@@ -1262,6 +1277,7 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         if apiKey.placeholderString == "Not needed" { apiKey.placeholderString = "Leave blank to keep the saved key" }
         model.placeholderString = "Provider model name"
         updateKeyFields(provider: selectedProvider, model: model, apiKey: apiKey)
+        updateKeyRows()
         autosave()
     }
 
@@ -1354,7 +1370,7 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
     private var draftEditorObserver: NSObjectProtocol?
     private var remoteChangeObserver: NSObjectProtocol?
     private static let answerTypes = ["", "address", "contact", "date", "gender", "phone"]
-    private static let typeTitles = ["Auto", "Address", "Contact", "Date", "Gender", "Phone"]
+    private static let typeTitles = ["Default", "Address", "Contact", "Date", "Gender", "Phone"]
     private static let aggregateTypes = AnswerStore.aggregateTypes
 
     override func loadView() {
@@ -1400,7 +1416,10 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
             ("Text Answer…", #selector(addAnswer)),
             ("Address…", #selector(addAddress)),
             ("Doctor…", #selector(addDoctor)),
-            ("Emergency Contact…", #selector(addEmergencyContact))
+            ("Emergency Contact…", #selector(addEmergencyContact)),
+            ("Date…", #selector(addDate)),
+            ("Gender…", #selector(addGender)),
+            ("Phone…", #selector(addPhone))
         ]
         for (title, action) in addItems {
             addMenu.addItem(withTitle: title)
@@ -2136,6 +2155,22 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
     }
 
     @objc private func addAnswer() {
+        addTextAnswer()
+    }
+
+    @objc private func addDate() {
+        addTextAnswer(type: "date")
+    }
+
+    @objc private func addGender() {
+        addTextAnswer(type: "gender")
+    }
+
+    @objc private func addPhone() {
+        addTextAnswer(type: "phone")
+    }
+
+    private func addTextAnswer(type: String? = nil) {
         if draftAnswer != nil && !commitDraftIfComplete() {
             focusDraft()
             return
@@ -2145,6 +2180,7 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
             "kind": "text",
             "inputType": "text"
         ]
+        draftAnswer?["answerType"] = type
         table.reloadData()
         let row = answers.count
         table.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)

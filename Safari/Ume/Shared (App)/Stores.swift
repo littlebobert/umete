@@ -15,6 +15,8 @@ let appGroupIdentifier = Bundle.main.object(forInfoDictionaryKey: "UmeAppGroupId
 enum SafariWebExtensionHandlerProviders {
     static let supported = ["umete", "openai", "anthropic", "openai-decisions"]
     static let `default` = "umete"
+    /// The one model iPhone and iPad use for "openai", at medium effort on OpenAI's fast tier.
+    static let iOSOpenAIModel = "gpt-6.1-sol"
 
     static func requiresKey(_ provider: String) -> Bool {
         provider != "umete"
@@ -828,7 +830,8 @@ enum AnswerStore {
         return label.isEmpty ? (contact["name"] as? String ?? "") : label
     }
 
-    static func update(id: String, userLabel: String, value: Any) throws {
+    /// An answerType of nil keeps the answer's type, and an empty one clears it.
+    static func update(id: String, userLabel: String, value: Any, answerType: String? = nil) throws {
         var answers = try load()
         guard let index = answers.firstIndex(where: { $0["answerID"] as? String == id }) else {
             throw StoreError.message("That saved answer no longer exists.")
@@ -839,6 +842,9 @@ enum AnswerStore {
             answers[index]["userLabel"] = userLabel.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         answers[index]["value"] = value
+        if let answerType {
+            answers[index]["answerType"] = answerType.isEmpty ? nil : answerType
+        }
         try save(answers)
     }
 

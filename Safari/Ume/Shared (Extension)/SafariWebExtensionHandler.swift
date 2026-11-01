@@ -355,7 +355,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
     private func requestOpenAI(_ settings: AISettings, inputJSON: String) async throws -> String {
         let schema = mappingSchema()
-        let body: [String: Any] = [
+        var body: [String: Any] = [
             "model": settings.model,
             "reasoning": ["effort": "high"],
             "instructions": systemPrompt,
@@ -363,6 +363,12 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             "store": false,
             "text": ["format": ["type": "json_schema", "name": "ume_field_mapping", "strict": true, "schema": schema]]
         ]
+        #if os(iOS)
+        // iPhone and iPad offer one OpenAI model, so settings saved before that move to it too.
+        body["model"] = SafariWebExtensionHandlerProviders.iOSOpenAIModel
+        body["reasoning"] = ["effort": "medium"]
+        body["service_tier"] = "fast"
+        #endif
         let data = try await post(url: "https://api.openai.com/v1/responses", headers: ["Authorization": "Bearer \(settings.apiKey)"], body: body)
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw MappingError.message("OpenAI returned an unreadable response.")

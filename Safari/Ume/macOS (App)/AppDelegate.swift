@@ -23,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         installAboutAction()
         configureSettingsWindow()
         startCloudSync()
+        SpotlightIndex.update()
     }
 
     func applicationDidBecomeActive(_ notification: Notification) {
