@@ -5,19 +5,20 @@ on:
   workflow_dispatch:
     inputs:
       platform:
-        description: "all: TestFlight, Mac DMG, GitHub release, Sparkle update, and website. ios: TestFlight only, which can rebuild an already-released version."
+        description: "all: TestFlight, Mac DMG, GitHub release, Sparkle update, and website. ios: TestFlight only, which can rebuild an already-released version. mac: everything but TestFlight."
         required: false
         type: choice
         default: all
         options:
           - all
           - ios
+          - mac
       version:
-        description: Version (for example, 0.1.2). Blank means the next patch version for "all", or the latest released version for "ios".
+        description: Version (for example, 0.1.2). Blank means the next patch version for "all" and "mac", or the latest released version for "ios".
         required: false
         type: string
       changelog_en:
-        description: Short English changelog note for GitHub, the Umete landing page, and TestFlight's "What to Test".
+        description: Short English changelog note for GitHub, the Umete landing page, and TestFlight's "What to Test", where each applies.
         required: false
         type: string
       changelog_ja:
@@ -145,6 +146,7 @@ jobs:
           xcodebuild -version
 
       - name: Build and upload iOS app to TestFlight
+        if: inputs.platform != 'mac'
         env:
           TESTFLIGHT_WHAT_TO_TEST: ${{ inputs.changelog_en }}
         run: >-
