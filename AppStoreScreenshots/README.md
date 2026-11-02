@@ -42,7 +42,7 @@ npm run preview -- duo   # just the Duo preview
 
 `voiceEnd` in `config.mjs` ends a line of the voice-over early, with a short fade, without touching the recording.
 
-For social posts, `npm run social` makes `output/social/umete-duo-en-US.mp4` (1080×1350): the same recordings and voice in the closed Duo's frame, with what's said as subtitles beneath it. The frame is Karui's `assets/bezels/iphone-duo-closed-720.png`, or `DUO_BEZEL=<png>`. The subtitles and their timings are `social.cues` in `config.mjs`; if the voice-over is recorded again, transcribe it again rather than copying the script, since a take can differ from it.
+For social posts, `npm run social` makes `output/social/umete-duo-en-US.mp4` (1080×1350): the same recordings and voice in the closed Duo's frame, with what's said as subtitles beneath it, and `umete-duo-en-US-ja.mp4`, the English voice with Japanese subtitles. The frame is Karui's `assets/bezels/iphone-duo-closed-720.png`, or `DUO_BEZEL=<png>`. The subtitles and their timings are `social.cues` and `social.translated` in `config.mjs`; if the voice-over is recorded again, transcribe it again rather than copying the script, since a take can differ from it.
 
 ## App Preview
 

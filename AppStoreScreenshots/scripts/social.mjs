@@ -63,9 +63,14 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: W, height: H } });
 const subtitleTop = frame.y + frame.height + 16;
 
-for (const [locale, lines] of Object.entries(social.cues)) {
-  const voices = lines.map((_, index) => join(here, "voiceover", locale, `line-${index + 1}.m4a`));
-  const ends = preview.duo.voiceEnd[locale] ?? {};
+const versions = [
+  ...Object.entries(social.cues).map(([name, lines]) => ({ name, voice: name, lines })),
+  ...Object.entries(social.translated).map(([name, { voice, cues }]) => ({ name, voice, lines: cues })),
+];
+
+for (const { name, voice, lines } of versions) {
+  const voices = lines.map((_, index) => join(here, "voiceover", voice, `line-${index + 1}.m4a`));
+  const ends = preview.duo.voiceEnd[voice] ?? {};
 
   // The scenes, timed as in preview.mjs.
   const durations = preview.duo.scenes.map((scene, index) => {
@@ -89,10 +94,10 @@ for (const [locale, lines] of Object.entries(social.cues)) {
   for (const [index, cue] of cues.entries()) {
     await page.setContent(`<!doctype html><meta charset="utf-8"><style>
       html, body { margin: 0; width: ${W}px; height: ${H}px; background: transparent; }
-      div { position: absolute; left: 70px; right: 70px; top: ${subtitleTop}px; height: ${H - subtitleTop - 28}px; display: flex; align-items: center; justify-content: center; text-align: center; font: 600 46px/1.3 -apple-system, "Helvetica Neue", sans-serif; letter-spacing: -0.01em; color: ${screenshot.ink}; text-wrap: balance; -webkit-font-smoothing: antialiased; }
+      div { position: absolute; left: 70px; right: 70px; top: ${subtitleTop}px; height: ${H - subtitleTop - 28}px; display: flex; align-items: center; justify-content: center; text-align: center; font: 600 46px/1.3 -apple-system, "Helvetica Neue", "Hiragino Sans", sans-serif; letter-spacing: -0.01em; color: ${screenshot.ink}; text-wrap: balance; -webkit-font-smoothing: antialiased; }
     </style><div>${cue.text}</div>`);
     await page.evaluate(() => document.fonts.ready);
-    await page.screenshot({ path: join(work, `${locale}-cue-${index + 1}.png`), omitBackground: true });
+    await page.screenshot({ path: join(work, `${name}-cue-${index + 1}.png`), omitBackground: true });
   }
 
   const still = (file) => ["-loop", "1", "-framerate", String(fps), "-t", total.toFixed(3), "-i", file];
@@ -101,7 +106,7 @@ for (const [locale, lines] of Object.entries(social.cues)) {
     ...still(framePNG),
     ...still(maskPNG),
     ...preview.duo.scenes.flatMap((scene) => ["-i", join(here, scene.clip)]),
-    ...cues.flatMap((_, index) => still(join(work, `${locale}-cue-${index + 1}.png`))),
+    ...cues.flatMap((_, index) => still(join(work, `${name}-cue-${index + 1}.png`))),
     ...voices.flatMap((file) => ["-i", file]),
   ];
   const firstClip = 3;
@@ -149,7 +154,7 @@ for (const [locale, lines] of Object.entries(social.cues)) {
   });
   filter.push(`${voices.map((_, index) => `[a${index}]`).join("")}amix=inputs=${voices.length}:normalize=0,apad,atrim=duration=${total.toFixed(3)}[audio]`);
 
-  const file = join(out, `umete-duo-${locale}.mp4`);
+  const file = join(out, `umete-duo-${name}.mp4`);
   ffmpeg(...inputs, "-filter_complex", filter.join(";"), "-map", "[video]", "-map", "[audio]",
     "-t", total.toFixed(3), "-r", String(fps), "-c:v", "libx264", "-profile:v", "high", "-crf", "18", "-preset", "slow",
     "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", file);

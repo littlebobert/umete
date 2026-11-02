@@ -114,6 +114,27 @@ export const social = Object.freeze({
       ]),
     ]),
   }),
+  // A voice with its subtitles in another language, timed to that voice. The app's
+  // screens are English only, so the button keeps its English name.
+  translated: Object.freeze({
+    "en-US-ja": Object.freeze({
+      voice: "en-US",
+      cues: Object.freeze([
+        Object.freeze([
+          { text: "Umeteは、Webフォームを<br>代わりに埋めてくれます。", start: 0.3, end: 2.35 },
+          { text: "Safariで開いて<br>「Fill this form」をタップすると、", start: 2.9, end: 5.9 },
+          { text: "答えがそれぞれの欄に入ります。", start: 6.4, end: 8.3 },
+        ]),
+        Object.freeze([
+          { text: "住所も、かかりつけ医も、<br>パスポート番号まで覚えておきます。", start: 0.1, end: 4.2 },
+        ]),
+        Object.freeze([
+          { text: "回答は暗号化されたまま。<br>AIに送ることはありません。", start: 0.15, end: 3.4 },
+          { text: "Umete、埋めて。", start: 4.2, end: 5.75 },
+        ]),
+      ]),
+    }),
+  }),
 });
 
 // The product page header, App Store Connect's wide image above the listing, in both
