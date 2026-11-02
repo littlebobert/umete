@@ -1,8 +1,8 @@
 // Assembles the App Previews (H.264 and AAC, 30 fps): output/preview/<locale>.mp4 for
 // iPhone (886 × 1920), output/preview/<locale>-ipad.mp4 for iPad (1200 × 1600), and
-// output/preview/<locale>-duo.mp4 for iPhone Duo (886 × 1920). Each scene's recording
+// output/preview/<locale>-duo.mp4 for iPhone Duo (1920 × 886). Each scene's recording
 // sits in a rounded frame under its caption, on the screenshots' paper, crossfaded into
-// the next, with that language's voice-over. The Duo's is the recording alone, on black.
+// the next, with that language's voice-over. The Duo's is the recording alone.
 // Japanese comes from `npm run narrate`; English from voiceover/en-US/line-<n>.*
 // when it's there, and otherwise the English preview is silent, timed like Japanese.
 // All devices share the voice and the scene timing.
@@ -52,9 +52,10 @@ const formats = [
     suffix: "-duo",
     width: preview.duo.width,
     height: preview.duo.height,
-    // Only a screen recording: the closed display at full width, centered, since it's
-    // wider than the 886 × 1920 App Store Connect accepts, with no caption or frame.
-    screen: { width: preview.duo.width, aspect: 2034 / 1398, top: 315, radius: 0 },
+    // Only a screen recording: the closed display in landscape at full width, with its
+    // top cut (the title and camera), since it's taller than the 1920 × 886 App Store
+    // Connect accepts, keeping the toolbars and tabs along the bottom.
+    screen: { width: preview.duo.width, aspect: 1398 / 2034, top: -434, radius: 0 },
     plain: true,
     locales: preview.duo.locales,
     voiceEnd: preview.duo.voiceEnd,
@@ -151,7 +152,7 @@ for (const format of formats) {
         "-filter_complex",
         `${source(scene)}[src];[src]scale=${frame.width}:${frame.height},tpad=stop_mode=clone:stop_duration=${duration},trim=duration=${duration},setpts=PTS-STARTPTS,format=rgba[clip];` +
         `[2:v]format=gray,trim=duration=${duration}[mask];[clip][mask]alphamerge[rounded];` +
-        `[0:v]trim=duration=${duration},fps=${fps}[bg];[bg][rounded]overlay=${frame.left}:${frame.top}:shortest=1,format=yuv420p[v]`,
+        `[0:v]trim=duration=${duration},fps=${fps}[bg];[bg][rounded]overlay=${frame.left}:${scene.top ?? frame.top}:shortest=1,format=yuv420p[v]`,
         "-map", "[v]", "-an", "-c:v", "libx264", "-preset", "slow", "-crf", "16", "-r", String(fps), out,
       ]);
       return { out, duration };

@@ -34,7 +34,7 @@ All on the **iPhone 18 Pro Max** Simulator, whose 1320×2868 screen fills the be
 
 ## iPhone Duo
 
-`output/<locale>-duo-closed/` holds the closed Duo's screenshots (1398×2034), and `output/preview/en-US-duo.mp4` its preview (886×1920): only the screen recordings, on black where the closed display doesn't fill App Store Connect's size, with no captions or frame. Fold the Duo in DeviceHub first, since scripted taps reached only the closed display, then take the captures and recordings above on it, adding `--display=1` to `simctl io`, into `captures/duo-closed/` under the names in `config.mjs`.
+`output/<locale>-duo-closed/` holds the closed Duo's screenshots (1398×2034), and `output/preview/en-US-duo.mp4` its preview (1920×886): only screen recordings of the closed Duo in landscape, cropped to fill App Store Connect's size (a scene's `top` in `config.mjs` sets where), with no captions or frame. Fold the Duo in DeviceHub first, since scripted taps reached only the closed display, then take the captures above on it, adding `--display=1` to `simctl io`, into `captures/duo-closed/`. Rotate it to landscape for the recordings, in `captures/duo-landscape/`. The names are in `config.mjs`.
 
 ```bash
 npm run preview -- duo   # just the Duo preview

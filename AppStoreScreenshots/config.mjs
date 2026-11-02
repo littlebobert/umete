@@ -167,16 +167,18 @@ export const preview = Object.freeze({
     ]),
   }),
   // The iPhone Duo preview: the same voice over screen recordings alone, of the closed
-  // Duo, at 886 × 1920. English only, with the noise after the last line cut.
+  // Duo in landscape, filling 1920 × 886. English only, with the noise after the last
+  // line cut.
   duo: Object.freeze({
-    width: 886,
-    height: 1920,
+    width: 1920,
+    height: 886,
     locales: Object.freeze(["en-US"]),
     voiceEnd: Object.freeze({ "en-US": Object.freeze({ 3: 6.1 }) }),
     scenes: Object.freeze([
-      { clip: "captures/duo-closed/scene-1-fill.mp4", keep: [[0, 6.6], [10.0, 11.6], [15.3, 18.5]] },
-      { clip: "captures/duo-closed/scene-2-saved.mp4", keep: [[2.3, 8.3]] },
-      { clip: "captures/duo-closed/scene-3-privacy.mp4", keep: [[2.1, 6.6]] },
+      { clip: "captures/duo-landscape/scene-1-fill.mp4", keep: [[0.8, 5.5], [7.0, 8.6], [11.6, 12.6], [16.9, 22.0]] },
+      // Cropped higher than Safari's, to keep the address and "Answers are encrypted".
+      { clip: "captures/duo-landscape/scene-2-saved.mp4", keep: [[2.3, 8.8]], top: -194 },
+      { clip: "captures/duo-landscape/scene-3-privacy.mp4", keep: [[2.1, 7.4]], top: -194 },
     ]),
   }),
   // Japanese is spoken by ElevenLabs (scripts/narrate.mjs). English is recorded by
