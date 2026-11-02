@@ -1,8 +1,8 @@
 // Assembles the App Previews (H.264 and AAC, 30 fps): output/preview/<locale>.mp4 for
 // iPhone (886 × 1920), output/preview/<locale>-ipad.mp4 for iPad (1200 × 1600), and
-// output/preview/<locale>-duo.mp4 for iPhone Duo (1920 × 886). Each scene's recording
-// sits in a rounded frame under its caption (beside it on the Duo, in a drawn frame), on
-// the screenshots' paper, crossfaded into the next, with that language's voice-over.
+// output/preview/<locale>-duo.mp4 for iPhone Duo (886 × 1920). Each scene's recording
+// sits in a rounded frame under its caption, on the screenshots' paper, crossfaded into
+// the next, with that language's voice-over. The Duo's is the recording alone, on black.
 // Japanese comes from `npm run narrate`; English from voiceover/en-US/line-<n>.*
 // when it's there, and otherwise the English preview is silent, timed like Japanese.
 // All devices share the voice and the scene timing.
@@ -52,10 +52,10 @@ const formats = [
     suffix: "-duo",
     width: preview.duo.width,
     height: preview.duo.height,
-    // 0.364 of the closed Duo's display, on the right; the caption fills the left.
-    screen: { width: 508, aspect: 740 / 508, left: 1066, top: 73, corners: "8px 63px 63px 8px", bezel: 23, rim: 5 },
-    side: true,
-    captionSize: { "en-US": 76, ja: 66 },
+    // Only a screen recording: the closed display at full width, centered, since it's
+    // wider than the 886 × 1920 App Store Connect accepts, with no caption or frame.
+    screen: { width: preview.duo.width, aspect: 2034 / 1398, top: 315, radius: 0 },
+    plain: true,
     locales: preview.duo.locales,
     voiceEnd: preview.duo.voiceEnd,
     scenes: preview.scenes.map((scene, index) => ({ ...scene, ...preview.duo.scenes[index] })),
@@ -70,7 +70,7 @@ const formats = [
       height,
       left: format.screen.left ?? (format.width - format.screen.width) / 2,
       top: format.screen.top ?? format.height - height - format.screen.bottom,
-      radius: format.screen.corners ?? `${format.screen.radius}px`,
+      radius: format.screen.radius,
     },
   };
 });
@@ -97,24 +97,21 @@ async function still(markup, width, height, file) {
 }
 const font = (locale) => locale === "ja" ? `"Hiragino Mincho ProN", serif` : `"New York", "Iowan Old Style", Georgia, serif`;
 for (const format of formats) {
-  const { width, height, frame, screen } = format;
-  // On the Duo, the caption is beside the device, in its drawn frame.
-  const captionBox = format.side
-    ? `left: 90px; width: ${frame.left - screen.bezel - 170}px; top: 0; height: ${height}px;`
-    : `left: 60px; right: 60px; top: 0; height: ${frame.top}px;`;
-  const shell = format.side
-    ? `<div style="position: absolute; left: ${frame.left - screen.bezel}px; top: ${frame.top - screen.bezel}px; width: ${frame.width + screen.bezel * 2}px; height: ${frame.height + screen.bezel * 2}px; border-radius: 31px 86px 86px 31px; background: #000; box-shadow: inset 0 0 0 1px #9aa5b6, inset 0 0 0 ${screen.rim}px #56657c;"></div>`
-    : "";
+  const { width, height, frame } = format;
   for (const locale of format.locales) {
     for (const [index, scene] of format.scenes.entries()) {
+      if (format.plain) {
+        await still(`<!doctype html><html><body style="margin:0;width:${width}px;height:${height}px;background:#000"></body></html>`, width, height, join(work, `bg-${format.id}-${locale}-${index + 1}.png`));
+        continue;
+      }
       await still(`<!doctype html><html><head><meta charset="utf-8"><style>
         html, body { margin: 0; width: ${width}px; height: ${height}px; background: ${screenshot.background}; }
-        h1 { position: absolute; ${captionBox} margin: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-family: ${font(locale)}; font-size: ${format.captionSize[locale]}px; font-weight: 600; line-height: 1.15; letter-spacing: ${locale === "ja" ? "0" : "-0.03em"}; color: ${screenshot.ink}; text-wrap: balance; word-break: ${locale === "ja" ? "keep-all" : "normal"}; }
-        .shadow { position: absolute; left: ${frame.left + 30}px; top: ${frame.top + 40}px; width: ${frame.width - 60}px; height: ${frame.height - 20}px; border-radius: ${frame.radius}; background: rgb(48 54 43 / 25%); filter: blur(36px); }
-      </style></head><body><h1>${scene.caption[locale]}</h1><div class="shadow"></div>${shell}</body></html>`, width, height, join(work, `bg-${format.id}-${locale}-${index + 1}.png`));
+        h1 { position: absolute; left: 60px; right: 60px; top: 0; height: ${frame.top}px; margin: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-family: ${font(locale)}; font-size: ${format.captionSize[locale]}px; font-weight: 600; line-height: 1.15; letter-spacing: ${locale === "ja" ? "0" : "-0.03em"}; color: ${screenshot.ink}; text-wrap: balance; word-break: ${locale === "ja" ? "keep-all" : "normal"}; }
+        .shadow { position: absolute; left: ${frame.left + 30}px; top: ${frame.top + 40}px; width: ${frame.width - 60}px; height: ${frame.height - 20}px; border-radius: ${frame.radius}px; background: rgb(48 54 43 / 25%); filter: blur(36px); }
+      </style></head><body><h1>${scene.caption[locale]}</h1><div class="shadow"></div></body></html>`, width, height, join(work, `bg-${format.id}-${locale}-${index + 1}.png`));
     }
   }
-  await still(`<!doctype html><html><body style="margin:0;background:transparent"><div style="width:${frame.width}px;height:${frame.height}px;border-radius:${frame.radius};background:#fff"></div></body></html>`, frame.width, frame.height, join(work, `mask-${format.id}.png`));
+  await still(`<!doctype html><html><body style="margin:0;background:transparent"><div style="width:${frame.width}px;height:${frame.height}px;border-radius:${frame.radius}px;background:#fff"></div></body></html>`, frame.width, frame.height, join(work, `mask-${format.id}.png`));
 }
 await browser.close();
 

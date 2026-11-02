@@ -166,11 +166,11 @@ export const preview = Object.freeze({
       { clip: "captures/ipad-scene-3-privacy.mp4" },
     ]),
   }),
-  // The iPhone Duo preview: the same voice and captions beside the closed Duo, landscape
-  // at 1920 × 886, as Karui's. English only, with the noise after the last line cut.
+  // The iPhone Duo preview: the same voice over screen recordings alone, of the closed
+  // Duo, at 886 × 1920. English only, with the noise after the last line cut.
   duo: Object.freeze({
-    width: 1920,
-    height: 886,
+    width: 886,
+    height: 1920,
     locales: Object.freeze(["en-US"]),
     voiceEnd: Object.freeze({ "en-US": Object.freeze({ 3: 6.1 }) }),
     scenes: Object.freeze([
