@@ -87,6 +87,35 @@ export const duo = Object.freeze({
   layout: Object.freeze({ maxWidth: 1240, top: 470, bottom: 1990 }),
 });
 
+// The video for social posts: the Duo preview's recordings and voice in the closed Duo's
+// frame, with what's said as subtitles beneath it. 1080 × 1350 (4:5). The frame image is
+// Karui's copy, which isn't in git, or DUO_BEZEL=<png>; the numbers are as Karui's.
+// Each cue is words as spoken, transcribed from the recording, with its seconds into
+// that line of the voice-over.
+export const social = Object.freeze({
+  width: 1080,
+  height: 1350,
+  bezel: process.env.DUO_BEZEL || "../../karui/AppStoreScreenshots/assets/bezels/iphone-duo-closed-720.png",
+  frame: Object.freeze({ x: 180, y: 56, width: 720, height: 1004 }),
+  screen: Object.freeze({ x: 41, y: 37, width: 640, height: 931, corner: 88 }),
+  cues: Object.freeze({
+    "en-US": Object.freeze([
+      Object.freeze([
+        { text: "Umete fills in web forms for you.", start: 0.3, end: 2.35 },
+        { text: "Open it in Safari, tap Fill this form,", start: 2.9, end: 5.9 },
+        { text: "and your answers go right where they belong.", start: 6.4, end: 8.3 },
+      ]),
+      Object.freeze([
+        { text: "It remembers addresses, your doctors, even your passport number.", start: 0.1, end: 4.2 },
+      ]),
+      Object.freeze([
+        { text: "Your answers stay encrypted, and they never go to AI.", start: 0.15, end: 3.4 },
+        { text: "Umete: fill it in.", start: 4.2, end: 5.75 },
+      ]),
+    ]),
+  }),
+});
+
 // The product page header, App Store Connect's wide image above the listing, in both
 // sizes it takes: the name's meaning in the green, centered over faint empty form
 // fields, and nothing else, like Kaketa's 書けた, since the store crops the edges and
@@ -166,19 +195,17 @@ export const preview = Object.freeze({
       { clip: "captures/ipad-scene-3-privacy.mp4" },
     ]),
   }),
-  // The iPhone Duo preview: the same voice over screen recordings alone, of the closed
-  // Duo in landscape, filling 1920 × 886. English only, with the noise after the last
-  // line cut.
+  // The iPhone Duo preview: the same voice and captions over whole screen recordings of
+  // the closed Duo, with no device frame, at 886 × 1920, with the noise after the last
+  // English line cut.
   duo: Object.freeze({
-    width: 1920,
-    height: 886,
-    locales: Object.freeze(["en-US"]),
+    width: 886,
+    height: 1920,
     voiceEnd: Object.freeze({ "en-US": Object.freeze({ 3: 6.1 }) }),
     scenes: Object.freeze([
-      { clip: "captures/duo-landscape/scene-1-fill.mp4", keep: [[0.8, 5.5], [7.0, 8.6], [11.6, 12.6], [16.9, 22.0]] },
-      // Cropped higher than Safari's, to keep the address and "Answers are encrypted".
-      { clip: "captures/duo-landscape/scene-2-saved.mp4", keep: [[2.3, 8.8]], top: -194 },
-      { clip: "captures/duo-landscape/scene-3-privacy.mp4", keep: [[2.1, 7.4]], top: -194 },
+      { clip: "captures/duo-closed/scene-1-fill.mp4", keep: [[0, 6.6], [10.0, 11.6], [15.3, 18.5]] },
+      { clip: "captures/duo-closed/scene-2-saved.mp4", keep: [[2.3, 8.3]] },
+      { clip: "captures/duo-closed/scene-3-privacy.mp4", keep: [[2.1, 6.6]] },
     ]),
   }),
   // Japanese is spoken by ElevenLabs (scripts/narrate.mjs). English is recorded by

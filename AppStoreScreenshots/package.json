@@ -8,7 +8,8 @@
     "render": "node scripts/render.mjs",
     "narrate": "node scripts/narrate.mjs",
     "preview": "node scripts/preview.mjs",
-    "landing": "node scripts/landing.mjs"
+    "landing": "node scripts/landing.mjs",
+    "social": "node scripts/social.mjs"
   },
   "devDependencies": {
     "playwright": "^1.63.0"
