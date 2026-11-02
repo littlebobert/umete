@@ -65,6 +65,28 @@ export const ipad = Object.freeze({
   frame: Object.freeze({ bezel: 52, radius: 104, screenWidth: 1400, bottom: 150 }),
 });
 
+// The iPhone Duo screenshots, at the closed Duo's outer display (1398 × 2034), from the
+// Simulator with the Duo folded in DeviceHub: captures/duo-closed/. Its frame is drawn,
+// in Karui's proportions (duo-shell.js there): the bezel and rim in the display's pixels,
+// corners nearly square on the hinge side and round on the open side, and the camera,
+// which screenshots leave out and recordings include.
+export const duo = Object.freeze({
+  width: 1398,
+  height: 2034,
+  suffix: "duo-closed",
+  captures: Object.freeze({
+    fill: "captures/duo-closed/fill-sheet.png",
+    remembers: "captures/duo-closed/saved-data.png",
+    private: "captures/duo-closed/privacy.png",
+  }),
+  screen: Object.freeze({ width: 1398, height: 2034, left: 21, right: 174 }),
+  bezel: 64,
+  rim: 13,
+  camera: Object.freeze({ x: 1254, y: 143, diameter: 111 }),
+  // Where the device sits on the page: under the headline, as large as fits.
+  layout: Object.freeze({ maxWidth: 1240, top: 470, bottom: 1990 }),
+});
+
 // The product page header, App Store Connect's wide image above the listing, in both
 // sizes it takes: the name's meaning in the green, centered over faint empty form
 // fields, and nothing else, like Kaketa's 書けた, since the store crops the edges and
@@ -142,6 +164,19 @@ export const preview = Object.freeze({
       { clip: "captures/ipad-scene-1-fill.mp4", keep: [[0, 3.2], [12.0, 16.2]] },
       { clip: "captures/ipad-scene-2-saved.mp4" },
       { clip: "captures/ipad-scene-3-privacy.mp4" },
+    ]),
+  }),
+  // The iPhone Duo preview: the same voice and captions beside the closed Duo, landscape
+  // at 1920 × 886, as Karui's. English only, with the noise after the last line cut.
+  duo: Object.freeze({
+    width: 1920,
+    height: 886,
+    locales: Object.freeze(["en-US"]),
+    voiceEnd: Object.freeze({ "en-US": Object.freeze({ 3: 6.1 }) }),
+    scenes: Object.freeze([
+      { clip: "captures/duo-closed/scene-1-fill.mp4", keep: [[0, 6.6], [10.0, 11.6], [15.3, 18.5]] },
+      { clip: "captures/duo-closed/scene-2-saved.mp4", keep: [[2.3, 8.3]] },
+      { clip: "captures/duo-closed/scene-3-privacy.mp4", keep: [[2.1, 6.6]] },
     ]),
   }),
   // Japanese is spoken by ElevenLabs (scripts/narrate.mjs). English is recorded by

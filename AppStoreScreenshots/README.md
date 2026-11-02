@@ -32,6 +32,16 @@ All on the **iPhone 18 Pro Max** Simulator, whose 1320×2868 screen fills the be
    Turn Umete on once through Safari's page menu → Manage Extensions.
 4. Open Umete from the page menu and tap **Fill this form**. It should fill all 9 fields on the device, without AI matching. Capture `captures/fill-sheet.png` with the sheet open, then close the sheet and capture `captures/filled-form.png` (used by the search card).
 
+## iPhone Duo
+
+`output/<locale>-duo-closed/` holds the closed Duo's screenshots (1398×2034), and `output/preview/en-US-duo.mp4` its preview (1920×886). Fold the Duo in DeviceHub first, since scripted taps reached only the closed display, then take the captures and recordings above on it, adding `--display=1` to `simctl io`, into `captures/duo-closed/` under the names in `config.mjs`.
+
+```bash
+npm run preview -- duo   # just the Duo preview
+```
+
+`voiceEnd` in `config.mjs` ends a line of the voice-over early, with a short fade, without touching the recording.
+
 ## App Preview
 
 `output/preview/<locale>.mp4`, 886×1920 at 30 fps with stereo AAC, for the 6.9-inch iPhone slot. It has three scenes, one per screenshot, each a Simulator recording under its headline, with a voice-over:

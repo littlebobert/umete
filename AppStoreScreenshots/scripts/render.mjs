@@ -10,7 +10,7 @@ import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
-import { bezel, header, ipad, locales, screenshot, search, slides } from "../config.mjs";
+import { bezel, duo, header, ipad, locales, screenshot, search, slides } from "../config.mjs";
 
 const here = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -129,6 +129,31 @@ function ipadHTML({ hero, capture, locale }) {
   </body></html>`;
 }
 
+// The closed iPhone Duo page: the headline, then the capture in its drawn frame.
+function duoHTML({ hero, capture, locale }) {
+  const { background, ink } = screenshot;
+  const { width, height, screen, bezel: rimmed, rim, camera, layout } = duo;
+  const shellWidth = screen.width + rimmed * 2;
+  const shellHeight = screen.height + rimmed * 2;
+  const scale = Math.min(layout.maxWidth / shellWidth, (layout.bottom - layout.top) / shellHeight);
+  const left = (width - shellWidth * scale) / 2;
+  const px = (value) => `${value * scale}px`;
+  const corners = (extra) => `${px(screen.left + extra)} ${px(screen.right + extra)} ${px(screen.right + extra)} ${px(screen.left + extra)}`;
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+    html, body { margin: 0; width: ${width}px; height: ${height}px; overflow: hidden; background: ${background}; }
+    .copy { position: absolute; z-index: 3; top: 110px; left: 90px; right: 90px; color: ${ink}; text-align: center; }
+    h1 { margin: 0; font-family: ${fontFamily(locale)}; font-size: ${locale === "ja" ? 92 : 104}px; font-weight: 600; line-height: 1.12; letter-spacing: ${locale === "ja" ? "0" : "-0.035em"}; }
+    .shadow { position: absolute; z-index: 1; left: ${left + 60}px; right: ${left + 60}px; top: ${layout.top + shellHeight * scale - 130}px; height: 170px; border-radius: 50%; background: rgb(48 54 43 / 24%); filter: blur(46px); }
+    .device { position: absolute; z-index: 2; left: ${left}px; top: ${layout.top}px; width: ${px(shellWidth)}; height: ${px(shellHeight)}; border-radius: ${corners(rimmed)}; background: #000; box-shadow: inset 0 0 0 ${px(3)} #9aa5b6, inset 0 0 0 ${px(rim)} #56657c; }
+    .screen { position: absolute; left: ${px(rimmed)}; top: ${px(rimmed)}; width: ${px(screen.width)}; height: ${px(screen.height)}; border-radius: ${corners(0)}; }
+    .camera { position: absolute; left: ${px(rimmed + camera.x - camera.diameter / 2)}; top: ${px(rimmed + camera.y - camera.diameter / 2)}; width: ${px(camera.diameter)}; height: ${px(camera.diameter)}; border-radius: 50%; background: #000; }
+  </style></head><body>
+    <div class="copy"><h1>${hero}</h1></div>
+    <div class="shadow"></div>
+    <div class="device"><img class="screen" src="${capture}"><div class="camera"></div></div>
+  </body></html>`;
+}
+
 const browser = await chromium.launch();
 const page = await browser.newPage({ deviceScaleFactor: 1 });
 async function shoot(markup, width, height, file) {
@@ -167,6 +192,15 @@ for (const locale of locales) {
     await shoot(
       ipadHTML({ hero: slide.hero[locale], capture: dataURL(ipad.captures[slide.id]), locale }),
       ipad.width, ipad.height, join(here, "output", `${locale}-${ipad.suffix}`, `${index + 1}-${slide.id}.png`),
+    );
+  }
+}
+// The closed iPhone Duo set.
+for (const locale of locales) {
+  for (const [index, slide] of slides.entries()) {
+    await shoot(
+      duoHTML({ hero: slide.hero[locale], capture: dataURL(duo.captures[slide.id]), locale }),
+      duo.width, duo.height, join(here, "output", `${locale}-${duo.suffix}`, `${index + 1}-${slide.id}.png`),
     );
   }
 }
