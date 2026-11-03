@@ -1,6 +1,6 @@
 // Draws the umete.jp landing page's icon as a pencil sketch flipbook, in the way of
 // Karui's (Scripts/make-landing-sketch.mjs there): a bud opens into a plum blossom, its
-// petals fall as the fruit swells, the fruit is coloured in, and after a while it drops
+// petals fall as the fruit swells, the fruit is shaded in, and after a while it drops
 // and the next bud comes. Each drawing is redrawn with fresh wobble, a few alternating
 // takes for what holds still, so it boils like pencil on paper. Writes
 // output/landing/umete-icon-sketch.mp4, and the finished fruit as umete-icon-sketch.jpg
@@ -27,13 +27,13 @@ const outputSize = 224;
 const deepen = "curves=all='0/0 0.45/0.2 0.72/0.6 0.86/0.86 1/1'";
 const graphite = "#34342f";
 const paper = "#f5f1e9";
-const fruitYellow = "#cdb83f";
-const fruitGreen = "#8f9a38";
-const blush = "#d0603a";
-const leafGreen = "#5f7a2e";
-const petalPink = "#e48a9c";
-const petalDeep = "#b83a52";
-const pollen = "#d8a628";
+// Mostly pencil, as Karui's is: greys for the fruit, leaf, and petals, and its one red for
+// the blossom's eye and the fruit's blush.
+const fruitTone = "#a3a199";
+const fruitShade = "#7c7a72";
+const leafTone = "#6a6862";
+const petalTone = "#bdbab2";
+const red = "#d63a2c";
 
 let seed = 11;
 const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -110,8 +110,8 @@ const blossomCenter = [512, 540];
 // The blossom and bud are drawn this much larger than their outlines.
 const bloom = 1.35;
 
-// The light comes from the upper right, as in Karui's: the fruit is yellow-green, with a
-// blush and pencil shade on its lower left, and fewer strokes where it's lit. Each stroke
+// The light comes from the upper right, as in Karui's: the fruit is toned in grey, with a
+// red blush and pencil shade on its lower left, and fewer strokes where it's lit. Each stroke
 // keeps where it starts across, so colouring in can sweep from left to right.
 function fruitColour() {
   const strokes = [];
@@ -119,17 +119,17 @@ function fruitColour() {
   const add = (x, svg) => strokes.push({ x, svg });
   for (let x = -80; x < 820; x += 16 + rand() * 6) {
     const top = 330 + rand() * 30, from = [x, 890], to = [x + (890 - top) * slope, top];
-    add(x, brush(line(from, to, 4), 26, 0.45, { color: fruitYellow, wobble: 2, overshoot: 0, heavy: 0.35 }));
+    add(x, brush(line(from, to, 4), 26, 0.45, { color: fruitTone, wobble: 2, overshoot: 0, heavy: 0.35 }));
   }
   for (let x = -80; x < 830; x += 7 + rand() * 3) {
     if (rand() < Math.max(0, (x - 420) / 420) * 0.45) continue;
     const top = 340 + rand() * 40, from = [x, 890 + j(6)], to = [x + (from[1] - top) * slope, top];
-    add(x, brush(line(from, to, 4), 8, 0.85, { color: rand() < 0.3 ? fruitGreen : fruitYellow, wobble: 2, shift: 1, overshoot: 3 }));
+    add(x, brush(line(from, to, 4), 8, 0.85, { color: rand() < 0.3 ? fruitShade : fruitTone, wobble: 2, shift: 1, overshoot: 3 }));
   }
   // The blush, heaviest low on the left.
   for (let x = 20; x < 600; x += 9 + rand() * 4) {
     const top = 470 + rand() * 90 + Math.max(0, x - 380) * 0.5, from = [x, 880 + j(5)], to = [x + (from[1] - top) * slope, top];
-    add(x, brush(line(from, to, 4), 9, 0.8 * Math.max(0.35, 1 - Math.max(0, x - 170) / 520), { color: blush, wobble: 2, shift: 1, overshoot: 3 }));
+    add(x, brush(line(from, to, 4), 9, 0.6 * Math.max(0.3, 1 - Math.max(0, x - 140) / 460), { color: red, wobble: 2, shift: 1, overshoot: 3 }));
   }
   // Pencil shade, crossed the other way, in the deepest part.
   for (let x = 220; x < 560; x += 9 + rand() * 4) {
@@ -160,7 +160,7 @@ function stemAndLeaf() {
   s += `<path d="${pathOf(leafOutline)}" fill="${paper}"/><g clip-path="url(#leaf)">`;
   for (let t = 0; t < 1; t += 0.035 + rand() * 0.015) {
     const at = lerp(leafBase, leafTip, t);
-    s += brush(line([at[0] - 40, at[1] + 90], [at[0] + 30, at[1] - 90], 3), 9, 0.85, { color: leafGreen, wobble: 1.5, shift: 1, overshoot: 0 });
+    s += brush(line([at[0] - 40, at[1] + 90], [at[0] + 30, at[1] - 90], 3), 9, 0.85, { color: leafTone, wobble: 1.5, shift: 1, overshoot: 0 });
   }
   s += "</g>";
   const rib = bez(leafBase, [620, 260], [700, 230], [780, 210], 8);
@@ -170,7 +170,7 @@ function stemAndLeaf() {
 function petal() {
   let s = `<path d="${pathOf(petalOutline)}" fill="${paper}"/><g clip-path="url(#petal)">`;
   for (let x = -70; x <= 70; x += 11 + rand() * 4) {
-    s += brush(line([x * 0.25, -10], [x * 1.1, -168], 3), 9, 0.75, { color: petalPink, wobble: 1.5, shift: 1, overshoot: 0, heavy: 0.3 });
+    s += brush(line([x * 0.25, -10], [x * 1.1, -168], 3), 9, 0.75, { color: petalTone, wobble: 1.5, shift: 1, overshoot: 0, heavy: 0.3 });
   }
   return `${s}</g>` + brush(petalOutline, 11, 0.95, { wobble: 1.5, heavy: 0.5, overshoot: 4 });
 }
@@ -189,17 +189,17 @@ function blossom(scale, scatter) {
     s += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${spin.toFixed(1)}) scale(${(scale * bloom).toFixed(3)})" opacity="${(1 - scatter ** 2).toFixed(2)}">${petal()}</g>`;
   }
   if (scatter > 0.4) return s;
-  // The middle: a dark eye and pollen-tipped stamens.
+  // The middle: a red eye and dot-tipped stamens.
   s += `<g transform="translate(${cx} ${cy}) scale(${(scale * bloom * (1 - scatter * 2.5)).toFixed(3)})">`;
   for (let i = 0; i < 14; i++) {
     const a = (i / 14) * Math.PI * 2 + j(0.15), r = 58 + j(10), tip = [Math.cos(a) * r, Math.sin(a) * r];
     s += brush(line([0, 0], tip, 3), 5, 0.85, { wobble: 1, shift: 0.5, overshoot: 0 });
-    s += brush(line(lerp([0, 0], tip, 0.92), tip, 2), 15, 1, { color: pollen, wobble: 0.5, shift: 1, overshoot: 0, heavy: 0.2 });
+    s += brush(line(lerp([0, 0], tip, 0.92), tip, 2), 15, 1, { color: graphite, wobble: 0.5, shift: 1, overshoot: 0, heavy: 0.2 });
   }
   for (let i = 0; i < 4; i++) {
     const start = rand() * 6.28;
     const ring = Array.from({ length: 13 }, (_, k) => [Math.cos(start + (k / 12) * 6.6) * 20, Math.sin(start + (k / 12) * 6.6) * 20]);
-    s += brush(ring, 14, 0.95, { color: petalDeep, wobble: 1.5, shift: 2, overshoot: 0 });
+    s += brush(ring, 14, 0.95, { color: red, wobble: 1.5, shift: 2, overshoot: 0 });
   }
   return `${s}</g>`;
 }
@@ -211,7 +211,7 @@ function bud(scale) {
   let s = `<g transform="translate(${stemFoot[0]} ${stemFoot[1] - 6}) scale(${(scale * bloom).toFixed(3)} ${(-scale * bloom).toFixed(3)})"><path d="${pathOf(shape)}" fill="${paper}"/>`;
   for (let y = -8; y > -118; y -= 10 + rand() * 3) {
     const half = 46 * Math.sin((Math.PI * -y) / 124);
-    s += brush(line([-half, y + 8], [half, y - 8], 3), 11, 0.85, { color: petalPink, wobble: 1, shift: 1, overshoot: 0 });
+    s += brush(line([-half, y + 8], [half, y - 8], 3), 11, 0.85, { color: petalTone, wobble: 1, shift: 1, overshoot: 0 });
   }
   return `${s}${brush(shape, 12, 1, { wobble: 1.5, heavy: 0.5, overshoot: 3 })}</g>`;
 }
