@@ -9,7 +9,8 @@
     "narrate": "node scripts/narrate.mjs",
     "preview": "node scripts/preview.mjs",
     "landing": "node scripts/landing.mjs",
-    "social": "node scripts/social.mjs"
+    "social": "node scripts/social.mjs",
+    "sketch": "node scripts/sketch.mjs"
   },
   "devDependencies": {
     "playwright": "^1.63.0"

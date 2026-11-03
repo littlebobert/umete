@@ -44,6 +44,10 @@ npm run preview -- duo   # just the Duo preview
 
 For social posts, `npm run social` makes `output/social/umete-duo-en-US.mp4` (1080×1350): the same recordings and voice in the closed Duo's frame, with what's said as subtitles beneath it, and `umete-duo-en-US-ja.mp4`, the English voice with Japanese subtitles. The frame is Karui's `assets/bezels/iphone-duo-closed-720.png`, or `DUO_BEZEL=<png>`. The subtitles and their timings are `social.cues` and `social.translated` in `config.mjs`; if the voice-over is recorded again, transcribe it again rather than copying the script, since a take can differ from it.
 
+## Landing page icon
+
+`npm run sketch` draws umete.jp's header icon as a pencil sketch flipbook, in the way of Karui's: a bud opens into a plum blossom, its petals fall as the fruit swells and is coloured in, and after a while the fruit drops and the next bud comes. It writes `output/landing/umete-icon-sketch.mp4` (224 px, 6.4 s, looping) and the finished fruit as `umete-icon-sketch.jpg`, shown with no motion; copy both to the site's `assets/`.
+
 ## App Preview
 
 `output/preview/<locale>.mp4`, 886×1920 at 30 fps with stereo AAC, for the 6.9-inch iPhone slot. It has three scenes, one per screenshot, each a Simulator recording under its headline, with a voice-over:
