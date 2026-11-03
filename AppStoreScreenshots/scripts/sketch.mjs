@@ -28,7 +28,7 @@ const deepen = "curves=all='0/0 0.45/0.2 0.72/0.6 0.86/0.86 1/1'";
 const graphite = "#34342f";
 const paper = "#f5f1e9";
 // Mostly pencil, as Karui's is: greys for the fruit, leaf, and petals, and its one red for
-// the blossom's eye and the fruit's blush.
+// the blossom's eye and a faint blush on the fruit.
 const fruitTone = "#a3a199";
 const fruitShade = "#7c7a72";
 const leafTone = "#6a6862";
@@ -111,8 +111,8 @@ const blossomCenter = [512, 540];
 const bloom = 1.35;
 
 // The light comes from the upper right, as in Karui's: the fruit is toned in grey, with a
-// red blush and pencil shade on its lower left, and fewer strokes where it's lit. Each stroke
-// keeps where it starts across, so colouring in can sweep from left to right.
+// faint red blush and pencil shade on its lower left, and fewer strokes where it's lit.
+// Each stroke keeps where it starts across, so colouring in can sweep from left to right.
 function fruitColour() {
   const strokes = [];
   const slope = 0.58;
@@ -126,10 +126,10 @@ function fruitColour() {
     const top = 340 + rand() * 40, from = [x, 890 + j(6)], to = [x + (from[1] - top) * slope, top];
     add(x, brush(line(from, to, 4), 8, 0.85, { color: rand() < 0.3 ? fruitShade : fruitTone, wobble: 2, shift: 1, overshoot: 3 }));
   }
-  // The blush, heaviest low on the left.
-  for (let x = 20; x < 600; x += 9 + rand() * 4) {
-    const top = 470 + rand() * 90 + Math.max(0, x - 380) * 0.5, from = [x, 880 + j(5)], to = [x + (from[1] - top) * slope, top];
-    add(x, brush(line(from, to, 4), 9, 0.6 * Math.max(0.3, 1 - Math.max(0, x - 140) / 460), { color: red, wobble: 2, shift: 1, overshoot: 3 }));
+  // The blush, a light touch low on the left.
+  for (let x = 40; x < 480; x += 13 + rand() * 6) {
+    const top = 560 + rand() * 90 + Math.max(0, x - 300) * 0.5, from = [x, 870 + j(5)], to = [x + (from[1] - top) * slope, top];
+    add(x, brush(line(from, to, 4), 8, 0.4 * Math.max(0.3, 1 - Math.max(0, x - 120) / 360), { color: red, wobble: 2, shift: 1, overshoot: 3 }));
   }
   // Pencil shade, crossed the other way, in the deepest part.
   for (let x = 220; x < 560; x += 9 + rand() * 4) {
