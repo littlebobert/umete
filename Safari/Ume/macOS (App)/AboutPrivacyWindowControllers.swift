@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 
 final class AboutWindowController: NSWindowController {
     init(openPrivacy: @escaping () -> Void) {
@@ -12,8 +13,8 @@ final class AboutWindowController: NSWindowController {
         let windowTitle = NSTextField(labelWithString: "About Umete")
         windowTitle.font = .systemFont(ofSize: 13, weight: .semibold)
         windowTitle.alignment = .center
-        let icon = NSImageView(image: NSApp.applicationIconImage)
-        icon.imageScaling = .scaleProportionallyUpOrDown
+        // The size of the art in the 78-point app icon this replaced, so the layout holds.
+        let icon = NSHostingView(rootView: AnimatedAppIcon(name: "umete-icon-sketch", size: 64).padding(7))
         icon.translatesAutoresizingMaskIntoConstraints = false
         let name = NSTextField(labelWithString: "Umete")
         name.font = .systemFont(ofSize: 26, weight: .bold)

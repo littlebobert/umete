@@ -19,6 +19,9 @@
 		A10000510000000000000001 /* SpotlightIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000500000000000000001 /* SpotlightIndex.swift */; };
 		A10000520000000000000001 /* SpotlightIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000500000000000000001 /* SpotlightIndex.swift */; };
 		A10000050000000000000001 /* SettingsViewControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000110000000000000001 /* SettingsViewControllers.swift */; };
+		A10000630000000000000001 /* AnimatedAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000600000000000000001 /* AnimatedAppIcon.swift */; };
+		A10000640000000000000001 /* umete-icon-sketch.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A10000610000000000000001 /* umete-icon-sketch.jpg */; };
+		A10000650000000000000001 /* umete-icon-sketch.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A10000620000000000000001 /* umete-icon-sketch.mp4 */; };
 		A10000060000000000000001 /* AboutPrivacyWindowControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000120000000000000001 /* AboutPrivacyWindowControllers.swift */; };
 		A10000070000000000000001 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = A10000130000000000000001 /* icons */; };
 		A10000080000000000000001 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = A10000130000000000000001 /* icons */; };
@@ -103,6 +106,9 @@
 		A10000300000000000000001 /* CloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSync.swift; sourceTree = "<group>"; };
 		A10000500000000000000001 /* SpotlightIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndex.swift; sourceTree = "<group>"; };
 		A10000110000000000000001 /* SettingsViewControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewControllers.swift; sourceTree = "<group>"; };
+		A10000600000000000000001 /* AnimatedAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedAppIcon.swift; sourceTree = "<group>"; };
+		A10000610000000000000001 /* umete-icon-sketch.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "umete-icon-sketch.jpg"; sourceTree = "<group>"; };
+		A10000620000000000000001 /* umete-icon-sketch.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "umete-icon-sketch.mp4"; sourceTree = "<group>"; };
 		A10000120000000000000001 /* AboutPrivacyWindowControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPrivacyWindowControllers.swift; sourceTree = "<group>"; };
 		A10000130000000000000001 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../../Extension/icons; sourceTree = "<group>"; };
 		D0A1D2D4301B98AD0082FD16 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
@@ -240,6 +246,9 @@
 				D0A1D2F3301B98AE0082FD16 /* AppDelegate.swift */,
 				A10000110000000000000001 /* SettingsViewControllers.swift */,
 				A10000120000000000000001 /* AboutPrivacyWindowControllers.swift */,
+				A10000600000000000000001 /* AnimatedAppIcon.swift */,
+				A10000610000000000000001 /* umete-icon-sketch.jpg */,
+				A10000620000000000000001 /* umete-icon-sketch.mp4 */,
 				D0A1D2F5301B98AE0082FD16 /* Main.storyboard */,
 				D0A1D2F8301B98AE0082FD16 /* Info.plist */,
 			);
@@ -421,6 +430,8 @@
 			files = (
 				D0A1D310301B98AE0082FD16 /* Icon.png in Resources */,
 				D0A1D2F7301B98AE0082FD16 /* Main.storyboard in Resources */,
+				A10000640000000000000001 /* umete-icon-sketch.jpg in Resources */,
+				A10000650000000000000001 /* umete-icon-sketch.mp4 in Resources */,
 				D0A1D318301B98AE0082FD16 /* Assets.xcassets in Resources */,
 			);
 		};
@@ -483,6 +494,7 @@
 				A10000520000000000000001 /* SpotlightIndex.swift in Sources */,
 				A10000050000000000000001 /* SettingsViewControllers.swift in Sources */,
 				A10000060000000000000001 /* AboutPrivacyWindowControllers.swift in Sources */,
+				A10000630000000000000001 /* AnimatedAppIcon.swift in Sources */,
 				D0A1D2F4301B98AE0082FD16 /* AppDelegate.swift in Sources */,
 			);
 		};
