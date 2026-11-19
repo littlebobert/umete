@@ -92,16 +92,39 @@
     const text = semanticText(entry);
     const names = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder].map(normalize).filter(Boolean);
     const machineNames = [entry?.name, entry?.id].filter((value) => value && !looksGenerated(value)).map(normalize);
+    // The last segment of a name like "Form$_mailingAddress$_city" says what the field is.
+    const machineTails = [entry?.name, entry?.id]
+      .filter((value) => value && !looksGenerated(value))
+      .map((value) => normalize(String(value).split(/[$.:[\]]|<>|__/).filter((part) => part.replace(/_/g, "")).pop()))
+      .filter(Boolean);
     const hasExactName = (...values) => names.some((name) => values.includes(name));
-    const hasLine2Name = names.some((name) => /^(?:address line 2|address 2|street 2|(?:apartment|apt|suite|unit|building)(?: (?:apartment|apt|suite|unit|building|or|number|no|optional|etc))*)$/.test(name));
-    const hasLine2MachineName = machineNames.some((name) => /^(?:(?:shipping|billing) )?(?:address line ?2|address ?2|street ?2)$/.test(name));
-    if (/(?:^| )(?:email|e mail|ip|internet|web|website) address(?: |$)/.test(text)) return "";
+    const hasExactTail = (...values) => !names.length && machineTails.some((tail) => values.includes(tail));
+    // A label outranks the machine name; the name speaks only for unlabeled fields.
+    const ownText = names.length ? names.join(" ") : machineTails.join(" ");
+    const ownNames = names.join(" ");
+    const hasLine2Name = names.some((name) => /^(?:address line 2|address 2|street 2|(?:apartment|apt|suite|unit|building)(?: (?:apartment|apt|suite|unit|building|or|number|no|optional|etc))*)$/.test(name))
+      || /(?:^| )(?:(?:street )?address (?:line )?(?:2|two)|street (?:address )?(?:line )?2|second address line)(?: |$)/.test(ownNames);
+    // Machine names often prefix the part ("BillingAddress2", "addrLine2",
+    // "address[street2]"), but only count when the label doesn't say otherwise:
+    // sites reuse "address2" for a Company field or a second email.
+    const labelAllowsLine = !ownNames || /(?:^| )(?:address|addr|street|line|apt|apartment|suite|unit|building|floor)(?: |$)/.test(ownNames);
+    const hasLine2MachineName = labelAllowsLine && machineTails.some((name) => /(?:^| |[a-z])(?:address ?(?:line ?)?2|addr ?line ?2|street ?(?:line ?)?2|line ?two)$/.test(name));
+    const hasLaterLineName = /(?:^| )(?:address line [3-9]|address [3-9]|street (?:address )?(?:line )?[3-9]|third address line)(?: |$)/.test(ownNames)
+      || (labelAllowsLine && machineTails.some((name) => /(?:^| |[a-z])(?:address ?(?:line ?)?[3-9]|addr ?line ?[3-9]|street ?(?:line ?)?[3-9]|line ?three)$/.test(name)));
+    if (/(?:^| )(?:email|e mail|ip|internet|web|website) address/.test(text)) return "";
+    if (hasLaterLineName) return "addressLine3";
     if (hasLine2Name || hasLine2MachineName) return "addressLine2";
-    if (/(?:^| )(?:address line 1|address 1|street address|mailing address)(?: |$)/.test(text)) return "addressLine1";
+    // The field's own words only: a "Mailing address" heading covers city and ZIP too.
+    if (/(?:^| )(?:address line 1|address 1|street address|mailing address)(?: |$)/.test(ownText)) return "addressLine1";
+    // A field labeled only "Address" is the street line, or the whole street in a text area.
+    if (hasExactName("address", "street", "home address", "street line", "shipping address", "billing address") || hasExactTail("address", "street")) return entry?.kind === "textarea" ? "streetAddress" : "addressLine1";
+    // The four-digit ZIP+4 box, which Umete has no value for.
+    if (/(?:^| )(?:zip|zip code|zipcode|postal code)(?: |$)|zipcode/.test(`${ownNames} ${machineNames.join(" ")}`)
+        && /(?:^| )(?:ext|extension|suffix|plus 4|4)(?: |$)|zip4|zipcode ext/.test(`${ownNames} ${machineNames.join(" ")}`)) return "postalCodeSuffix";
     if (/(?:^| )(?:postal code|postcode|post code|zip|zip code)(?: |$)/.test(text)) return "postalCode";
-    if (hasExactName("city", "town", "locality") || /(?:^| )(?:address city|shipping city|billing city)(?: |$)/.test(text)) return "locality";
-    if (hasExactName("state", "province", "prefecture", "region") || /(?:^| )(?:address|shipping|billing) (?:state|province|prefecture|region)(?: |$)/.test(text)) return "administrativeArea";
-    if (hasExactName("country", "country region")
+    if (hasExactName("city", "town", "locality") || hasExactTail("city", "town") || /(?:^| )(?:address city|shipping city|billing city)(?: |$)/.test(text)) return "locality";
+    if (hasExactName("state", "province", "prefecture", "region") || hasExactTail("state", "province") || /(?:^| )(?:address|shipping|billing) (?:state|province|prefecture|region)(?: |$)/.test(text)) return "administrativeArea";
+    if (hasExactName("country", "country region") || hasExactTail("country")
         || /(?:^| )(?:address|shipping|billing) country(?: |$)/.test(text)
         || /(?:^| )(?:country|region) of residence|residence (?:country|region)(?: |$)/.test(text)) {
       return "country";
@@ -378,9 +401,15 @@
   function semanticCategory(entry) {
     const text = semanticText(entry);
     if (addressFieldPart(entry)) return "address";
+    // Only the field's own name counts here: a "Contact phone and email" heading
+    // shouldn't make every field under it an email field.
+    const own = normalize([nameText(entry), entry?.label, entry?.name, entry?.id, entry?.autocomplete, entry?.placeholder].filter(Boolean).join(" "));
+    if (entry?.inputType === "email" || /(?:^| )(?:email|e mail)(?: |$)/.test(own)) return "email";
     if (/(?:^| )(?:country (?:phone )?code|phone country|calling code|dial code|international code|country dialing)(?: |$)/.test(text)) return "phone";
+    if (/(?:^| )(?:ext|extension)(?: |$)/.test(own)) return "phone-extension";
     if (isPhoneOwnerField(entry)) return "phone-owner";
-    if (/(?:^| )(?:phone|telephone|tel|mobile|cell)(?: |$)/.test(text)) return "phone";
+    // Numbered boxes count too ("dayPhone1"), as does an area code box.
+    if (/(?:^| )(?:phone|telephone|tel|mobile|cell)\d?(?: |$)|(?:^| )area code(?: |$)/.test(text)) return "phone";
     if (/(?:^| )(?:gender|sex)(?: |$)/.test(text)) return "gender";
     if (/(?:^| )(?:expir(?:y|ation)|expires?|valid (?:to|until)|issue date|issued (?:on|date))(?= |$)/.test(text)) return "document-date";
     if (/(?:^| )(?:birth ?day|birth ?date|date of birth|d o b)(?: |$)/.test(text) || /^bday(?:-(?:month|day|year))?$/.test(entry?.autocomplete || "")) return "date";
@@ -409,6 +438,13 @@
     }
     if ((fieldContact?.category || "") !== (contactFieldInfo(saved)?.category || "")) return false;
     if (savedType === "address") return fieldCategory === "address" && Boolean(addressValue(saved, field));
+    // A remembered street line never fills line 2, and so on.
+    const savedPart = addressFieldPart(saved);
+    const fieldPart = fieldCategory === "address" ? addressFieldPart(field) : "";
+    if (savedPart && fieldPart && !sameAddressPart(savedPart, fieldPart)) return false;
+    // An email address never goes into a field asking for a street address.
+    if (fieldCategory !== "email" && semanticCategory(saved) === "email"
+        && /(?:^| )address(?: |$)/.test(normalize([nameText(field), field.label, field.placeholder].filter(Boolean).join(" ")))) return false;
     if (savedType && field.kind === "radio") {
       if (savedType === "gender") {
         const text = normalize([field.accessibleName, field.label, field.group, field.name, field.value].filter(Boolean).join(" "));
@@ -435,6 +471,12 @@
     return !(savedCategory && fieldCategory && savedCategory !== fieldCategory);
   }
 
+  function sameAddressPart(left, right) {
+    if (left === right) return true;
+    const street = new Set(["addressLine1", "streetAddress"]);
+    return street.has(left) && street.has(right);
+  }
+
   function score(saved, field) {
     const savedType = answerType(saved);
     if (savedType === "contact" || !compatible(saved, field)) return -Infinity;
@@ -447,6 +489,8 @@
     let total = 0;
     if (saved.autocomplete && saved.autocomplete === field.autocomplete) total += 100;
     if (savedType && savedType === semanticCategory(field)) total += 45;
+    const savedAddressPart = savedType ? "" : addressFieldPart(saved);
+    if (savedAddressPart && savedAddressPart === addressFieldPart(field)) total += 45;
     if (saved.name && !looksGenerated(saved.name) && !looksGenerated(field.name) && normalize(saved.name) === normalize(field.name)) total += 50;
     if (saved.id && !looksGenerated(saved.id) && !looksGenerated(field.id) && normalize(saved.id) === normalize(field.id)) total += 30;
     total += overlap(nameText(saved), nameText(field)) * 70;

@@ -1,0 +1,6 @@
+PHONE_HOME_CITY_CODE | dayPhone1 | Day phone: |  | f1
+PHONE_HOME_NUMBER_PREFIX | dayPhone2 |  |  | f1
+PHONE_HOME_NUMBER_SUFFIX | dayPhone3 |  |  | f1
+PHONE_HOME_EXTENSION | dayPhoneExt | Ext. |  | f1
+UNKNOWN_TYPE | eveningAreaCode | Area code |  | f1
+UNKNOWN_TYPE | eveningNumber | Number |  | f1

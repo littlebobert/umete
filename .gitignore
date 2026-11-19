@@ -17,3 +17,8 @@ AppStoreScreenshots/node_modules/
 .env
 AppStoreScreenshots/.cache/
 AppStoreScreenshots/voiceover/
+
+# Form eval: downloaded corpora and reports are made, not kept.
+eval/corpus/
+eval/reports/
+eval/node_modules/

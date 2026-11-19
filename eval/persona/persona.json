@@ -1,0 +1,20 @@
+{
+  "about": "A fictional test person. Expected values for each Chromium field type come from here; answers Umete saves come from remembering learn-*.html, plus the structured address below for the structured variant.",
+  "firstName": "Hana",
+  "lastName": "Sato",
+  "email": "hana.sato@example.com",
+  "company": "Plum Labs",
+  "phone": { "countryCode": "1", "areaCode": "415", "prefix": "555", "suffix": "0142" },
+  "address": {
+    "addressLine1": "1200 Market Street",
+    "addressLine2": "Apt 4B",
+    "houseNumber": "1200",
+    "streetName": "Market Street",
+    "locality": "San Francisco",
+    "administrativeArea": "CA",
+    "administrativeAreaName": "California",
+    "postalCode": "94102",
+    "countryCode": "US",
+    "countryName": "United States"
+  }
+}

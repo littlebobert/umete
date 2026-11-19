@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Create your account</title>
+</head>
+<body>
+  <!-- The one form the test person filled and asked Umete to remember.
+       Values must agree with persona.json. -->
+  <h1>Create your account</h1>
+  <form>
+    <fieldset>
+      <legend>Your details</legend>
+      <label>First name <input name="first_name" autocomplete="given-name" value="Hana"></label>
+      <label>Last name <input name="last_name" autocomplete="family-name" value="Sato"></label>
+      <label>Email address <input name="email" type="email" autocomplete="email" value="hana.sato@example.com"></label>
+      <label>Phone number <input name="phone" type="tel" autocomplete="tel" value="(415) 555-0142"></label>
+      <label>Company <input name="company" autocomplete="organization" value="Plum Labs"></label>
+      <label>Password <input name="password" type="password" value="not-a-real-password"></label>
+    </fieldset>
+    <fieldset class="address">
+      <legend>Mailing address</legend>
+      <label>Street address <input name="address1" autocomplete="address-line1" value="1200 Market Street"></label>
+      <label>Apartment, suite, etc. <input name="address2" autocomplete="address-line2" value="Apt 4B"></label>
+      <label>City <input name="city" autocomplete="address-level2" value="San Francisco"></label>
+      <label>State
+        <select name="state" autocomplete="address-level1">
+          <option value="">Select a state</option>
+          <option value="AZ">Arizona</option>
+          <option value="CA" selected>California</option>
+          <option value="NY">New York</option>
+        </select>
+      </label>
+      <label>ZIP code <input name="zip" autocomplete="postal-code" value="94102"></label>
+      <label>Country
+        <select name="country" autocomplete="country">
+          <option value="JP">Japan</option>
+          <option value="US" selected>United States</option>
+        </select>
+      </label>
+    </fieldset>
+  </form>
+</body>
+</html>

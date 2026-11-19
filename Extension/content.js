@@ -39,11 +39,20 @@
       .join(" "));
   }
 
+  // A label wrapped around a dropdown or text area would otherwise take in
+  // every option ("State Select a state Arizona California…") or typed text.
+  function labelText(label) {
+    if (!label?.querySelector?.("select, textarea, datalist")) return textOf(label);
+    const copy = label.cloneNode(true);
+    copy.querySelectorAll("select, textarea, datalist").forEach((node) => node.remove());
+    return compactText(copy.textContent || "");
+  }
+
   function labelFor(element) {
-    if (element.labels?.length) return compactText([...element.labels].map(textOf).filter(Boolean).join(" "));
+    if (element.labels?.length) return compactText([...element.labels].map(labelText).filter(Boolean).join(" "));
     return referencedText(element, "aria-labelledby")
       || compactText(element.getAttribute("aria-label"))
-      || textOf(element.closest("label"));
+      || labelText(element.closest("label"));
   }
 
   function descriptionFor(element) {
@@ -374,6 +383,60 @@
     return value ? [value] : null;
   }
 
+  const PHONE_PART_TYPES = new Set(["", "text", "tel", "number"]);
+  const MAX_PHONE_PART_LENGTH = 8;
+
+  function isPhonePartBox(element) {
+    return element instanceof HTMLInputElement
+      && PHONE_PART_TYPES.has(element.type)
+      && element.maxLength >= 1 && element.maxLength <= MAX_PHONE_PART_LENGTH
+      && !isCountryCodeField(element);
+  }
+
+  // Boxes of one number sit in the same row, so they share an ancestor a few levels up.
+  function closeTogether(first, second) {
+    let node = first.parentElement;
+    for (let depth = 0; node && depth < 3; depth += 1, node = node.parentElement) {
+      if (node.contains(second)) return true;
+    }
+    return false;
+  }
+
+  // A number split into boxes sized for its parts, such as 415 / 555 / 0142.
+  // Starting at the matched box, the following boxes take the digits in
+  // order, each up to its maxlength. Returns null unless the boxes hold the
+  // whole number exactly, so a short run never gets a partial number.
+  function splitPhoneParts(element, digits) {
+    if (!isPhonePartBox(element) || element.maxLength >= digits.length) return null;
+    const elements = eligibleElements();
+    const start = elements.indexOf(element);
+    if (start < 0) return null;
+    const parts = [];
+    let remaining = digits;
+    for (let index = start; index < elements.length && remaining; index += 1) {
+      const box = elements[index];
+      if (index > start && !(isPhonePartBox(box) && closeTogether(elements[index - 1], box))) break;
+      parts.push({ element: box, value: remaining.slice(0, box.maxLength) });
+      remaining = remaining.slice(box.maxLength);
+    }
+    return !remaining && parts.length > 1 ? parts : null;
+  }
+
+  // The later boxes of a split number, filled along with the first one.
+  const filledAsPhonePart = new WeakSet();
+
+  function applySplitPhone(parts) {
+    let applied = true;
+    for (const [index, part] of parts.entries()) {
+      setNativeValue(part.element, part.value);
+      dispatchValueEvents(part.element);
+      const stuck = valueStuck(part.element, part.value);
+      if (index === 0) applied = stuck;
+      else if (stuck) filledAsPhonePart.add(part.element);
+    }
+    return applied;
+  }
+
   function selectOption(element, option) {
     if (!option) return false;
     if (isCustomCombobox(element)) return chooseComboboxOption(element, option);
@@ -580,6 +643,8 @@
   }
 
   function applyValue(element, value, saved) {
+    // Already holds its part of a split phone number filled from the first box.
+    if (filledAsPhonePart.has(element)) return true;
     if (UmeMatcher.answerType(saved) === "contact") {
       const flattened = flattenContact(saved, element);
       return flattened ? applyValue(element, flattened.value, flattened) : false;
@@ -615,11 +680,19 @@
       }
       value = parts[parts.length - 1];
       const digits = digitsOnly(value);
-      if (digits && !isConfirmationField(element) && phoneUsedElsewhere(digits, element)) {
+      const split = digits ? splitPhoneParts(element, digits) : null;
+      // A box too short for the number that isn't part of a split run (an
+      // area code box on its own) is left alone rather than given a cut-off number.
+      if (!split && element.maxLength > 0 && String(value).length > element.maxLength) {
+        intentionallySkipped.add(element);
+        return false;
+      }
+      if (digits && !isConfirmationField(element) && phoneUsedElsewhere(digits, element, split)) {
         intentionallySkipped.add(element);
         return false;
       }
       if (digits && !filledPhoneNumbers.has(digits)) filledPhoneNumbers.set(digits, element);
+      if (split) return applySplitPhone(split);
     } else if (isDropdown(element)) {
       return applySelect(element, value);
     }
@@ -645,14 +718,16 @@
     return element.id || element.name || "";
   }
 
-  function phoneUsedElsewhere(digits, element) {
+  function phoneUsedElsewhere(digits, element, split = null) {
     const owner = filledPhoneNumbers.get(digits);
     // The field that got the number counts as used even after the site removes
     // it (a collapsed step), unless this is that same field re-rendered.
     if (owner && owner !== element && !(fieldIdentity(owner) && fieldIdentity(owner) === fieldIdentity(element))) return true;
-    // Also catch the number already typed into any other field, hidden or not.
+    // Also catch the number already typed into any other field, hidden or not,
+    // except this number's own boxes from an earlier fill.
+    const ownBoxes = new Set((split || []).map((part) => part.element));
     return deepQuerySelectorAll("input").some((other) => {
-      if (other === element || other.type === "hidden") return false;
+      if (other === element || other.type === "hidden" || ownBoxes.has(other)) return false;
       const otherDigits = digitsOnly(other.value);
       return otherDigits.length >= 6 && (otherDigits === digits || otherDigits.endsWith(digits) || digits.endsWith(otherDigits));
     });
@@ -737,7 +812,7 @@
     return eligibleElements().flatMap((element, index) => {
       const descriptor = describe(element);
       if (hasAddress && UmeMatcher.addressFieldPart(descriptor)) return [];
-      if (intentionallySkipped.has(element)) return [];
+      if (intentionallySkipped.has(element) || filledAsPhonePart.has(element)) return [];
       if (!failedApplications.has(element) && matchForElement(savedEntries, element)) return [];
       const options = isDropdown(element)
         ? dropdownOptions(element).map((option) => compactText(option.text)).filter(Boolean).slice(0, 50)

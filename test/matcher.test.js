@@ -507,3 +507,57 @@ test("fields asking who owns a phone are not filled with a phone number", () => 
     assert.equal(bestMatch(saved, entry({ accessibleName: label, label, group: "Phone No.", placeholder: "+81 Ex. 9012345678" })), phone, label);
   }
 });
+
+test("a saved email never fills a field asking for an address", () => {
+  const email = entry({ accessibleName: "Email address", label: "Email address", name: "email", autocomplete: "email", inputType: "email", value: "hana@example.com" });
+  const street = entry({ accessibleName: "Street address", label: "Street address", name: "address1", autocomplete: "address-line1", value: "1200 Market Street" });
+  for (const label of ["Address:", "* Shipping Address:", "Address 2 (optional)", "Address Line 3"]) {
+    const field = entry({ accessibleName: label, label, name: "address" });
+    assert.notEqual(bestMatch([email], field), email, label);
+  }
+  assert.equal(bestMatch([email, street], entry({ accessibleName: "E-mail Address:", label: "E-mail Address:", name: "txtEmail" })), email);
+});
+
+test("a plain Address label is the street line, so a structured address fills it", () => {
+  const address = entry({ answerType: "address", kind: "aggregate", value: { addressLine1: "1200 Market Street", addressLine2: "Apt 4B", countryCode: "US" } });
+  const email = entry({ accessibleName: "Email address", label: "Email address", autocomplete: "email", value: "hana@example.com" });
+  const field = entry({ accessibleName: "Address:", label: "Address:", name: "address" });
+  assert.equal(addressFieldPart(field), "addressLine1");
+  assert.equal(bestMatch([email, address], field), address);
+  assert.equal(addressFieldPart(entry({ accessibleName: "Address", kind: "textarea" })), "streetAddress");
+});
+
+test("a remembered street line never fills line 2, and line 2 finds the remembered apartment", () => {
+  const street = entry({ accessibleName: "Street address", label: "Street address", name: "address1", autocomplete: "address-line1", value: "1200 Market Street" });
+  const apartment = entry({ accessibleName: "Apartment, suite, etc.", label: "Apartment, suite, etc.", name: "address2", autocomplete: "address-line2", value: "Apt 4B" });
+  for (const [label, name] of [["Address line 2:", "a2"], ["Street Address Line 2", "shipping_address2"], ["Address 2:(optional)", "billing_suite"], ["", "BillingAddress2"]]) {
+    const field = entry({ accessibleName: label, label, name });
+    assert.equal(addressFieldPart(field), "addressLine2", label || name);
+    assert.equal(bestMatch([street, apartment], field), apartment, label || name);
+  }
+  assert.equal(bestMatch([street, apartment], entry({ accessibleName: "Address Line 3", label: "Address Line 3", name: "address3" })), null);
+});
+
+test("machine names give way to a label that names something else", () => {
+  assert.equal(addressFieldPart(entry({ accessibleName: "Company", label: "Company", name: "ctl00$Main$address2" })), "");
+  assert.equal(addressFieldPart(entry({ accessibleName: "Company", label: "Company", name: "Form$_mailingAddress$_company", id: "Form__mailingAddress__company" })), "");
+  assert.equal(addressFieldPart(entry({ name: "Form$_mailingAddress$_city" })), "locality");
+  assert.equal(addressFieldPart(entry({ accessibleName: "Zip/Postal Code", label: "Zip/Postal Code", section: "Mailing Address" })), "postalCode");
+});
+
+test("ZIP+4 boxes and phone extensions get nothing", () => {
+  const zip = entry({ accessibleName: "ZIP code", label: "ZIP code", name: "zip", autocomplete: "postal-code", value: "94102" });
+  const phone = entry({ answerType: "phone", accessibleName: "Phone number", label: "Phone number", name: "phone", autocomplete: "tel", inputType: "tel", value: "4155550142" });
+  assert.equal(addressFieldPart(entry({ accessibleName: "Optional", label: "Optional", name: "addzipcodeExt" })), "postalCodeSuffix");
+  assert.equal(bestMatch([zip, phone], entry({ accessibleName: "Optional", label: "Optional", name: "addzipcodeExt" })), null);
+  for (const label of ["Ext.", "Ext:", "Extension"]) {
+    assert.equal(bestMatch([zip, phone], entry({ accessibleName: label, label, name: "phoneExt", inputType: "tel" })), null, label);
+  }
+});
+
+test("area code and numbered phone boxes are phone fields, never ZIP codes", () => {
+  const zip = entry({ accessibleName: "ZIP code", label: "ZIP code", name: "zip", autocomplete: "postal-code", value: "94102" });
+  const phone = entry({ answerType: "phone", accessibleName: "Phone number", label: "Phone number", name: "phone", autocomplete: "tel", inputType: "tel", value: "4155550142" });
+  assert.equal(bestMatch([zip, phone], entry({ accessibleName: "Area code", label: "Area code", name: "eveningAreaCode", inputType: "tel" })), phone);
+  assert.equal(bestMatch([zip, phone], entry({ name: "dayPhone1", tableHeaders: ["Day phone:"] })), phone);
+});
