@@ -101,9 +101,12 @@
     const stored = await api.storage.local.get(DEBUG_LOG_KEY);
     const existing = stored[DEBUG_LOG_KEY] || "";
     if (!debugLoggingEnabled) {
+      // The switch is under AI Provider in the Mac app and AI Matching on iOS.
+      const { os = "" } = await api.runtime.getPlatformInfo();
+      const suffix = os === "ios" ? "_ios" : "";
       debugLogText.value = existing
-        ? `${existing}\n\n${t("loggingOffWithEntries")}`
-        : t("loggingOff");
+        ? `${existing}\n\n${t(`loggingOffWithEntries${suffix}`)}`
+        : t(`loggingOff${suffix}`);
       return;
     }
     debugLogText.value = existing || t("noDebugEntries");
@@ -180,22 +183,36 @@
     openDebugLogButton.hidden = false;
   }
 
+  // Opens the Umete app. On the Mac the native handler launches it. iOS gives a Safari
+  // extension's native handler no way to open its app (NSExtensionContext.open always
+  // fails there), so on iOS the current tab follows a ume:// link: Safari asks to open
+  // Umete and leaves the page as it was. The popup then closes, since Safari's question
+  // waits behind it. (Following the link from the popup itself leaves an empty tab.)
+  async function openUmeteApp(destination, nativeType) {
+    const { os = "" } = await api.runtime.getPlatformInfo();
+    if (os !== "ios") return sendNative({ type: nativeType });
+    const [tab] = await api.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.id) throw new Error(t(destination === "settings" ? "errSettingsOpen" : "errFinishSetup"));
+    await api.tabs.update(tab.id, { url: `ume://${destination}` });
+    return { ok: true };
+  }
+
   async function openCompanionApp() {
     openAppButton.disabled = true;
     try {
-      const result = await sendNative({ type: "UME_OPEN_APP" });
+      const result = await openUmeteApp("onboarding", "UME_OPEN_APP");
       if (!result?.ok) throw new Error(result?.error || t("errFinishSetup"));
       window.close();
     } catch (error) {
       openAppButton.disabled = false;
-      getStarted.querySelector("p").textContent = error.message || "Open the Umete app to finish setup.";
+      getStarted.querySelector("p").textContent = error.message || t("errFinishSetup");
     }
   }
 
   async function openSettings() {
     openSettingsButton.disabled = true;
     try {
-      const result = await sendNative({ type: "UME_OPEN_SETTINGS" });
+      const result = await openUmeteApp("settings", "UME_OPEN_SETTINGS");
       if (!result?.ok) throw new Error(result?.error || t("errSettingsOpen"));
       window.close();
     } catch (error) {

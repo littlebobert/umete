@@ -79,6 +79,12 @@
   "loggingOff": {
     "message": "ログはオフです。Umeteの設定→「AIプロバイダ」→「バグ報告用のログを有効にする」をオンにしてから、問題をもう一度起こしてください。"
   },
+  "loggingOffWithEntries_ios": {
+    "message": "現在ログはオフです。新しい記録を残すには、Umeteアプリの「AIマッチング」でオンにしてください。"
+  },
+  "loggingOff_ios": {
+    "message": "ログはオフです。Umeteアプリの「AIマッチング」→「バグ報告用のログを有効にする」をオンにしてから、問題をもう一度起こしてください。"
+  },
   "noDebugEntries": {
     "message": "機能拡張のデバッグ記録はまだありません。"
   },

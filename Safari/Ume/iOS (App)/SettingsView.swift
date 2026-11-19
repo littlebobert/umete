@@ -118,6 +118,8 @@ final class SettingsModel: ObservableObject {
     @Published private(set) var syncStatus = String(localized: "Checking iCloud…")
     @Published private(set) var isSyncing = false
     @Published var needsOnboarding = false
+    @Published private(set) var debugLoggingEnabled = AIDebugLogStore.isEnabled
+    @Published private(set) var hidesSensitiveDebugInfo = AIDebugLogStore.hidesSensitiveInfo
     @Published var showsAlert = false
     private(set) var alert: Alert?
 
@@ -138,6 +140,8 @@ final class SettingsModel: ObservableObject {
             )
         }
         syncEnabled = CloudSync.isEnabled
+        debugLoggingEnabled = AIDebugLogStore.isEnabled
+        hidesSensitiveDebugInfo = AIDebugLogStore.hidesSensitiveInfo
         syncStatus = await CloudSync.shared.statusDescription()
     }
 
@@ -231,6 +235,23 @@ final class SettingsModel: ObservableObject {
         CloudSync.isEnabled = enabled
         syncEnabled = enabled
         if enabled { await syncNow() } else { await load() }
+    }
+
+    /// Turning logging off deletes what it saved, as on the Mac.
+    func setDebugLogging(_ enabled: Bool) {
+        AIDebugLogStore.isEnabled = enabled
+        debugLoggingEnabled = enabled
+        guard !enabled else { return }
+        do {
+            try AIDebugLogStore.clear()
+        } catch {
+            show(String(localized: "Couldn’t Delete"), String(localized: "Logging disabled, but saved logs could not be deleted: \(error.localizedDescription)", comment: "The placeholder is an error message"))
+        }
+    }
+
+    func setHidesSensitiveDebugInfo(_ hides: Bool) {
+        AIDebugLogStore.hidesSensitiveInfo = hides
+        hidesSensitiveDebugInfo = hides
     }
 
     func syncNow() async {
@@ -420,6 +441,19 @@ struct AIMatchingTab: View {
                         Button("Delete Saved Key", role: .destructive) { confirmsKeyDeletion = true }
                     }
                 }
+                Section {
+                    Toggle("Enable logging for bug reports", isOn: Binding(
+                        get: { model.debugLoggingEnabled }, set: { model.setDebugLogging($0) }))
+                    if model.debugLoggingEnabled {
+                        Toggle("Hide potentially sensitive info in AI debug logs", isOn: Binding(
+                            get: { model.hidesSensitiveDebugInfo }, set: { model.setHidesSensitiveDebugInfo($0) }))
+                        NavigationLink(destination: DebugLogView()) { Text("AI Debug Log") }
+                    }
+                } footer: {
+                    if model.debugLoggingEnabled {
+                        Text("Your logs are never sent automatically. Open Debug Logs… in the Safari extension to review or email them.")
+                    }
+                }
             }
             .navigationTitle("AI Matching")
             .confirmationDialog("Delete the saved API key?", isPresented: $confirmsKeyDeletion, titleVisibility: .visible) {
@@ -494,6 +528,54 @@ struct SavedDataTab: View {
             }
         }
         .navigationViewStyle(.stack)
+    }
+}
+
+/// The AI matching log the Safari extension writes while logging for bug reports is
+/// on: what the Mac's View Log… window shows.
+struct DebugLogView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var log = ""
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(AIDebugLogStore.hidesSensitiveInfo
+                    ? String(localized: "Sensitive field details are hidden. Saved answer values and API keys are never logged.")
+                    : String(localized: "This log may contain field labels and other potentially sensitive form details, but never saved answer values or API keys."))
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                Text(log.isEmpty ? Self.emptyMessage : log)
+                    .font(.system(.footnote, design: .monospaced))
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                if !log.isEmpty {
+                    Button("Delete Log", role: .destructive) {
+                        try? AIDebugLogStore.clear()
+                        dismiss()
+                    }
+                    .padding(.top, 8)
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("AI Debug Log")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            Button("Copy") { UIPasteboard.general.string = log }
+                .disabled(log.isEmpty)
+        }
+        .onAppear { log = AIDebugLogStore.read() }
+    }
+
+    private static var emptyMessage: String {
+        if let error = AIDebugLogStore.lastError {
+            return String(localized: "Umete attempted to write the AI debug log, but it failed:\n\n\(error)", comment: "The placeholder is an error message")
+        }
+        if let attempt = AIDebugLogStore.lastAttempt {
+            return String(localized: "Umete attempted to write the AI debug log at \(attempt.formatted()), but no entries could be read.", comment: "The placeholder is a date and time")
+        }
+        return String(localized: "No AI debug request has reached the native extension yet.")
     }
 }
 

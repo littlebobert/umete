@@ -79,6 +79,12 @@
   "loggingOff": {
     "message": "Logging is off. Enable it in Umete Settings → AI Provider → Enable logging for bug reports, then reproduce the problem."
   },
+  "loggingOffWithEntries_ios": {
+    "message": "Logging is currently off. Turn it on in the Umete app → AI Matching to capture new entries."
+  },
+  "loggingOff_ios": {
+    "message": "Logging is off. In the Umete app, turn on AI Matching → Enable logging for bug reports, then reproduce the problem."
+  },
   "noDebugEntries": {
     "message": "No extension debug entries yet."
   },

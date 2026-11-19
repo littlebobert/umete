@@ -79,6 +79,12 @@
   "loggingOff": {
     "message": "로그 기록이 꺼져 있습니다. Umete 설정 > AI 제공자 > '버그 보고용 로그 기록 켜기'를 켠 다음 문제를 다시 재현하세요."
   },
+  "loggingOffWithEntries_ios": {
+    "message": "현재 로그 기록이 꺼져 있습니다. 새 항목을 기록하려면 Umete 앱 > AI 매칭에서 켜세요."
+  },
+  "loggingOff_ios": {
+    "message": "로그 기록이 꺼져 있습니다. Umete 앱 > AI 매칭 > '버그 보고용 로그 기록 켜기'를 켠 다음 문제를 다시 재현하세요."
+  },
   "noDebugEntries": {
     "message": "아직 확장 프로그램 디버그 기록이 없습니다."
   },
