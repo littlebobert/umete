@@ -380,9 +380,9 @@
   emailDebugLogButton.addEventListener("click", async () => {
     emailDebugLogButton.disabled = true;
     try {
-      const { os = "unknown" } = await api.runtime.getPlatformInfo();
-      const version = api.runtime.getManifest()?.version || "unknown";
-      window.location.href = UmeDebugEmail.buildDebugEmail(debugLogText.value, { version, platform: os });
+      const { os = "" } = await api.runtime.getPlatformInfo();
+      const appInfo = await sendNative({ type: "UME_GET_APP_INFO" }).catch(() => null);
+      window.location.href = UmeDebugEmail.buildDebugEmail(debugLogText.value, UmeDebugEmail.reportSource(appInfo, os));
     } catch (error) {
       show(error.message || "Umete could not open an email draft.", true);
       emailDebugLogButton.disabled = false;

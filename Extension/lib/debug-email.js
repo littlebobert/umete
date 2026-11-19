@@ -31,5 +31,17 @@
     return `mailto:${recipient}?subject=${encodeURIComponent("Umete debug logs")}&body=${encodeURIComponent(body)}`;
   }
 
-  return { buildDebugEmail, DEFAULT_MAX_LOG_LENGTH };
+  // The version and platform lines, from the app's answer to UME_GET_APP_INFO.
+  // manifest.json's version is never stamped (it stays 0.1.0), so without the app
+  // the version is unknown, and Safari's own "ios" or "mac" stands in for the platform.
+  function reportSource(appInfo, safariOS) {
+    if (appInfo?.ok && appInfo.version) {
+      const version = appInfo.build ? `${appInfo.version} (${appInfo.build})` : appInfo.version;
+      const platform = [appInfo.platform, appInfo.model && `(${appInfo.model})`].filter(Boolean).join(" ");
+      return { version, platform: platform || safariOS || "unknown" };
+    }
+    return { version: "unknown", platform: safariOS || "unknown" };
+  }
+
+  return { buildDebugEmail, reportSource, DEFAULT_MAX_LOG_LENGTH };
 });

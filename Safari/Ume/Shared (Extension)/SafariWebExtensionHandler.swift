@@ -32,6 +32,8 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             complete(context, ["ok": true, "complete": OnboardingStore.isComplete])
         case "UME_GET_DEBUG_LOGGING_STATE":
             complete(context, ["ok": true, "enabled": AIDebugLogStore.isEnabled])
+        case "UME_GET_APP_INFO":
+            complete(context, Self.appInfo())
         case "UME_OPEN_APP", "UME_OPEN_SETTINGS":
             let destination = type == "UME_OPEN_SETTINGS" ? "settings" : "onboarding"
             guard let url = URL(string: "ume://\(destination)") else {
@@ -82,6 +84,38 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         default:
             complete(context, ["ok": false, "error": "Unsupported native message."])
         }
+    }
+
+    /// Where a bug report comes from. The extension can't tell on its own: manifest.json's
+    /// version isn't stamped at build time (it stays 0.1.0), and Safari reports only "ios"
+    /// or "mac". The extension's bundle carries the release's version and build number.
+    private static func appInfo() -> [String: Any] {
+        let info = Bundle.main.infoDictionary ?? [:]
+        let os = ProcessInfo.processInfo.operatingSystemVersion
+        let osVersion = "\(os.majorVersion).\(os.minorVersion)" + (os.patchVersion > 0 ? ".\(os.patchVersion)" : "")
+        #if os(macOS)
+        let model = sysctlString("hw.model")
+        let platform = "macOS \(osVersion)"
+        #else
+        let model = sysctlString("hw.machine")
+        let platform = "\(model.hasPrefix("iPad") ? "iPadOS" : "iOS") \(osVersion)"
+        #endif
+        return [
+            "ok": true,
+            "version": info["CFBundleShortVersionString"] as? String ?? "",
+            "build": info["CFBundleVersion"] as? String ?? "",
+            "platform": platform,
+            "model": model
+        ]
+    }
+
+    /// A string sysctl value, such as hw.machine ("iPhone18,1") or hw.model ("Mac16,10").
+    private static func sysctlString(_ name: String) -> String {
+        var size = 0
+        guard sysctlbyname(name, nil, &size, nil, 0) == 0, size > 0 else { return "" }
+        var buffer = [UInt8](repeating: 0, count: size)
+        guard sysctlbyname(name, &buffer, &size, nil, 0) == 0 else { return "" }
+        return String(decoding: buffer.prefix { $0 != 0 }, as: UTF8.self)
     }
 
     #if os(macOS)
