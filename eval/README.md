@@ -12,6 +12,10 @@ npm run eval      # writes reports/<time>-<variant>.md and .json
 
 `node run.js --only 017 --verbose` runs a single form.
 
+### AI matching
+
+`--ai dry` reports which fields local matching missed that Fill would ask the AI about, and how many requests that takes, without sending anything. `--ai openai` sends them to the OpenAI Decisions API with `OPENAI_API_KEY`, as **OpenAI Decisions (your key)** does: same questions, `gpt-6-luna` (or `--model`), the same 0.6 confidence cutoff, applied through `UME_APPLY_MAPPINGS`. [ai.js](ai.js) is a port of the app's Swift request code, so keep the two in step. A full run is about 530 requests across both variants.
+
 ## How it works
 
 1. A fictional person ([persona/persona.json](persona/persona.json)) remembers [persona/learn-full.html](persona/learn-full.html) through the real content scripts (`UME_COLLECT`), as **Remember my answers** does.
@@ -32,9 +36,11 @@ There are two variants. **learned** gets every answer from that one remembered f
 | missed | the person had an answer, but the field was left empty |
 | review | filled a field Chromium calls `UNKNOWN_TYPE` or a card name; it may be fine |
 | unmapped | a labeled field couldn't be found on the page |
+| hidden | the field isn't visible on the saved page, so Umete rightly skips it |
+| already set | the field already held the right value before Fill |
 
 ## Caveats
 
 - The `.out` files are Chromium's own predictions kept as regression baselines, not hand-checked truth. Some are debatable, such as a gift recipient's email labeled `EMAIL_ADDRESS`.
 - The pages are old static snapshots. They don't exercise shadow DOM, custom comboboxes, or forms built by JavaScript.
-- Only local matching is scored. The AI step (`UME_SCHEMAS`, then the native app) isn't run yet.
+- Fields hidden on the saved page, and fields that already held the right value, are left out of the score.

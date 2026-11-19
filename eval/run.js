@@ -13,13 +13,21 @@
 //   structured  name, email, phone, company learned; the address is a
 //               structured address answer, as entered in the app
 //
-// Usage: node run.js [--variant learned|structured|both] [--only 017] [--verbose]
+// AI matching (--ai), the step Fill runs after local matching for fields it
+// left unhandled (UME_SCHEMAS):
+//   off      local matching only (default)
+//   dry      no requests; reports which missed fields the AI would be asked about
+//   openai   the OpenAI Decisions API with OPENAI_API_KEY, as "OpenAI Decisions
+//            (your key)" does; --model overrides the app's default
+//
+// Usage: node run.js [--variant learned|structured|both] [--ai off|dry|openai] [--only 017] [--verbose]
 
 const fs = require("node:fs");
 const path = require("node:path");
 const { webkit } = require("playwright");
 const { expectations, matches } = require("./expect.js");
 const { parseExpected, mapRows } = require("./corpus.js");
+const ai = require("./ai.js");
 
 const ROOT = path.resolve(__dirname, "..");
 const EXTENSION = path.join(ROOT, "Extension");
@@ -33,14 +41,18 @@ const RULES = expectations(PERSONA);
 const PAGE_TIMEOUT_MS = 15_000;
 
 function parseArgs(argv) {
-  const args = { variant: "both", only: null, verbose: false };
+  const args = { variant: "both", only: null, verbose: false, ai: "off", model: "" };
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === "--variant") args.variant = argv[++i];
     else if (argv[i] === "--only") args.only = argv[++i];
     else if (argv[i] === "--verbose") args.verbose = true;
+    else if (argv[i] === "--ai") args.ai = argv[++i];
+    else if (argv[i] === "--model") args.model = argv[++i];
     else throw new Error(`Unknown argument ${argv[i]}`);
   }
   if (!["learned", "structured", "both"].includes(args.variant)) throw new Error("--variant is learned, structured, or both");
+  if (!["off", "dry", "openai"].includes(args.ai)) throw new Error("--ai is off, dry, or openai");
+  if (args.ai === "openai" && !process.env.OPENAI_API_KEY) throw new Error("--ai openai needs OPENAI_API_KEY in the environment.");
   return args;
 }
 
@@ -93,6 +105,7 @@ function snapshotControls() {
       name: element.getAttribute("name") || "",
       id: element.id || "",
       maxLength: typeof element.maxLength === "number" ? element.maxLength : -1,
+      visible: element.getClientRects().length > 0 && getComputedStyle(element).visibility === "visible",
       value: element.type === "checkbox" || element.type === "radio" ? String(element.checked) : String(element.value ?? ""),
       optionText: option ? option.text.trim() : ""
     };
@@ -120,7 +133,34 @@ async function remember(browser, variant) {
   return answers;
 }
 
-async function fillForm(browser, htmlPath, answers) {
+// Lines up UME_SCHEMAS fields (indexes into the content script's own list)
+// with snapshot controls by name and id, in order.
+function schemaControls(schemas, controls) {
+  const used = new Set();
+  const byField = new Map();
+  for (const schema of schemas) {
+    const control = controls.find((candidate) => !used.has(candidate.index)
+      && candidate.name === (schema.name || "") && candidate.id === (schema.id || ""));
+    if (!control) continue;
+    used.add(control.index);
+    byField.set(schema.field, control.index);
+  }
+  return byField;
+}
+
+async function askAI(answers, schemas, args) {
+  const { requests, values } = ai.buildRequests(answers, schemas);
+  const mappings = [];
+  const decisions = [];
+  for (const body of requests) {
+    const result = await ai.ask("openai", body, { apiKey: process.env.OPENAI_API_KEY, model: args.model });
+    mappings.push(...result.mappings);
+    decisions.push(...result.decisions);
+  }
+  return { mappings, decisions, values, requests: requests.length };
+}
+
+async function fillForm(browser, htmlPath, answers, args) {
   const context = await browser.newContext({ javaScriptEnabled: false });
   // Saved pages still point at their sites' scripts, images, and trackers.
   await context.route(/^(?!file:)/, (route) => route.abort());
@@ -131,8 +171,29 @@ async function fillForm(browser, htmlPath, answers) {
     await injectUmete(page);
     const before = await page.evaluate(snapshotControls);
     const result = await page.evaluate((saved) => globalThis.__umeEvalSend({ type: "UME_FILL", answers: saved }), answers);
+    const local = await page.evaluate(snapshotControls);
+    if (args.ai === "off") return { before, after: local, local, result };
+    const { fields: schemas = [] } = await page.evaluate((saved) => globalThis.__umeEvalSend({ type: "UME_SCHEMAS", answers: saved }), answers) || {};
+    const asked = schemaControls(schemas, before);
+    const aiInfo = { asked: [...asked.values()], requests: 0, characters: 0, decisions: {} };
+    if (args.ai === "dry" && schemas.length) {
+      const { requests } = ai.buildRequests(answers, schemas);
+      aiInfo.requests = requests.length;
+      aiInfo.characters = requests.reduce((sum, body) => sum + JSON.stringify(body).length, 0);
+    }
+    if (args.ai === "openai" && schemas.length) {
+      const { mappings, decisions, values, requests } = await askAI(answers, schemas, args);
+      aiInfo.requests = requests;
+      for (const decision of decisions) {
+        const index = asked.get(decision.field);
+        if (index !== undefined) aiInfo.decisions[index] = decision;
+      }
+      if (mappings.length) {
+        await page.evaluate(({ mappings: chosen, values: saved }) => globalThis.__umeEvalSend({ type: "UME_APPLY_MAPPINGS", mappings: chosen, values: saved }), { mappings, values });
+      }
+    }
     const after = await page.evaluate(snapshotControls);
-    return { before, after, result };
+    return { before, after, local, result, aiInfo };
   } finally {
     await context.close();
   }
@@ -146,7 +207,7 @@ function changed(before, after) {
   return before.value !== after.value || before.optionText !== after.optionText;
 }
 
-function scoreForm(stem, expectedRows, before, after) {
+function scoreForm(stem, expectedRows, before, after, local = after, aiInfo = null) {
   const fields = [];
   const mapped = mapRows(expectedRows, before);
   const labeledIndexes = new Set();
@@ -161,12 +222,28 @@ function scoreForm(stem, expectedRows, before, after) {
     const rule = RULES[row.type];
     const isPassword = control.type === "password";
     const base = { type: row.type, name: row.name, label: row.label, got: now ? (now.optionText || now.value) : "" };
-    let outcome;
-    if (isPassword || rule?.sensitive) outcome = filled ? "sensitive-fill" : "correct-skip";
-    else if (rule?.accept) outcome = !filled ? "missed" : matches(rule, readings(now), now.optionText, now.maxLength) ? "correct" : "wrong";
-    else if (rule?.none) outcome = filled ? "wrong" : "correct-skip";
-    else outcome = filled ? "review" : "correct-skip";
+    const outcomeOf = (state) => {
+      const filled = Boolean(state) && changed(control, state);
+      if (isPassword || rule?.sensitive) return filled ? "sensitive-fill" : "correct-skip";
+      if (rule?.accept) return !filled ? "missed" : matches(rule, readings(state), state.optionText, state.maxLength) ? "correct" : "wrong";
+      if (rule?.none) return filled ? "wrong" : "correct-skip";
+      return filled ? "review" : "correct-skip";
+    };
+    // A field that already held the right value isn't a miss, and Umete
+    // leaves out fields a person can't see; so does the score.
+    const scoredOutcome = (state) => {
+      const untouched = !changed(control, state || control);
+      if (untouched && rule?.accept && control.value !== "" && matches(rule, readings(control), control.optionText, control.maxLength)) return "already-set";
+      if (untouched && !control.visible && !(isPassword || rule?.sensitive)) return "hidden";
+      return outcomeOf(state);
+    };
+    const outcome = scoredOutcome(now);
     if (outcome === "wrong" && rule?.accept) base.expected = rule.accept[0];
+    if (aiInfo) {
+      base.localOutcome = scoredOutcome(local[control.index]);
+      base.askedAI = aiInfo.asked.includes(control.index);
+      if (aiInfo.decisions[control.index]) base.aiDecision = aiInfo.decisions[control.index];
+    }
     fields.push({ outcome, ...base });
   }
   // Fills on controls Chromium didn't label at all (checkboxes, radios, fields
@@ -181,7 +258,7 @@ function scoreForm(stem, expectedRows, before, after) {
   return { form: stem, fields };
 }
 
-const OUTCOMES = ["correct", "wrong", "sensitive-fill", "missed", "correct-skip", "review", "unmapped"];
+const OUTCOMES = ["correct", "wrong", "sensitive-fill", "missed", "correct-skip", "review", "unmapped", "hidden", "already-set"];
 
 function tally(forms) {
   const totals = Object.fromEntries(OUTCOMES.map((outcome) => [outcome, 0]));
@@ -196,6 +273,18 @@ function tally(forms) {
 }
 
 const pct = (value) => `${(value * 100).toFixed(1)}%`;
+
+// What the AI step changed: fields local matching missed that the AI was
+// asked about, and what came of them.
+function aiSummary(forms) {
+  const fields = forms.flatMap((form) => form.fields).filter((field) => field.localOutcome !== undefined);
+  const missedLocally = fields.filter((field) => field.localOutcome === "missed");
+  const asked = missedLocally.filter((field) => field.askedAI);
+  const changedBy = (from, to) => fields.filter((field) => field.localOutcome === from && field.outcome === to).length;
+  const requests = forms.reduce((sum, form) => sum + (form.aiRequests || 0), 0);
+  const characters = forms.reduce((sum, form) => sum + (form.aiCharacters || 0), 0);
+  return `AI: ${asked.length} of ${missedLocally.length} local misses asked about · ${changedBy("missed", "correct")} now correct, ${changedBy("missed", "wrong")} now wrong · ${changedBy("correct-skip", "wrong")} wrong and ${changedBy("correct-skip", "review")} for review where nothing belonged · ${requests} requests${characters ? ` (~${Math.round(characters / 4 / 1000)}k input tokens)` : ""}`;
+}
 
 function markdownReport(variant, forms, totals, answers, startedAt) {
   const lines = [
@@ -247,8 +336,12 @@ async function runVariant(browser, variant, args) {
     if (!html) continue;
     const expectedRows = parseExpected(fs.readFileSync(path.join(directory, `${file}.out`), "utf8"));
     try {
-      const { before, after, result } = await fillForm(browser, html, answers);
-      const scored = scoreForm(stem, expectedRows, before, after);
+      const { before, after, local, result, aiInfo } = await fillForm(browser, html, answers, args);
+      const scored = scoreForm(stem, expectedRows, before, after, local, aiInfo);
+      if (aiInfo) {
+        scored.aiRequests = aiInfo.requests;
+        scored.aiCharacters = aiInfo.characters;
+      }
       scored.umeteFilled = result?.filled ?? null;
       forms.push(scored);
       if (args.verbose) {
@@ -279,6 +372,7 @@ async function main() {
       fs.writeFileSync(`${base}.json`, JSON.stringify({ variant, startedAt, answers, totals, forms }, null, 2));
       fs.writeFileSync(`${base}.md`, markdownReport(variant, forms, totals, answers, startedAt));
       console.log(`${variant}: ${totals.correct} correct, ${totals.wrong} wrong, ${totals["sensitive-fill"]} sensitive fills, ${totals.missed} missed, ${totals.review} for review · precision ${pct(totals.precision)}, recall ${pct(totals.recall)}`);
+      if (args.ai !== "off") console.log(`  ${aiSummary(forms)}`);
       console.log(`  ${path.relative(process.cwd(), base)}.md`);
       if (totals["sensitive-fill"] > 0) failed = true;
     }
