@@ -2,11 +2,22 @@
   "manifest_version": 3,
   "name": "Umete",
   "version": "0.1.0",
-  "description": "Autofill everything, securely.",
-  "permissions": ["storage", "activeTab", "nativeMessaging", "scripting"],
-  "optional_host_permissions": ["<all_urls>"],
+  "description": "__MSG_extDescription__",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "nativeMessaging",
+    "scripting"
+  ],
+  "optional_host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
-    "scripts": ["lib/matcher.js", "background.js"],
+    "scripts": [
+      "lib/i18n.js",
+      "lib/matcher.js",
+      "background.js"
+    ],
     "persistent": false
   },
   "icons": {
@@ -28,5 +39,6 @@
       "48": "icons/icon-48.png",
       "64": "icons/icon-64.png"
     }
-  }
+  },
+  "default_locale": "en"
 }

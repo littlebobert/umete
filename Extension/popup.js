@@ -20,6 +20,15 @@
   const debugLogText = document.getElementById("debug-log-text");
   const DEBUG_LOG_KEY = "ume-extension-debug-log";
   const DEBUG_LOG_LIMIT = 64_000;
+  const { t, plural } = UmeI18n;
+  UmeI18n.localizeDocument(document);
+
+  // "Filled 3 fields, including 1 AI match." English pluralizes both counts.
+  function filledWithAI(total, aiFilled) {
+    const key = total === 1 ? "filledWithAI_one" : `filledWithAI_other_${aiFilled === 1 ? "one" : "other"}`;
+    return t(key, total, aiFilled);
+  }
+
   const CONTENT_SCRIPT_FILES = ["lib/matcher.js", "lib/dom.js", "lib/date.js", "lib/phone.js", "content.js"];
   const AI_SCHEMA_KEYS = [
     "accessibleDescription", "accessibleName", "answerType", "autocomplete", "form", "group",
@@ -44,7 +53,7 @@
       }
       return;
     }
-    throw new Error("This version of Safari does not support on-demand extension access.");
+    throw new Error(t("errNoOnDemand"));
   }
 
   async function ensureContentScript(tabId) {
@@ -56,7 +65,7 @@
     }
     await injectContentScript(tabId);
     const response = await api.tabs.sendMessage(tabId, { type: "UME_PING" }, { frameId: 0 });
-    if (!response?.ready) throw new Error("Umete could not start on this page.");
+    if (!response?.ready) throw new Error(t("errCouldNotStart"));
   }
 
   async function sendMessage(tabId, message) {
@@ -64,7 +73,7 @@
       await ensureContentScript(tabId);
       return await api.tabs.sendMessage(tabId, message, { frameId: 0 });
     } catch (error) {
-      throw new Error(`Umete could not communicate with this page. Reload it and try again. ${error.message || ""}`.trim());
+      throw new Error(t("errCommunicate", error.message || "").trim());
     }
   }
 
@@ -93,11 +102,11 @@
     const existing = stored[DEBUG_LOG_KEY] || "";
     if (!debugLoggingEnabled) {
       debugLogText.value = existing
-        ? `${existing}\n\nLogging is currently off. Enable it in Umete Settings → AI Provider to capture new entries.`
-        : "Logging is off. Enable it in Umete Settings → AI Provider → Enable logging for bug reports, then reproduce the problem.";
+        ? `${existing}\n\n${t("loggingOffWithEntries")}`
+        : t("loggingOff");
       return;
     }
-    debugLogText.value = existing || "No extension debug entries yet.";
+    debugLogText.value = existing || t("noDebugEntries");
   }
 
   // Addresses are matched locally only. Contacts are split into one sanitized
@@ -134,11 +143,11 @@
 
   async function activeTab() {
     const [tab] = await api.tabs.query({ active: true, currentWindow: true });
-    if (!tab?.id || !/^https?:/.test(tab.url || "")) throw new Error("Open a regular web page first.");
+    if (!tab?.id || !/^https?:/.test(tab.url || "")) throw new Error(t("errOpenWebPage"));
     return tab;
   }
 
-  function setBusy(nextBusy, message = "Working…") {
+  function setBusy(nextBusy, message = t("working")) {
     busy = nextBusy;
     learnButton.disabled = nextBusy;
     fillButton.disabled = nextBusy || cachedAnswers.length === 0;
@@ -157,7 +166,7 @@
 
   async function loadOnboardingState() {
     const result = await sendNative({ type: "UME_GET_ONBOARDING_STATE" });
-    if (!result?.ok) throw new Error(result?.error || "Umete setup status is unavailable.");
+    if (!result?.ok) throw new Error(result?.error || t("errSetupStatus"));
     return Boolean(result.complete);
   }
 
@@ -175,7 +184,7 @@
     openAppButton.disabled = true;
     try {
       const result = await sendNative({ type: "UME_OPEN_APP" });
-      if (!result?.ok) throw new Error(result?.error || "Open the Umete app to finish setup.");
+      if (!result?.ok) throw new Error(result?.error || t("errFinishSetup"));
       window.close();
     } catch (error) {
       openAppButton.disabled = false;
@@ -187,17 +196,17 @@
     openSettingsButton.disabled = true;
     try {
       const result = await sendNative({ type: "UME_OPEN_SETTINGS" });
-      if (!result?.ok) throw new Error(result?.error || "Umete Settings could not be opened.");
+      if (!result?.ok) throw new Error(result?.error || t("errSettingsOpen"));
       window.close();
     } catch (error) {
       openSettingsButton.disabled = false;
-      show(error.message || "Umete Settings could not be opened.", true);
+      show(error.message || t("errSettingsOpen"), true);
     }
   }
 
   async function loadNativeAnswers() {
     const result = await sendNative({ type: "UME_GET_ANSWERS" });
-    if (!result?.ok) throw new Error(result?.error || "Saved answers are unavailable.");
+    if (!result?.ok) throw new Error(result?.error || t("errAnswersUnavailable"));
     return result.answers || [];
   }
 
@@ -206,7 +215,7 @@
     if (!legacy.length) return answers;
     const merged = UmeMatcher.mergeEntries(answers, legacy);
     const result = await sendNative({ type: "UME_SAVE_ANSWERS", answers: merged });
-    if (!result?.ok) throw new Error(result?.error || "Saved answers could not be migrated.");
+    if (!result?.ok) throw new Error(result?.error || t("errMigrate"));
     await api.storage.local.remove("answers");
     return merged;
   }
@@ -218,21 +227,21 @@
   }
 
   async function learn() {
-    setBusy(true, "Reading completed fields…");
+    setBusy(true, t("readingFields"));
     try {
       const tab = await activeTab();
       const result = await sendMessage(tab.id, { type: "UME_COLLECT" });
       const incoming = result?.answers || [];
-      if (!incoming.length) throw new Error("No completed, supported fields found on this page.");
+      if (!incoming.length) throw new Error(t("errNoFields"));
       const merged = UmeMatcher.mergeEntries(cachedAnswers, incoming);
       const saved = await sendNative({ type: "UME_SAVE_ANSWERS", answers: merged });
-      if (!saved?.ok) throw new Error(saved?.error || "Umete could not save these answers.");
+      if (!saved?.ok) throw new Error(saved?.error || t("errSave"));
       cachedAnswers = merged;
       api.runtime.sendMessage({ type: "UME_ANSWERS_CHANGED" }).catch(() => {});
       api.tabs.sendMessage(tab.id, { type: "UME_REPORT_FIELDS" }, { frameId: 0 }).catch(() => {});
-      show(`Remembered ${incoming.length} answer${incoming.length === 1 ? "" : "s"}. Passwords and payment fields were skipped.`);
+      show(plural("remembered", incoming.length));
     } catch (error) {
-      show(error.message || "Umete could not read this page.", true);
+      show(error.message || t("errRead"), true);
     } finally {
       setBusy(false);
       await refreshAnswers().catch(() => {});
@@ -240,14 +249,14 @@
   }
 
   async function fill() {
-    setBusy(true, "Matching saved answers…");
+    setBusy(true, t("matching"));
     let locallyFilled = 0;
     try {
       const tab = await activeTab();
       const answers = await refreshAnswers();
       await refreshDebugLoggingState();
       await appendDebug("FILL START", { url: tab.url, tabId: tab.id, savedAnswerCount: answers.length });
-      if (!answers.length) throw new Error("Remember some answers first.");
+      if (!answers.length) throw new Error(t("errRememberFirst"));
 
       const localResult = await sendMessage(tab.id, { type: "UME_FILL", answers, diagnostics: debugLoggingEnabled });
       await appendDebug("LOCAL FILL RESPONSE", localResult || { response: null });
@@ -261,12 +270,12 @@
 
       if (!fields.length) {
         show(locallyFilled
-          ? `Filled ${locallyFilled} field${locallyFilled === 1 ? "" : "s"}. Please review everything before continuing.`
-          : "No confident matches found. Fill this form once, then ask Umete to remember it.");
+          ? plural("filled", locallyFilled)
+          : t("noMatchesFillOnce"));
         return;
       }
 
-      setActivity("Asking your AI provider about unmatched fields…");
+      setActivity(t("askingAI"));
       const aiValues = aiSavedEntries(answers);
       const saved = aiValues.map((answer) => schemaForAI(answer, "key", answer.key));
       const sanitizedFields = fields.map((field) => schemaForAI(field, "field", field.field));
@@ -276,9 +285,9 @@
         error: nativeResult?.error || null,
         mappings: nativeResult?.mappings || []
       });
-      if (!nativeResult?.ok) throw new Error(nativeResult?.error || "AI mapping failed.");
+      if (!nativeResult?.ok) throw new Error(nativeResult?.error || t("errAIMapping"));
 
-      setActivity("Applying confident matches…");
+      setActivity(t("applying"));
       const aiResult = await sendMessage(tab.id, {
         type: "UME_APPLY_MAPPINGS",
         mappings: nativeResult.mappings || [],
@@ -289,13 +298,13 @@
       const total = locallyFilled + aiFilled;
       await appendDebug("FILL COMPLETE", { locallyFilled, aiFilled, total });
       show(total
-        ? `Filled ${total} field${total === 1 ? "" : "s"}${aiFilled ? `, including ${aiFilled} AI match${aiFilled === 1 ? "" : "es"}` : ""}. Please review everything before continuing.`
-        : "No confident matches were found.");
+        ? (aiFilled ? filledWithAI(total, aiFilled) : plural("filled", total))
+        : t("noMatches"));
     } catch (error) {
-      const message = error.message || "Umete could not fill this page.";
+      const message = error.message || t("errFill");
       await appendDebug("FILL ERROR", { message, stack: error.stack || null, locallyFilled });
       show(locallyFilled
-        ? `Filled ${locallyFilled} field${locallyFilled === 1 ? "" : "s"} locally. AI mapping was unavailable: ${message}`
+        ? plural("filledLocallyAIUnavailable", locallyFilled, message)
         : message, true);
     } finally {
       setBusy(false);
@@ -322,7 +331,7 @@
     const granted = await permissionRequest.catch(() => false);
     if (!granted) {
       formBadgeToggle.checked = false;
-      show("Umete needs access to all websites to check pages for forms. Allow it in Safari’s extension settings, then try again.", true);
+      show(t("badgeNeedsAccess"), true);
       return;
     }
     try {
@@ -339,13 +348,13 @@
     await api.storage.local.set({ [FORM_BADGE_KEY]: true });
     const tab = await activeTab().catch(() => null);
     if (tab) await api.tabs.sendMessage(tab.id, { type: "UME_REPORT_FIELDS" }, { frameId: 0 }).catch(() => {});
-    show("Umete will badge its toolbar icon on pages with forms it can fill. Reload open pages to badge them now.");
+    show(t("badgeOn"));
   }
 
   async function disableFormBadge() {
     await api.scripting.unregisterContentScripts({ ids: [DETECT_SCRIPT_ID] }).catch(() => {});
     await api.storage.local.set({ [FORM_BADGE_KEY]: false });
-    show("Form badges are off.");
+    show(t("badgeOff"));
   }
 
   formBadgeToggle.addEventListener("change", () => {
@@ -354,7 +363,7 @@
     const change = request ? enableFormBadge(request) : disableFormBadge();
     change.catch((error) => {
       formBadgeToggle.checked = !formBadgeToggle.checked;
-      show(error.message || "Umete could not change the badge setting.", true);
+      show(error.message || t("errBadge"), true);
     });
   });
 
@@ -374,8 +383,8 @@
   });
   copyDebugLogButton.addEventListener("click", async () => {
     await navigator.clipboard.writeText(debugLogText.value);
-    copyDebugLogButton.textContent = "Copied";
-    setTimeout(() => { copyDebugLogButton.textContent = "Copy"; }, 1200);
+    copyDebugLogButton.textContent = t("copied");
+    setTimeout(() => { copyDebugLogButton.textContent = t("copy"); }, 1200);
   });
   emailDebugLogButton.addEventListener("click", async () => {
     emailDebugLogButton.disabled = true;
@@ -384,7 +393,7 @@
       const appInfo = await sendNative({ type: "UME_GET_APP_INFO" }).catch(() => null);
       window.location.href = UmeDebugEmail.buildDebugEmail(debugLogText.value, UmeDebugEmail.reportSource(appInfo, os));
     } catch (error) {
-      show(error.message || "Umete could not open an email draft.", true);
+      show(error.message || t("errEmail"), true);
       emailDebugLogButton.disabled = false;
     }
   });

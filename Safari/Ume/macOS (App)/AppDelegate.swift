@@ -54,7 +54,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showSettingsContent(in window: NSWindow) {
-        window.title = "Umete Settings"
+        window.title = String(localized: "Umete Settings")
         window.contentViewController = SettingsTabViewController()
         window.contentMinSize = NSSize(width: 720, height: 500)
         window.setContentSize(NSSize(width: 760, height: 620))
@@ -63,38 +63,39 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func installEditMenu() {
         guard let mainMenu = NSApp.mainMenu,
-              !mainMenu.items.contains(where: { $0.title == "Edit" }) else { return }
-        let item = NSMenuItem(title: "Edit", action: nil, keyEquivalent: "")
-        let menu = NSMenu(title: "Edit")
+              !mainMenu.items.contains(where: { $0.submenu?.items.contains { $0.action == #selector(NSText.cut(_:)) } == true }) else { return }
+        let item = NSMenuItem(title: String(localized: "Edit", comment: "Edit menu"), action: nil, keyEquivalent: "")
+        let menu = NSMenu(title: String(localized: "Edit", comment: "Edit menu"))
         item.submenu = menu
-        menu.addItem(withTitle: "Undo", action: Selector(("undo:")), keyEquivalent: "z")
-        menu.addItem(withTitle: "Redo", action: Selector(("redo:")), keyEquivalent: "Z")
+        menu.addItem(withTitle: String(localized: "Undo"), action: Selector(("undo:")), keyEquivalent: "z")
+        menu.addItem(withTitle: String(localized: "Redo"), action: Selector(("redo:")), keyEquivalent: "Z")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
-        menu.addItem(withTitle: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
-        menu.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
-        menu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        menu.addItem(withTitle: String(localized: "Cut"), action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        menu.addItem(withTitle: String(localized: "Copy"), action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        menu.addItem(withTitle: String(localized: "Paste"), action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        menu.addItem(withTitle: String(localized: "Select All"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         mainMenu.insertItem(item, at: min(1, mainMenu.items.count))
     }
 
     private func installWindowMenu() {
         guard let mainMenu = NSApp.mainMenu,
-              !mainMenu.items.contains(where: { $0.title == "Window" }) else { return }
-        let item = NSMenuItem(title: "Window", action: nil, keyEquivalent: "")
-        let menu = NSMenu(title: "Window")
+              NSApp.windowsMenu == nil else { return }
+        let item = NSMenuItem(title: String(localized: "Window", comment: "Window menu"), action: nil, keyEquivalent: "")
+        let menu = NSMenu(title: String(localized: "Window", comment: "Window menu"))
         item.submenu = menu
-        menu.addItem(withTitle: "Minimize", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
-        menu.addItem(withTitle: "Zoom", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: String(localized: "Minimize"), action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
+        menu.addItem(withTitle: String(localized: "Zoom", comment: "Window menu command that zooms (maximizes) the window"), action: #selector(NSWindow.performZoom(_:)), keyEquivalent: "")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Close Window", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+        menu.addItem(withTitle: String(localized: "Close Window"), action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
         NSApp.windowsMenu = menu
-        let helpIndex = mainMenu.items.firstIndex(where: { $0.title == "Help" }) ?? mainMenu.items.count
+        // Menus are found by what they do, not their titles, which differ by language.
+        let helpIndex = mainMenu.items.firstIndex(where: { $0.submenu?.items.contains { $0.action == #selector(NSApplication.showHelp(_:)) } == true }) ?? mainMenu.items.count
         mainMenu.insertItem(item, at: helpIndex)
     }
 
     private func installSettingsShortcut() {
         guard let appMenu = NSApp.mainMenu?.items.first?.submenu else { return }
-        let item = NSMenuItem(title: "Settings…", action: #selector(showSettings(_:)), keyEquivalent: ",")
+        let item = NSMenuItem(title: String(localized: "Settings…"), action: #selector(showSettings(_:)), keyEquivalent: ",")
         item.target = self
         appMenu.insertItem(item, at: min(2, appMenu.items.count))
         appMenu.insertItem(.separator(), at: min(3, appMenu.items.count))
@@ -102,10 +103,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func installUpdateMenu() {
         guard let appMenu = NSApp.mainMenu?.items.first?.submenu,
-              !appMenu.items.contains(where: { $0.title == "Check for Updates…" }) else { return }
-        let item = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdates(_:)), keyEquivalent: "")
+              !appMenu.items.contains(where: { $0.action == #selector(checkForUpdates(_:)) }) else { return }
+        let item = NSMenuItem(title: String(localized: "Check for Updates…"), action: #selector(checkForUpdates(_:)), keyEquivalent: "")
         item.target = self
-        let settingsIndex = appMenu.items.firstIndex(where: { $0.title == "Settings…" }) ?? 1
+        let settingsIndex = appMenu.items.firstIndex(where: { $0.action == #selector(showSettings(_:)) }) ?? 1
         let insertionIndex = min(settingsIndex + 2, appMenu.items.count)
         appMenu.insertItem(item, at: insertionIndex)
         appMenu.insertItem(.separator(), at: min(insertionIndex + 1, appMenu.items.count))
@@ -116,7 +117,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func installAboutAction() {
-        guard let about = NSApp.mainMenu?.items.first?.submenu?.items.first(where: { $0.title == "About Umete" }) else { return }
+        guard let about = NSApp.mainMenu?.items.first?.submenu?.items.first(where: { $0.action == #selector(NSApplication.orderFrontStandardAboutPanel(_:)) }) else { return }
         about.target = self
         about.action = #selector(showAbout(_:))
     }

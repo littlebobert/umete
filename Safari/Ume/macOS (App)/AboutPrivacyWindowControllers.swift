@@ -4,13 +4,13 @@ import SwiftUI
 final class AboutWindowController: NSWindowController {
     init(openPrivacy: @escaping () -> Void) {
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 310, height: 292), styleMask: [.titled, .closable, .fullSizeContentView], backing: .buffered, defer: false)
-        window.title = "About Umete"
+        window.title = String(localized: "About Umete")
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.isReleasedWhenClosed = false
         window.center()
 
-        let windowTitle = NSTextField(labelWithString: "About Umete")
+        let windowTitle = NSTextField(labelWithString: String(localized: "About Umete"))
         windowTitle.font = .systemFont(ofSize: 13, weight: .semibold)
         windowTitle.alignment = .center
         // The size of the art in the 78-point app icon this replaced, so the layout holds.
@@ -19,16 +19,17 @@ final class AboutWindowController: NSWindowController {
         let name = NSTextField(labelWithString: "Umete")
         name.font = .systemFont(ofSize: 26, weight: .bold)
         name.alignment = .center
-        let version = NSTextField(labelWithString: "Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0")")
+        let versionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+        let version = NSTextField(labelWithString: String(localized: "Version \(versionNumber)", comment: "About window: the app's version number"))
         version.textColor = .secondaryLabelColor
-        let explanation = NSTextField(labelWithString: "Fills in web forms automatically.")
+        let explanation = NSTextField(labelWithString: String(localized: "Fills in web forms automatically."))
         explanation.textColor = .secondaryLabelColor
         explanation.alignment = .center
-        let madeInJapan = NSTextField(labelWithString: "Made in Japan")
+        let madeInJapan = NSTextField(labelWithString: String(localized: "Made in Japan"))
         madeInJapan.alignment = .center
-        let reportBug = NSButton(title: "Report a Bug…", target: LinkTarget.shared, action: #selector(LinkTarget.reportBug))
+        let reportBug = NSButton(title: String(localized: "Report a Bug…"), target: LinkTarget.shared, action: #selector(LinkTarget.reportBug))
         reportBug.bezelStyle = .rounded
-        let privacy = ClosureButton(title: "Privacy…", action: openPrivacy)
+        let privacy = ClosureButton(title: String(localized: "Privacy…", comment: "About window button that opens the privacy window"), action: openPrivacy)
         privacy.bezelStyle = .rounded
         let buttons = NSStackView(views: [reportBug, privacy])
         buttons.orientation = .horizontal
@@ -37,7 +38,7 @@ final class AboutWindowController: NSWindowController {
         let source = NSButton(title: "", target: LinkTarget.shared, action: #selector(LinkTarget.openSource))
         source.isBordered = false
         source.attributedTitle = NSAttributedString(
-            string: "Open source under the MIT License",
+            string: String(localized: "Open source under the MIT License"),
             attributes: [
                 .foregroundColor: NSColor.linkColor,
                 .underlineStyle: NSUnderlineStyle.single.rawValue,
@@ -75,20 +76,20 @@ final class AboutWindowController: NSWindowController {
 final class PrivacyWindowController: NSWindowController {
     init() {
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 560, height: 470), styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
-        window.title = "Umete Privacy"
+        window.title = String(localized: "Umete Privacy")
         window.isReleasedWhenClosed = false
         window.minSize = NSSize(width: 500, height: 440)
         window.center()
 
-        let title = NSTextField(labelWithString: "Privacy")
+        let title = NSTextField(labelWithString: String(localized: "Privacy"))
         title.font = .systemFont(ofSize: 24, weight: .bold)
-        let intro = NSTextField(wrappingLabelWithString: "Umete keeps your answers encrypted, has no account, and collects no analytics.")
+        let intro = NSTextField(wrappingLabelWithString: String(localized: "Umete keeps your answers encrypted, has no account, and collects no analytics."))
         intro.textColor = .secondaryLabelColor
         let details = [
-            ("Encrypted answer storage", "Saved answers are encrypted with AES-GCM in Umete’s shared app container. The key is kept in Apple Keychain, and in your iCloud Keychain when sync is on."),
-            ("Private iCloud sync", "With iCloud sync on, each answer is encrypted on this Mac before it goes to your private iCloud database, so Apple can’t read it. You can turn sync off in Settings → General."),
-            ("AI receives field context, not answers", "For fields Umete can’t match itself, it sends only descriptions such as labels, field types, headings, and menu options, plus the labels of your saved answers. Saved values, values in the form, addresses, and contacts’ names stay on your Mac."),
-            ("You stay in control", "You can edit or delete your saved answers at any time.")
+            (String(localized: "Encrypted answer storage"), String(localized: "Saved answers are encrypted with AES-GCM in Umete’s shared app container. The key is kept in Apple Keychain, and in your iCloud Keychain when sync is on.")),
+            (String(localized: "Private iCloud sync"), String(localized: "With iCloud sync on, each answer is encrypted on this Mac before it goes to your private iCloud database, so Apple can’t read it. You can turn sync off in Settings → General.")),
+            (String(localized: "AI receives field context, not answers"), String(localized: "For fields Umete can’t match itself, it sends only descriptions such as labels, field types, headings, and menu options, plus the labels of your saved answers. Saved values, values in the form, addresses, and contacts’ names stay on your Mac.")),
+            (String(localized: "You stay in control"), String(localized: "You can edit or delete your saved answers at any time."))
         ]
         let stack = NSStackView(views: [title, intro])
         stack.orientation = .vertical
@@ -108,7 +109,7 @@ final class PrivacyWindowController: NSWindowController {
         let policy = NSButton(title: "", target: LinkTarget.shared, action: #selector(LinkTarget.openPrivacyPolicy))
         policy.isBordered = false
         policy.attributedTitle = NSAttributedString(
-            string: "Read the full privacy policy",
+            string: String(localized: "Read the full privacy policy"),
             attributes: [
                 .foregroundColor: NSColor.linkColor,
                 .underlineStyle: NSUnderlineStyle.single.rawValue,

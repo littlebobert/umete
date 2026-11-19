@@ -167,29 +167,35 @@ final class CloudSync {
         return status
     }
 
+    /// Japanese runs sentences together; English and Korean put a space between them.
+    static var sentenceSeparator: String {
+        Bundle.main.preferredLocalizations.first == "ja" ? "" : " "
+    }
+
     func statusDescription() async -> String {
-        guard Self.isEnabled else { return "Sync is off. Saved answers stay on this device." }
+        guard Self.isEnabled else { return String(localized: "Sync is off. Saved answers stay on this device.") }
         switch await accountStatus() {
         case .available:
             break
         case .noAccount:
-            return "Sign in to iCloud on this device to sync saved answers."
+            return String(localized: "Sign in to iCloud on this device to sync saved answers.")
         case .restricted:
-            return "iCloud is restricted on this device, so answers stay here."
+            return String(localized: "iCloud is restricted on this device, so answers stay here.")
         default:
-            return "iCloud is unavailable right now. Umete will retry."
+            return String(localized: "iCloud is unavailable right now. Umete will retry.")
         }
         let state = SyncState.load()
-        if let error = state.lastError, !error.isEmpty { return "Sync problem: \(error)" }
-        guard let last = state.lastPullAt else { return "Waiting for the first sync." }
+        if let error = state.lastError, !error.isEmpty { return String(localized: "Sync problem: \(error)") }
+        guard let last = state.lastPullAt else { return String(localized: "Waiting for the first sync.") }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
-        var text = "Last synced \(formatter.localizedString(for: Date(timeIntervalSince1970: last), relativeTo: Date()))."
+        let relativeTime = formatter.localizedString(for: Date(timeIntervalSince1970: last), relativeTo: Date())
+        var text = String(localized: "Last synced \(relativeTime).", comment: "iCloud sync status; the value is a relative time such as “2 minutes ago”")
         if !state.pendingUploads.isEmpty || !state.pendingDeletes.isEmpty {
-            text += " Changes on this device are waiting to upload."
+            text += Self.sentenceSeparator + String(localized: "Changes on this device are waiting to upload.")
         }
         if state.unreadableCount > 0 {
-            text += " \(state.unreadableCount) answer\(state.unreadableCount == 1 ? "" : "s") from another device can't be read until that device syncs again."
+            text += Self.sentenceSeparator + String(localized: "\(state.unreadableCount) answers from another device can't be read until that device syncs again.")
         }
         return text
     }
@@ -382,10 +388,10 @@ final class CloudSync {
     private static func describe(_ error: Error) -> String {
         if let ckError = error as? CKError {
             switch ckError.code {
-            case .networkUnavailable, .networkFailure: return "You appear to be offline."
-            case .notAuthenticated: return "Sign in to iCloud to sync."
-            case .quotaExceeded: return "Your iCloud storage is full."
-            case .serviceUnavailable, .requestRateLimited, .zoneBusy: return "iCloud is busy. Umete will retry."
+            case .networkUnavailable, .networkFailure: return String(localized: "You appear to be offline.")
+            case .notAuthenticated: return String(localized: "Sign in to iCloud to sync.")
+            case .quotaExceeded: return String(localized: "Your iCloud storage is full.")
+            case .serviceUnavailable, .requestRateLimited, .zoneBusy: return String(localized: "iCloud is busy. Umete will retry.")
             default: break
             }
         }

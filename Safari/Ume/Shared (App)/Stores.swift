@@ -83,7 +83,7 @@ private func migratedKeychainData(service: String, accessible: CFString) throws 
         return protectedItem as? Data
     }
     guard protectedStatus == errSecItemNotFound else {
-        throw StoreError.message("Apple Keychain could not read Umete's protected data.")
+        throw StoreError.message(String(localized: "Apple Keychain could not read Umete's protected data."))
     }
 
 #if os(macOS)
@@ -99,7 +99,7 @@ private func migratedKeychainData(service: String, accessible: CFString) throws 
         inserted[kSecAttrAccessible as String] = accessible
         let addStatus = SecItemAdd(inserted as CFDictionary, nil)
         guard addStatus == errSecSuccess || addStatus == errSecDuplicateItem else {
-            throw StoreError.message("Apple Keychain could not migrate Umete's protected data.")
+            throw StoreError.message(String(localized: "Apple Keychain could not migrate Umete's protected data."))
         }
 
         legacyQuery[kSecReturnData as String] = nil
@@ -108,10 +108,10 @@ private func migratedKeychainData(service: String, accessible: CFString) throws 
         return data
     }
     if legacyStatus == errSecInteractionNotAllowed || legacyStatus == errSecAuthFailed || legacyStatus == errSecUserCanceled {
-        throw StoreError.message("Umete found protected data from an older build that macOS no longer recognizes. Remove the old Umete keychain items and reopen Umete.")
+        throw StoreError.message(String(localized: "Umete found protected data from an older build that macOS no longer recognizes. Remove the old Umete keychain items and reopen Umete."))
     }
     guard legacyStatus == errSecItemNotFound else {
-        throw StoreError.message("Apple Keychain could not read Umete's older protected data.")
+        throw StoreError.message(String(localized: "Apple Keychain could not read Umete's older protected data."))
     }
 #endif
 
@@ -160,10 +160,10 @@ enum SettingsStore {
             attributes.forEach { inserted[$0.key] = $0.value }
             let addStatus = SecItemAdd(inserted as CFDictionary, nil)
             guard addStatus == errSecSuccess else {
-                throw StoreError.message("Apple Keychain could not save these settings.")
+                throw StoreError.message(String(localized: "Apple Keychain could not save these settings."))
             }
         } else if status != errSecSuccess {
-            throw StoreError.message("Apple Keychain could not save these settings.")
+            throw StoreError.message(String(localized: "Apple Keychain could not save these settings."))
         }
     }
 
@@ -194,7 +194,7 @@ enum AIDebugLogStore {
 
     private static func fileURL() throws -> URL {
         guard let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) else {
-            throw StoreError.message("Umete could not access its shared data container.")
+            throw StoreError.message(String(localized: "Umete could not access its shared data container."))
         }
         return container.appendingPathComponent("ai-debug.log", isDirectory: false)
     }
@@ -333,7 +333,7 @@ enum AnswerStore {
 
     private static func fileURL() throws -> URL {
         guard let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) else {
-            throw StoreError.message("Umete could not access its shared data container.")
+            throw StoreError.message(String(localized: "Umete could not access its shared data container."))
         }
         return container.appendingPathComponent("answers.encrypted", isDirectory: false)
     }
@@ -402,7 +402,7 @@ enum AnswerStore {
             return try legacyKey(createIfMissing: true)
         }
         guard status == errSecSuccess else {
-            throw StoreError.message("Apple Keychain could not protect saved answers.")
+            throw StoreError.message(String(localized: "Apple Keychain could not protect saved answers."))
         }
         return key
     }
@@ -415,7 +415,7 @@ enum AnswerStore {
             return storeSyncKey(SymmetricKey(size: .bits256))
         }
         guard let key = try legacyKey(createIfMissing: true) else {
-            throw StoreError.message("Apple Keychain could not protect saved answers.")
+            throw StoreError.message(String(localized: "Apple Keychain could not protect saved answers."))
         }
         return key
     }
@@ -444,7 +444,7 @@ enum AnswerStore {
         for (key, isLegacy) in candidates {
             guard let data = try? AES.GCM.open(box, using: key) else { continue }
             guard let answers = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
-                throw StoreError.message("Saved answers could not be read.")
+                throw StoreError.message(String(localized: "Saved answers could not be read."))
             }
             return (answers, isLegacy)
         }
@@ -472,7 +472,7 @@ enum AnswerStore {
         let key = try encryptionKey()
         let data = try JSONSerialization.data(withJSONObject: answer, options: [.sortedKeys])
         guard let combined = try AES.GCM.seal(data, using: key).combined else {
-            throw StoreError.message("A saved answer could not be encrypted for iCloud.")
+            throw StoreError.message(String(localized: "A saved answer could not be encrypted for iCloud."))
         }
         return (combined, keyID(key))
     }
@@ -623,14 +623,14 @@ enum AnswerStore {
         var address: [String: Any] = ["version": 1]
         for (key, limit) in limits {
             let value = (raw[key] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-            guard value.count <= limit else { throw StoreError.message("The saved address was too long.") }
+            guard value.count <= limit else { throw StoreError.message(String(localized: "The saved address was too long.")) }
             if !value.isEmpty { address[key] = value }
         }
         let line1 = address["addressLine1"] as? String ?? ""
         let countryCode = (address["countryCode"] as? String ?? "").uppercased()
-        guard !line1.isEmpty else { throw StoreError.message("Enter a street address.") }
+        guard !line1.isEmpty else { throw StoreError.message(String(localized: "Enter a street address.")) }
         guard countryCode.range(of: #"^[A-Z]{2}$"#, options: .regularExpression) != nil else {
-            throw StoreError.message("Choose a country or region.")
+            throw StoreError.message(String(localized: "Choose a country or region."))
         }
         address["countryCode"] = countryCode
         return address
@@ -652,12 +652,12 @@ enum AnswerStore {
         var contact: [String: Any] = ["version": 1]
         for (key, limit) in limits {
             let value = (raw[key] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-            guard value.count <= limit else { throw StoreError.message("The saved contact was too long.") }
+            guard value.count <= limit else { throw StoreError.message(String(localized: "The saved contact was too long.")) }
             if !value.isEmpty { contact[key] = value }
         }
-        guard contact["name"] != nil else { throw StoreError.message("Enter the contact's name.") }
+        guard contact["name"] != nil else { throw StoreError.message(String(localized: "Enter the contact's name.")) }
         let category = (raw["category"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        guard contactCategories.contains(category) else { throw StoreError.message("Choose a contact kind.") }
+        guard contactCategories.contains(category) else { throw StoreError.message(String(localized: "Choose a contact kind.")) }
         contact["category"] = category
         return contact
     }
@@ -695,19 +695,21 @@ enum AnswerStore {
         for index in answers.indices {
             guard let type = answers[index]["answerType"] as? String, aggregateTypes.contains(type) else { continue }
             guard let raw = answers[index]["value"] as? [String: Any] else {
-                throw StoreError.message(type == "address" ? "The saved address was invalid." : "The saved contact was invalid.")
+                throw StoreError.message(type == "address"
+                    ? String(localized: "The saved address was invalid.")
+                    : String(localized: "The saved contact was invalid."))
             }
             answers[index]["value"] = type == "address" ? try validatedAddress(raw) : try validatedContact(raw)
             answers[index]["kind"] = "aggregate"
             answers[index]["inputType"] = ""
         }
         guard answers.count <= maximumCount, JSONSerialization.isValidJSONObject(answers) else {
-            throw StoreError.message("The saved answer data was invalid or too large.")
+            throw StoreError.message(String(localized: "The saved answer data was invalid or too large."))
         }
         let data = try JSONSerialization.data(withJSONObject: answers, options: [.sortedKeys])
         let sealed = try AES.GCM.seal(data, using: encryptionKey())
         guard let combined = sealed.combined else {
-            throw StoreError.message("Saved answers could not be encrypted.")
+            throw StoreError.message(String(localized: "Saved answers could not be encrypted."))
         }
         let url = try fileURL()
         var coordinatedError: NSError?
@@ -734,7 +736,7 @@ enum AnswerStore {
         let label = userLabel.trimmingCharacters(in: .whitespacesAndNewlines)
         let value = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !label.isEmpty, !value.isEmpty else {
-            throw StoreError.message("Enter both a label and a value.")
+            throw StoreError.message(String(localized: "Enter both a label and a value."))
         }
         var answer: [String: Any] = [
             "answerID": UUID().uuidString,
@@ -755,7 +757,7 @@ enum AnswerStore {
 
     static func addAddress(userLabel: String, value: [String: Any]) throws {
         let label = userLabel.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !label.isEmpty else { throw StoreError.message("Enter an address label.") }
+        guard !label.isEmpty else { throw StoreError.message(String(localized: "Enter an address label.")) }
         let address = try validatedAddress(value)
         var answers = try load()
         answers.append([
@@ -773,11 +775,11 @@ enum AnswerStore {
 
     static func updateAddress(id: String, userLabel: String, value: [String: Any]) throws {
         let label = userLabel.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !label.isEmpty else { throw StoreError.message("Enter an address label.") }
+        guard !label.isEmpty else { throw StoreError.message(String(localized: "Enter an address label.")) }
         let address = try validatedAddress(value)
         var answers = try load()
         guard let index = answers.firstIndex(where: { $0["answerID"] as? String == id }) else {
-            throw StoreError.message("That saved address no longer exists.")
+            throw StoreError.message(String(localized: "That saved address no longer exists."))
         }
         answers[index]["answerType"] = "address"
         answers[index]["userLabel"] = label
@@ -811,7 +813,7 @@ enum AnswerStore {
         let label = resolvedContactLabel(userLabel, contact: contact)
         var answers = try load()
         guard let index = answers.firstIndex(where: { $0["answerID"] as? String == id }) else {
-            throw StoreError.message("That saved contact no longer exists.")
+            throw StoreError.message(String(localized: "That saved contact no longer exists."))
         }
         answers[index]["answerType"] = "contact"
         answers[index]["userLabel"] = label
@@ -834,7 +836,7 @@ enum AnswerStore {
     static func update(id: String, userLabel: String, value: Any, answerType: String? = nil) throws {
         var answers = try load()
         guard let index = answers.firstIndex(where: { $0["answerID"] as? String == id }) else {
-            throw StoreError.message("That saved answer no longer exists.")
+            throw StoreError.message(String(localized: "That saved answer no longer exists."))
         }
         if userLabel.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             answers[index].removeValue(forKey: "userLabel")

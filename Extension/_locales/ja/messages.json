@@ -1,0 +1,260 @@
+{
+  "extDescription": {
+    "message": "Webフォームを自動で入力します。"
+  },
+  "tagline": {
+    "message": "Webフォームを自動で入力します。"
+  },
+  "setupTitle": {
+    "message": "Umeteの設定を完了してください"
+  },
+  "setupBody": {
+    "message": "Safari機能拡張を使う前に、Umeteアプリを開いて設定を完了してください。"
+  },
+  "openApp": {
+    "message": "Umeteを開く"
+  },
+  "learn": {
+    "message": "回答を保存"
+  },
+  "fill": {
+    "message": "このフォームに入力"
+  },
+  "working": {
+    "message": "処理中…"
+  },
+  "badgeOption": {
+    "message": "入力できるフォームがあるページでUmeteのアイコンにバッジを表示"
+  },
+  "badgeNote": {
+    "message": "Umeteは、開いた各ページにフォームがあるかをデバイス上だけで確認します。Safariから、すべてのWebサイトでUmeteを許可するよう求められます。"
+  },
+  "debugLogs": {
+    "message": "デバッグログ…"
+  },
+  "settings": {
+    "message": "設定…"
+  },
+  "debugLogTitle": {
+    "message": "機能拡張のデバッグログ"
+  },
+  "close": {
+    "message": "閉じる"
+  },
+  "done": {
+    "message": "完了"
+  },
+  "debugLogNote": {
+    "message": "ログにはページのURLやフォームのラベルが含まれることがあります。共有する前に内容を確認してください。Umeteが自動で送信することはありません。"
+  },
+  "deleteLog": {
+    "message": "ログを削除"
+  },
+  "copy": {
+    "message": "コピー"
+  },
+  "copied": {
+    "message": "コピーしました"
+  },
+  "emailLogs": {
+    "message": "ログをメールで送信…"
+  },
+  "errNoOnDemand": {
+    "message": "このバージョンのSafariは、必要なときだけ機能拡張にアクセスを許可する方式に対応していません。"
+  },
+  "errCouldNotStart": {
+    "message": "このページでUmeteを開始できませんでした。"
+  },
+  "errCommunicate": {
+    "message": "このページと通信できませんでした。ページを再読み込みして、もう一度お試しください。$DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "loggingOffWithEntries": {
+    "message": "現在ログはオフです。新しい記録を残すには、Umeteの設定→「AIプロバイダ」でオンにしてください。"
+  },
+  "loggingOff": {
+    "message": "ログはオフです。Umeteの設定→「AIプロバイダ」→「バグ報告用のログを有効にする」をオンにしてから、問題をもう一度起こしてください。"
+  },
+  "noDebugEntries": {
+    "message": "機能拡張のデバッグ記録はまだありません。"
+  },
+  "errOpenWebPage": {
+    "message": "先に通常のWebページを開いてください。"
+  },
+  "errSetupStatus": {
+    "message": "Umeteの設定状況を確認できません。"
+  },
+  "errFinishSetup": {
+    "message": "Umeteアプリを開いて設定を完了してください。"
+  },
+  "errSettingsOpen": {
+    "message": "Umeteの設定を開けませんでした。"
+  },
+  "errAnswersUnavailable": {
+    "message": "保存済みの回答を読み込めません。"
+  },
+  "errMigrate": {
+    "message": "保存済みの回答を移行できませんでした。"
+  },
+  "readingFields": {
+    "message": "入力済みの項目を読み取り中…"
+  },
+  "errNoFields": {
+    "message": "このページには、入力済みで対応している項目が見つかりませんでした。"
+  },
+  "errSave": {
+    "message": "これらの回答を保存できませんでした。"
+  },
+  "remembered_one": {
+    "message": "$COUNT$件の回答を保存しました。パスワードと支払い情報の項目は保存していません。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "remembered_other": {
+    "message": "$COUNT$件の回答を保存しました。パスワードと支払い情報の項目は保存していません。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "errRead": {
+    "message": "このページを読み取れませんでした。"
+  },
+  "matching": {
+    "message": "保存済みの回答と照合中…"
+  },
+  "errRememberFirst": {
+    "message": "先に回答を保存してください。"
+  },
+  "filled_one": {
+    "message": "$COUNT$項目に入力しました。先に進む前に、すべての内容を確認してください。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "filled_other": {
+    "message": "$COUNT$項目に入力しました。先に進む前に、すべての内容を確認してください。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "noMatchesFillOnce": {
+    "message": "確実に一致する回答が見つかりませんでした。このフォームを一度入力してから、Umeteで保存してください。"
+  },
+  "askingAI": {
+    "message": "一致しなかった項目をAIプロバイダに問い合わせ中…"
+  },
+  "errAIMapping": {
+    "message": "AIマッチングに失敗しました。"
+  },
+  "applying": {
+    "message": "確実に一致した回答を入力中…"
+  },
+  "filledWithAI_one": {
+    "message": "$TOTAL$項目に入力しました（うちAIマッチング$AI$項目）。先に進む前に、すべての内容を確認してください。",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      },
+      "ai": {
+        "content": "$2"
+      }
+    }
+  },
+  "filledWithAI_other_one": {
+    "message": "$TOTAL$項目に入力しました（うちAIマッチング$AI$項目）。先に進む前に、すべての内容を確認してください。",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      },
+      "ai": {
+        "content": "$2"
+      }
+    }
+  },
+  "filledWithAI_other_other": {
+    "message": "$TOTAL$項目に入力しました（うちAIマッチング$AI$項目）。先に進む前に、すべての内容を確認してください。",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      },
+      "ai": {
+        "content": "$2"
+      }
+    }
+  },
+  "noMatches": {
+    "message": "確実に一致する回答は見つかりませんでした。"
+  },
+  "errFill": {
+    "message": "このページに入力できませんでした。"
+  },
+  "filledLocallyAIUnavailable_one": {
+    "message": "デバイス上で$COUNT$項目に入力しました。AIマッチングは利用できませんでした：$ERROR$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "filledLocallyAIUnavailable_other": {
+    "message": "デバイス上で$COUNT$項目に入力しました。AIマッチングは利用できませんでした：$ERROR$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "badgeNeedsAccess": {
+    "message": "ページにフォームがあるかを確認するには、すべてのWebサイトへのアクセスが必要です。Safariの機能拡張の設定で許可してから、もう一度お試しください。"
+  },
+  "badgeOn": {
+    "message": "入力できるフォームがあるページで、ツールバーのUmeteアイコンにバッジを表示します。開いているページにすぐ表示するには、再読み込みしてください。"
+  },
+  "badgeOff": {
+    "message": "フォームのバッジをオフにしました。"
+  },
+  "errBadge": {
+    "message": "バッジの設定を変更できませんでした。"
+  },
+  "errEmail": {
+    "message": "メールの下書きを開けませんでした。"
+  },
+  "badgeCanFill_one": {
+    "message": "このページでUmeteが$COUNT$項目に入力できます",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeCanFill_other": {
+    "message": "このページでUmeteが$COUNT$項目に入力できます",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeHasForm": {
+    "message": "このページにはフォームがあります。一度入力してから、Umeteで保存してください。"
+  }
+}

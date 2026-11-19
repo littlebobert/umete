@@ -55,9 +55,9 @@
     const answers = await savedAnswers();
     const count = answers.length ? matchCount(answers, fields) : 0;
     if (count) {
-      await setBadge(tabId, String(count), `Umete can fill ${count} field${count === 1 ? "" : "s"} on this page`);
+      await setBadge(tabId, String(count), UmeI18n.plural("badgeCanFill", count));
     } else if (fields.length >= 3) {
-      await setBadge(tabId, "•", "This page has a form. Fill it once, then ask Umete to remember it.");
+      await setBadge(tabId, "•", UmeI18n.t("badgeHasForm"));
     } else {
       await clearBadge(tabId);
     }

@@ -59,7 +59,12 @@ struct AnswerEdit: Identifiable {
 }
 
 /// The types a plain text answer can have; addresses and contacts are added on the Mac.
-private let textAnswerTypes = [("", "Default"), ("date", "Date"), ("gender", "Gender"), ("phone", "Phone")]
+private let textAnswerTypes = [
+    ("", String(localized: "Default", comment: "Answer type: plain text with no special format")),
+    ("date", String(localized: "Date", comment: "Answer type")),
+    ("gender", String(localized: "Gender", comment: "Answer type")),
+    ("phone", String(localized: "Phone", comment: "Answer type: phone number"))
+]
 
 enum AIProvider: String, CaseIterable, Identifiable {
     case umete, openai, anthropic
@@ -69,7 +74,7 @@ enum AIProvider: String, CaseIterable, Identifiable {
 
     var name: String {
         switch self {
-        case .umete: return "Umete (free)"
+        case .umete: return String(localized: "Umete (free)", comment: "AI provider: Umete's free matching service")
         case .openai: return "OpenAI"
         case .anthropic: return "Anthropic"
         case .openAIDecisions: return "OpenAI"
@@ -79,7 +84,11 @@ enum AIProvider: String, CaseIterable, Identifiable {
     /// The Provider menu's entries; OpenAI's two APIs are modes under one entry.
     static let menuChoices: [AIProvider] = [.umete, .openai, .anthropic]
     var menuChoice: AIProvider { self == .openAIDecisions ? .openai : self }
-    var modeName: String { self == .openAIDecisions ? "Decisions API" : "GPT-6.1 Sol (medium, fast)" }
+    var modeName: String {
+        self == .openAIDecisions
+            ? "Decisions API"
+            : String(localized: "GPT-6.1 Sol (medium, fast)", comment: "OpenAI mode: model name (keep as is), medium reasoning effort, fast service tier")
+    }
 
     var defaultModel: String {
         switch self {
@@ -106,7 +115,7 @@ final class SettingsModel: ObservableObject {
     @Published private(set) var hasKey = false
     @Published private(set) var answers: [SavedAnswer] = []
     @Published var syncEnabled = CloudSync.isEnabled
-    @Published private(set) var syncStatus = "Checking iCloud…"
+    @Published private(set) var syncStatus = String(localized: "Checking iCloud…")
     @Published private(set) var isSyncing = false
     @Published var needsOnboarding = false
     @Published var showsAlert = false
@@ -151,7 +160,9 @@ final class SettingsModel: ObservableObject {
         let typedKey = apiKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         let key = typedKey.isEmpty ? SettingsStore.load()?.apiKey ?? "" : typedKey
         guard !provider.needsKey || (!model.isEmpty && !key.isEmpty) else {
-            show("Missing Details", "Enter \(provider == .anthropic ? "a model and an API key" : "an API key") for \(provider.name), or choose Umete (free).")
+            show(String(localized: "Missing Details"), provider == .anthropic
+                ? String(localized: "Enter a model and an API key for \(provider.name), or choose Umete (free).")
+                : String(localized: "Enter an API key for \(provider.name), or choose Umete (free)."))
             return false
         }
         do {
@@ -160,10 +171,12 @@ final class SettingsModel: ObservableObject {
             if completingOnboarding { OnboardingStore.isComplete = true }
             apiKeyDraft = ""
             await load()
-            if !completingOnboarding && !quietly { show("Saved", "Your AI settings are stored securely in Apple Keychain.") }
+            if !completingOnboarding && !quietly {
+                show(String(localized: "Saved", comment: "Alert title after AI settings are saved"), String(localized: "Your AI settings are stored securely in Apple Keychain."))
+            }
             return true
         } catch {
-            show("Couldn’t Save", error.localizedDescription)
+            show(String(localized: "Couldn’t Save"), error.localizedDescription)
             return false
         }
     }
@@ -171,7 +184,7 @@ final class SettingsModel: ObservableObject {
     func deleteKey() async {
         SettingsStore.delete()
         await load()
-        show("Key Deleted", "The saved API key was deleted.")
+        show(String(localized: "Key Deleted"), String(localized: "The saved API key was deleted."))
     }
 
     /// Adds a text answer, or changes one's label and value. Returns a message when
@@ -179,7 +192,7 @@ final class SettingsModel: ObservableObject {
     func save(_ edit: AnswerEdit) async -> String? {
         let label = edit.label.trimmingCharacters(in: .whitespacesAndNewlines)
         let value = edit.value.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !label.isEmpty, !value.isEmpty else { return "Enter both a label and a value." }
+        guard !label.isEmpty, !value.isEmpty else { return String(localized: "Enter both a label and a value.") }
         do {
             if let id = edit.answerID {
                 try AnswerStore.update(id: id, userLabel: label, value: value, answerType: edit.type)
@@ -197,7 +210,7 @@ final class SettingsModel: ObservableObject {
         do {
             for index in offsets { try AnswerStore.delete(id: answers[index].id) }
         } catch {
-            show("Couldn’t Delete", "Umete could not delete that answer.")
+            show(String(localized: "Couldn’t Delete"), String(localized: "Umete could not delete that answer."))
         }
         await load()
     }
@@ -205,11 +218,11 @@ final class SettingsModel: ObservableObject {
     func clearAnswers() async {
         do {
             try AnswerStore.clear()
-            show("Answers Deleted", CloudSync.isEnabled
-                ? "All saved answers were deleted from this device and will be removed from your other devices. Your AI settings were kept."
-                : "All saved answers were deleted. Your AI settings were kept.")
+            show(String(localized: "Answers Deleted"), CloudSync.isEnabled
+                ? String(localized: "All saved answers were deleted from this device and will be removed from your other devices. Your AI settings were kept.")
+                : String(localized: "All saved answers were deleted. Your AI settings were kept."))
         } catch {
-            show("Couldn’t Delete", "Umete could not delete all saved answers.")
+            show(String(localized: "Couldn’t Delete"), String(localized: "Umete could not delete all saved answers."))
         }
         await load()
     }
@@ -222,7 +235,7 @@ final class SettingsModel: ObservableObject {
 
     func syncNow() async {
         isSyncing = true
-        syncStatus = "Syncing…"
+        syncStatus = String(localized: "Syncing…")
         do {
             _ = try await CloudSync.shared.sync(reason: .manual)
         } catch {
@@ -241,13 +254,15 @@ final class SettingsModel: ObservableObject {
         for key in ["userLabel", "accessibleName", "label", "placeholder", "name", "autocomplete"] {
             if let text = answer[key] as? String, !text.isEmpty { return text }
         }
-        return "Saved answer \(index + 1)"
+        return String(localized: "Saved answer \(index + 1)", comment: "Fallback label for a saved answer with no label; the number is its position in the list")
     }
 
     private static func valueText(of answer: [String: Any], label: String) -> String {
         switch answer["value"] {
         case let flag as Bool:
-            return flag ? "Yes" : "No"
+            return flag
+                ? String(localized: "Yes", comment: "Value of a saved yes-or-no answer")
+                : String(localized: "No", comment: "Value of a saved yes-or-no answer")
         case let parts as [String: Any]:
             let isAddress = answer["answerType"] as? String == "address"
             let keys = isAddress
@@ -305,7 +320,7 @@ struct ProviderFields: View {
                 .autocorrectionDisabled()
         }
         if model.provider.needsKey {
-            SecureField(model.hasKey ? "API key (saved)" : "API key", text: $model.apiKeyDraft)
+            SecureField(model.hasKey ? String(localized: "API key (saved)") : String(localized: "API key"), text: $model.apiKeyDraft)
                 .textContentType(.password)
         }
     }
@@ -390,8 +405,10 @@ struct AIMatchingTab: View {
                     ProviderFields()
                 } footer: {
                     Text(model.provider.needsKey
-                        ? "Your key is stored in Apple Keychain on this device. It isn’t synced.\(model.provider == .openai ? " Fast mode costs twice OpenAI’s standard rate." : "")"
-                        : "Free, with a daily limit. No key needed.")
+                        ? (model.provider == .openai
+                            ? String(localized: "Your key is stored in Apple Keychain on this device. It isn’t synced. Fast mode costs twice OpenAI’s standard rate.")
+                            : String(localized: "Your key is stored in Apple Keychain on this device. It isn’t synced."))
+                        : String(localized: "Free, with a daily limit. No key needed."))
                 }
                 if model.provider.needsKey {
                     Section {
@@ -441,7 +458,7 @@ struct SavedDataTab: View {
                     .onDelete { offsets in Task { await model.delete(at: offsets) } }
                 } footer: {
                     if !model.answers.isEmpty {
-                        Text(model.answers.count == 1 ? "1 saved answer, encrypted. Tap an answer to edit it." : "\(model.answers.count) saved answers, encrypted. Tap an answer to edit it.")
+                        Text("\(model.answers.count) saved answers, encrypted. Tap an answer to edit it.")
                     }
                 }
                 if !model.answers.isEmpty {
@@ -465,7 +482,9 @@ struct SavedDataTab: View {
             }
             .refreshable { await model.load() }
             .confirmationDialog(
-                model.syncEnabled ? "Delete every saved answer on all your devices?" : "Delete every saved answer on this device?",
+                model.syncEnabled
+                    ? String(localized: "Delete every saved answer on all your devices?")
+                    : String(localized: "Delete every saved answer on this device?"),
                 isPresented: $confirmsClear,
                 titleVisibility: .visible
             ) {
@@ -514,10 +533,10 @@ struct AnswerEditorSheet: View {
 
     private var valueHint: String {
         switch type {
-        case "date": return "Year, month, and day, like 1990-04-12."
-        case "gender": return "As you’d answer on a form, like Female."
-        case "phone": return "With the country code, like +81 90-1234-5678."
-        default: return "For a list, put each item on its own line."
+        case "date": return String(localized: "Year, month, and day, like 1990-04-12.")
+        case "gender": return String(localized: "As you’d answer on a form, like Female.")
+        case "phone": return String(localized: "With the country code, like +81 90-1234-5678.")
+        default: return String(localized: "For a list, put each item on its own line.")
         }
     }
 
@@ -553,7 +572,7 @@ struct AnswerEditorSheet: View {
                     Section { Text(problem).foregroundColor(.red) }
                 }
             }
-            .navigationTitle(answerID == nil ? "New Answer" : "Edit Answer")
+            .navigationTitle(answerID == nil ? String(localized: "New Answer") : String(localized: "Edit Answer"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -578,11 +597,11 @@ struct AnswerEditorSheet: View {
 
 struct PrivacyTab: View {
     private let points: [(String, String, String)] = [
-        ("lock", "Answers are encrypted", "Saved answers are encrypted with AES-GCM in Umete’s app storage. The key is kept in Apple Keychain, and in your iCloud Keychain when sync is on."),
-        ("icloud", "iCloud sync stays private", "With Sync with iCloud on, each answer is encrypted on this device before it goes to your private iCloud database, so Apple can’t read it. You can turn sync off on the General tab."),
-        ("sparkles", "Answer values are never sent to AI", "For fields Umete can’t match itself, it sends only descriptions such as labels, field types, headings, and menu options, plus the labels of your saved answers. Saved values, values in the form, addresses, and contacts’ names stay on your device."),
-        ("eye.slash", "Sensitive fields are skipped", "Umete does not save passwords, payment fields, hidden values, or fields identified as security secrets."),
-        ("chart.bar.xaxis", "No analytics", "Umete has no account and collects no analytics."),
+        ("lock", String(localized: "Answers are encrypted"), String(localized: "Saved answers are encrypted with AES-GCM in Umete’s app storage. The key is kept in Apple Keychain, and in your iCloud Keychain when sync is on.")),
+        ("icloud", String(localized: "iCloud sync stays private"), String(localized: "With Sync with iCloud on, each answer is encrypted on this device before it goes to your private iCloud database, so Apple can’t read it. You can turn sync off on the General tab.")),
+        ("sparkles", String(localized: "Answer values are never sent to AI"), String(localized: "For fields Umete can’t match itself, it sends only descriptions such as labels, field types, headings, and menu options, plus the labels of your saved answers. Saved values, values in the form, addresses, and contacts’ names stay on your device.")),
+        ("eye.slash", String(localized: "Sensitive fields are skipped"), String(localized: "Umete does not save passwords, payment fields, hidden values, or fields identified as security secrets.")),
+        ("chart.bar.xaxis", String(localized: "No analytics"), String(localized: "Umete has no account and collects no analytics.")),
     ]
 
     var body: some View {

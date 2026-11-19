@@ -1,0 +1,260 @@
+{
+  "extDescription": {
+    "message": "Fill in web forms automatically."
+  },
+  "tagline": {
+    "message": "Fill in web forms automatically."
+  },
+  "setupTitle": {
+    "message": "Finish setting up Umete"
+  },
+  "setupBody": {
+    "message": "Open the Umete app to finish setup before using the Safari extension."
+  },
+  "openApp": {
+    "message": "Open Umete"
+  },
+  "learn": {
+    "message": "Remember my answers"
+  },
+  "fill": {
+    "message": "Fill this form"
+  },
+  "working": {
+    "message": "Working…"
+  },
+  "badgeOption": {
+    "message": "Badge the Umete icon on pages with forms it can fill"
+  },
+  "badgeNote": {
+    "message": "Umete checks each page you open for forms, on your device only. Safari will ask you to allow Umete on all websites."
+  },
+  "debugLogs": {
+    "message": "Debug Logs…"
+  },
+  "settings": {
+    "message": "Settings…"
+  },
+  "debugLogTitle": {
+    "message": "Extension Debug Logs"
+  },
+  "close": {
+    "message": "Close"
+  },
+  "done": {
+    "message": "Done"
+  },
+  "debugLogNote": {
+    "message": "Logs can include page URLs and form labels. Review them before sharing; Umete never sends them automatically."
+  },
+  "deleteLog": {
+    "message": "Delete Log"
+  },
+  "copy": {
+    "message": "Copy"
+  },
+  "copied": {
+    "message": "Copied"
+  },
+  "emailLogs": {
+    "message": "Email Logs…"
+  },
+  "errNoOnDemand": {
+    "message": "This version of Safari does not support on-demand extension access."
+  },
+  "errCouldNotStart": {
+    "message": "Umete could not start on this page."
+  },
+  "errCommunicate": {
+    "message": "Umete could not communicate with this page. Reload it and try again. $DETAIL$",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
+  },
+  "loggingOffWithEntries": {
+    "message": "Logging is currently off. Enable it in Umete Settings → AI Provider to capture new entries."
+  },
+  "loggingOff": {
+    "message": "Logging is off. Enable it in Umete Settings → AI Provider → Enable logging for bug reports, then reproduce the problem."
+  },
+  "noDebugEntries": {
+    "message": "No extension debug entries yet."
+  },
+  "errOpenWebPage": {
+    "message": "Open a regular web page first."
+  },
+  "errSetupStatus": {
+    "message": "Umete setup status is unavailable."
+  },
+  "errFinishSetup": {
+    "message": "Open the Umete app to finish setup."
+  },
+  "errSettingsOpen": {
+    "message": "Umete Settings could not be opened."
+  },
+  "errAnswersUnavailable": {
+    "message": "Saved answers are unavailable."
+  },
+  "errMigrate": {
+    "message": "Saved answers could not be migrated."
+  },
+  "readingFields": {
+    "message": "Reading completed fields…"
+  },
+  "errNoFields": {
+    "message": "No completed, supported fields found on this page."
+  },
+  "errSave": {
+    "message": "Umete could not save these answers."
+  },
+  "remembered_one": {
+    "message": "Remembered $COUNT$ answer. Passwords and payment fields were skipped.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "remembered_other": {
+    "message": "Remembered $COUNT$ answers. Passwords and payment fields were skipped.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "errRead": {
+    "message": "Umete could not read this page."
+  },
+  "matching": {
+    "message": "Matching saved answers…"
+  },
+  "errRememberFirst": {
+    "message": "Remember some answers first."
+  },
+  "filled_one": {
+    "message": "Filled $COUNT$ field. Please review everything before continuing.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "filled_other": {
+    "message": "Filled $COUNT$ fields. Please review everything before continuing.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "noMatchesFillOnce": {
+    "message": "No confident matches found. Fill this form once, then ask Umete to remember it."
+  },
+  "askingAI": {
+    "message": "Asking your AI provider about unmatched fields…"
+  },
+  "errAIMapping": {
+    "message": "AI mapping failed."
+  },
+  "applying": {
+    "message": "Applying confident matches…"
+  },
+  "filledWithAI_one": {
+    "message": "Filled $TOTAL$ field, including $AI$ AI match. Please review everything before continuing.",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      },
+      "ai": {
+        "content": "$2"
+      }
+    }
+  },
+  "filledWithAI_other_one": {
+    "message": "Filled $TOTAL$ fields, including $AI$ AI match. Please review everything before continuing.",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      },
+      "ai": {
+        "content": "$2"
+      }
+    }
+  },
+  "filledWithAI_other_other": {
+    "message": "Filled $TOTAL$ fields, including $AI$ AI matches. Please review everything before continuing.",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      },
+      "ai": {
+        "content": "$2"
+      }
+    }
+  },
+  "noMatches": {
+    "message": "No confident matches were found."
+  },
+  "errFill": {
+    "message": "Umete could not fill this page."
+  },
+  "filledLocallyAIUnavailable_one": {
+    "message": "Filled $COUNT$ field locally. AI mapping was unavailable: $ERROR$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "filledLocallyAIUnavailable_other": {
+    "message": "Filled $COUNT$ fields locally. AI mapping was unavailable: $ERROR$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "badgeNeedsAccess": {
+    "message": "Umete needs access to all websites to check pages for forms. Allow it in Safari’s extension settings, then try again."
+  },
+  "badgeOn": {
+    "message": "Umete will badge its toolbar icon on pages with forms it can fill. Reload open pages to badge them now."
+  },
+  "badgeOff": {
+    "message": "Form badges are off."
+  },
+  "errBadge": {
+    "message": "Umete could not change the badge setting."
+  },
+  "errEmail": {
+    "message": "Umete could not open an email draft."
+  },
+  "badgeCanFill_one": {
+    "message": "Umete can fill $COUNT$ field on this page",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeCanFill_other": {
+    "message": "Umete can fill $COUNT$ fields on this page",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeHasForm": {
+    "message": "This page has a form. Fill it once, then ask Umete to remember it."
+  }
+}

@@ -23,7 +23,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         }
 
         guard let payload = message as? [String: Any], let type = payload["type"] as? String else {
-            complete(context, ["ok": false, "error": "Unsupported native message."])
+            complete(context, ["ok": false, "error": String(localized: "Unsupported native message.")])
             return
         }
 
@@ -37,7 +37,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         case "UME_OPEN_APP", "UME_OPEN_SETTINGS":
             let destination = type == "UME_OPEN_SETTINGS" ? "settings" : "onboarding"
             guard let url = URL(string: "ume://\(destination)") else {
-                complete(context, ["ok": false, "error": "Umete could not open the companion app."])
+                complete(context, ["ok": false, "error": String(localized: "Umete could not open the companion app.")])
                 return
             }
             #if os(macOS)
@@ -46,7 +46,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             context.open(url) { [weak self] opened in
                 self?.complete(context, opened
                     ? ["ok": true]
-                    : ["ok": false, "error": "Umete Settings could not be opened."])
+                    : ["ok": false, "error": String(localized: "Umete Settings could not be opened.")])
             }
             #endif
         case "UME_GET_ANSWERS":
@@ -82,7 +82,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 }
             }
         default:
-            complete(context, ["ok": false, "error": "Unsupported native message."])
+            complete(context, ["ok": false, "error": String(localized: "Unsupported native message.")])
         }
     }
 
@@ -126,7 +126,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             .deletingLastPathComponent()
 
         guard appURL.pathExtension == "app" else {
-            complete(context, ["ok": false, "error": "Umete Settings could not be opened."])
+            complete(context, ["ok": false, "error": String(localized: "Umete Settings could not be opened.")])
             return
         }
 
@@ -135,7 +135,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         NSWorkspace.shared.open([url], withApplicationAt: appURL, configuration: configuration) { [weak self] app, _ in
             self?.complete(context, app != nil
                 ? ["ok": true]
-                : ["ok": false, "error": "Umete Settings could not be opened."])
+                : ["ok": false, "error": String(localized: "Umete Settings could not be opened.")])
         }
     }
     #endif
@@ -157,12 +157,12 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         let settings = SettingsStore.load() ?? AISettings(provider: SafariWebExtensionHandlerProviders.default, model: "", apiKey: "")
         guard Self.supportedProviders.contains(settings.provider),
               !SafariWebExtensionHandlerProviders.requiresKey(settings.provider) || !settings.apiKey.isEmpty else {
-            throw MappingError.message("Open the Umete app and add an API key, or switch AI matching to Umete (free).")
+            throw MappingError.message(String(localized: "Open the Umete app and add an API key, or switch AI matching to Umete (free)."))
         }
         guard let rawSaved = payload["saved"] as? [[String: Any]],
               let rawFields = payload["fields"] as? [[String: Any]],
               rawSaved.count <= 200, rawFields.count <= 200 else {
-            throw MappingError.message("The form mapping request was invalid or too large.")
+            throw MappingError.message(String(localized: "The form mapping request was invalid or too large."))
         }
         let saved = rawSaved
             .filter { ($0["answerType"] as? String) != "address" }
@@ -174,7 +174,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         let input: [String: Any] = ["savedFieldSchemas": saved, "currentFormSchemas": fields]
         let inputData = try JSONSerialization.data(withJSONObject: input, options: [.sortedKeys])
         guard let inputJSON = String(data: inputData, encoding: .utf8) else {
-            throw MappingError.message("Could not encode sanitized field schemas.")
+            throw MappingError.message(String(localized: "Could not encode sanitized field schemas."))
         }
 
         AIDebugLogStore.append(
@@ -205,7 +205,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
         guard let object = try JSONSerialization.jsonObject(with: Data(response.utf8)) as? [String: Any],
               let rawMappings = object["mappings"] as? [[String: Any]] else {
-            throw MappingError.message("The provider returned an invalid field mapping.")
+            throw MappingError.message(String(localized: "The provider returned an invalid field mapping."))
         }
 
         return rawMappings.compactMap { mapping in
@@ -284,11 +284,11 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 ? try await post(url: Self.umeteEndpoint, headers: ["X-Umete-Client": Self.clientVersion], body: body)
                 : try await post(url: Self.decisionsEndpoint, headers: ["Authorization": "Bearer \(settings.apiKey)"], body: body)
             guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                throw MappingError.message("OpenAI returned an unreadable decision.")
+                throw MappingError.message(String(localized: "OpenAI returned an unreadable decision."))
             }
             if let error = (json["error"] as? [String: Any])?["message"] as? String { throw MappingError.message(error) }
             guard let answers = json["answers"] as? [[String: Any]] else {
-                throw MappingError.message("OpenAI returned no decisions.")
+                throw MappingError.message(String(localized: "OpenAI returned no decisions."))
             }
             var summary: [String] = []
             for answer in answers {
@@ -405,7 +405,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         #endif
         let data = try await post(url: "https://api.openai.com/v1/responses", headers: ["Authorization": "Bearer \(settings.apiKey)"], body: body)
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw MappingError.message("OpenAI returned an unreadable response.")
+            throw MappingError.message(String(localized: "OpenAI returned an unreadable response."))
         }
         if let error = (json["error"] as? [String: Any])?["message"] as? String { throw MappingError.message(error) }
         if let output = json["output"] as? [[String: Any]] {
@@ -415,7 +415,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 }
             }
         }
-        throw MappingError.message("OpenAI returned no mapping.")
+        throw MappingError.message(String(localized: "OpenAI returned no mapping."))
     }
 
     private func requestAnthropic(_ settings: AISettings, inputJSON: String) async throws -> String {
@@ -431,17 +431,17 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             "anthropic-version": "2023-06-01"
         ], body: body)
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw MappingError.message("Anthropic returned an unreadable response.")
+            throw MappingError.message(String(localized: "Anthropic returned an unreadable response."))
         }
         if let error = (json["error"] as? [String: Any])?["message"] as? String { throw MappingError.message(error) }
         for content in json["content"] as? [[String: Any]] ?? [] {
             if let text = content["text"] as? String { return text }
         }
-        throw MappingError.message("Anthropic returned no mapping.")
+        throw MappingError.message(String(localized: "Anthropic returned no mapping."))
     }
 
     private func post(url: String, headers: [String: String], body: [String: Any]) async throws -> Data {
-        guard let endpoint = URL(string: url) else { throw MappingError.message("Invalid provider endpoint.") }
+        guard let endpoint = URL(string: url) else { throw MappingError.message(String(localized: "Invalid provider endpoint.")) }
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.timeoutInterval = 45
@@ -452,7 +452,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         guard let http = response as? HTTPURLResponse, 200..<300 ~= http.statusCode else {
             let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             let providerMessage = ((json?["error"] as? [String: Any])?["message"] as? String) ?? (json?["message"] as? String)
-            throw MappingError.message(providerMessage ?? "The AI provider rejected the request.")
+            throw MappingError.message(providerMessage ?? String(localized: "The AI provider rejected the request."))
         }
         return data
     }

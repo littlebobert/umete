@@ -3,31 +3,41 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 110;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A20000010000000000000001 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A20000030000000000000001 /* Sparkle */; };
 		A10000010000000000000001 /* Stores.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100000000000000001 /* Stores.swift */; };
 		A10000020000000000000001 /* Stores.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100000000000000001 /* Stores.swift */; };
 		A10000030000000000000001 /* Stores.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100000000000000001 /* Stores.swift */; };
 		A10000040000000000000001 /* Stores.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000100000000000000001 /* Stores.swift */; };
+		A10000050000000000000001 /* SettingsViewControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000110000000000000001 /* SettingsViewControllers.swift */; };
+		A10000060000000000000001 /* AboutPrivacyWindowControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000120000000000000001 /* AboutPrivacyWindowControllers.swift */; };
+		A10000070000000000000001 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = A10000130000000000000001 /* icons */; };
+		A10000080000000000000001 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = A10000130000000000000001 /* icons */; };
+		A10000090000000000000001 /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = A10000140000000000000001 /* _locales */; };
+		A100000A0000000000000001 /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = A10000140000000000000001 /* _locales */; };
+		A100000B0000000000000001 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A10000150000000000000001 /* Localizable.xcstrings */; };
+		A100000C0000000000000001 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A10000150000000000000001 /* Localizable.xcstrings */; };
+		A100000D0000000000000001 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A10000150000000000000001 /* Localizable.xcstrings */; };
+		A100000E0000000000000001 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A10000150000000000000001 /* Localizable.xcstrings */; };
+		A10000220000000000000001 /* detect.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* detect.js */; };
+		A10000230000000000000001 /* detect.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* detect.js */; };
+		A10000240000000000000001 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000210000000000000001 /* background.js */; };
+		A10000250000000000000001 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000210000000000000001 /* background.js */; };
 		A10000310000000000000001 /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000300000000000000001 /* CloudSync.swift */; };
 		A10000320000000000000001 /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000300000000000000001 /* CloudSync.swift */; };
 		A10000330000000000000001 /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000300000000000000001 /* CloudSync.swift */; };
 		A10000340000000000000001 /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000300000000000000001 /* CloudSync.swift */; };
+		A10000410000000000000001 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000420000000000000001 /* SettingsView.swift */; };
 		A10000510000000000000001 /* SpotlightIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000500000000000000001 /* SpotlightIndex.swift */; };
 		A10000520000000000000001 /* SpotlightIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000500000000000000001 /* SpotlightIndex.swift */; };
-		A10000050000000000000001 /* SettingsViewControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000110000000000000001 /* SettingsViewControllers.swift */; };
 		A10000630000000000000001 /* AnimatedAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000600000000000000001 /* AnimatedAppIcon.swift */; };
 		A10000640000000000000001 /* umete-icon-sketch.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A10000610000000000000001 /* umete-icon-sketch.jpg */; };
 		A10000650000000000000001 /* umete-icon-sketch.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A10000620000000000000001 /* umete-icon-sketch.mp4 */; };
-		A10000060000000000000001 /* AboutPrivacyWindowControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000120000000000000001 /* AboutPrivacyWindowControllers.swift */; };
-		A10000070000000000000001 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = A10000130000000000000001 /* icons */; };
-		A10000080000000000000001 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = A10000130000000000000001 /* icons */; };
+		A20000010000000000000001 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A20000030000000000000001 /* Sparkle */; };
 		D0A1D2E3301B98AE0082FD16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A1D2E2301B98AE0082FD16 /* AppDelegate.swift */; };
 		D0A1D2E5301B98AE0082FD16 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A1D2E4301B98AE0082FD16 /* SceneDelegate.swift */; };
-		A10000410000000000000001 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000420000000000000001 /* SettingsView.swift */; };
 		D0A1D2E8301B98AE0082FD16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D2E6301B98AE0082FD16 /* LaunchScreen.storyboard */; };
 		D0A1D2EB301B98AE0082FD16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D2E9301B98AE0082FD16 /* Main.storyboard */; };
 		D0A1D2F4301B98AE0082FD16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A1D2F3301B98AE0082FD16 /* AppDelegate.swift */; };
@@ -47,16 +57,12 @@
 		D0A1D335301B98AE0082FD16 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D32F301B98AE0082FD16 /* lib */; };
 		D0A1D336301B98AE0082FD16 /* popup.css in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D330301B98AE0082FD16 /* popup.css */; };
 		D0A1D337301B98AE0082FD16 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D331301B98AE0082FD16 /* content.js */; };
-		A10000220000000000000001 /* detect.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* detect.js */; };
-		A10000240000000000000001 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000210000000000000001 /* background.js */; };
 		D0A1D338301B98AE0082FD16 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D32C301B98AE0082FD16 /* popup.js */; };
 		D0A1D339301B98AE0082FD16 /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D32D301B98AE0082FD16 /* popup.html */; };
 		D0A1D33A301B98AE0082FD16 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D32E301B98AE0082FD16 /* manifest.json */; };
 		D0A1D33B301B98AE0082FD16 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D32F301B98AE0082FD16 /* lib */; };
 		D0A1D33C301B98AE0082FD16 /* popup.css in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D330301B98AE0082FD16 /* popup.css */; };
 		D0A1D33D301B98AE0082FD16 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = D0A1D331301B98AE0082FD16 /* content.js */; };
-		A10000230000000000000001 /* detect.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* detect.js */; };
-		A10000250000000000000001 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000210000000000000001 /* background.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,38 +85,39 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		D0A1D320301B98AE0082FD16 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolder = PlugIns;
 			files = (
 				D0A1D2FE301B98AE0082FD16 /* Umete Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D0A1D327301B98AE0082FD16 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolder = PlugIns;
 			files = (
 				D0A1D308301B98AE0082FD16 /* Umete Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A10000100000000000000001 /* Stores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stores.swift; sourceTree = "<group>"; };
-		A10000300000000000000001 /* CloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSync.swift; sourceTree = "<group>"; };
-		A10000500000000000000001 /* SpotlightIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndex.swift; sourceTree = "<group>"; };
 		A10000110000000000000001 /* SettingsViewControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewControllers.swift; sourceTree = "<group>"; };
+		A10000120000000000000001 /* AboutPrivacyWindowControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPrivacyWindowControllers.swift; sourceTree = "<group>"; };
+		A10000130000000000000001 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../../Extension/icons; sourceTree = "<group>"; };
+		A10000140000000000000001 /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _locales; path = ../../../Extension/_locales; sourceTree = "<group>"; };
+		A10000150000000000000001 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		A10000200000000000000001 /* detect.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = detect.js; path = ../../../Extension/detect.js; sourceTree = "<group>"; };
+		A10000210000000000000001 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = ../../../Extension/background.js; sourceTree = "<group>"; };
+		A10000300000000000000001 /* CloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSync.swift; sourceTree = "<group>"; };
+		A10000420000000000000001 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A10000500000000000000001 /* SpotlightIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndex.swift; sourceTree = "<group>"; };
 		A10000600000000000000001 /* AnimatedAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedAppIcon.swift; sourceTree = "<group>"; };
 		A10000610000000000000001 /* umete-icon-sketch.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "umete-icon-sketch.jpg"; sourceTree = "<group>"; };
 		A10000620000000000000001 /* umete-icon-sketch.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "umete-icon-sketch.mp4"; sourceTree = "<group>"; };
-		A10000120000000000000001 /* AboutPrivacyWindowControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPrivacyWindowControllers.swift; sourceTree = "<group>"; };
-		A10000130000000000000001 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../../Extension/icons; sourceTree = "<group>"; };
 		D0A1D2D4301B98AD0082FD16 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		D0A1D2D7301B98AD0082FD16 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D0A1D2D8301B98AE0082FD16 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -118,7 +125,6 @@
 		D0A1D2DF301B98AE0082FD16 /* Umete.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Umete.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0A1D2E2301B98AE0082FD16 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D0A1D2E4301B98AE0082FD16 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		A10000420000000000000001 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D0A1D2E7301B98AE0082FD16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D0A1D2EA301B98AE0082FD16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D0A1D2EC301B98AE0082FD16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -136,37 +142,28 @@
 		D0A1D32F301B98AE0082FD16 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../Extension/lib; sourceTree = "<group>"; };
 		D0A1D330301B98AE0082FD16 /* popup.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = popup.css; path = ../../../Extension/popup.css; sourceTree = "<group>"; };
 		D0A1D331301B98AE0082FD16 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = content.js; path = ../../../Extension/content.js; sourceTree = "<group>"; };
-		A10000200000000000000001 /* detect.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = detect.js; path = ../../../Extension/detect.js; sourceTree = "<group>"; };
-		A10000210000000000000001 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = ../../../Extension/background.js; sourceTree = "<group>"; };
+		D0E8126A30AE842400227FD5 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Main.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D0A1D2DC301B98AE0082FD16 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
 			);
 		};
 		D0A1D2EE301B98AE0082FD16 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
 				A20000010000000000000001 /* Sparkle in Frameworks */,
 			);
 		};
 		D0A1D2FA301B98AE0082FD16 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
 			);
 		};
 		D0A1D304301B98AE0082FD16 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
 			);
 		};
@@ -193,6 +190,7 @@
 				A10000100000000000000001 /* Stores.swift */,
 				A10000300000000000000001 /* CloudSync.swift */,
 				A10000500000000000000001 /* SpotlightIndex.swift */,
+				A10000150000000000000001 /* Localizable.xcstrings */,
 				D0A1D2D8301B98AE0082FD16 /* Assets.xcassets */,
 				D0A1D2D1301B98AD0082FD16 /* Resources */,
 			);
@@ -283,6 +281,7 @@
 				A10000200000000000000001 /* detect.js */,
 				A10000210000000000000001 /* background.js */,
 				A10000130000000000000001 /* icons */,
+				A10000140000000000000001 /* _locales */,
 			);
 			name = Resources;
 			path = "Shared (Extension)";
@@ -392,13 +391,15 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
+				ko,
 			);
 			mainGroup = D0A1D2CB301B98AD0082FD16;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			packageReferences = (
 				A20000020000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = D0A1D2E0301B98AE0082FD16 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -414,9 +415,8 @@
 /* Begin PBXResourcesBuildPhase section */
 		D0A1D2DD301B98AE0082FD16 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
+				A100000B0000000000000001 /* Localizable.xcstrings in Resources */,
 				D0A1D30F301B98AE0082FD16 /* Icon.png in Resources */,
 				D0A1D2E8301B98AE0082FD16 /* LaunchScreen.storyboard in Resources */,
 				D0A1D317301B98AE0082FD16 /* Assets.xcassets in Resources */,
@@ -425,9 +425,8 @@
 		};
 		D0A1D2EF301B98AE0082FD16 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
+				A100000C0000000000000001 /* Localizable.xcstrings in Resources */,
 				D0A1D310301B98AE0082FD16 /* Icon.png in Resources */,
 				D0A1D2F7301B98AE0082FD16 /* Main.storyboard in Resources */,
 				A10000640000000000000001 /* umete-icon-sketch.jpg in Resources */,
@@ -437,9 +436,8 @@
 		};
 		D0A1D2FB301B98AE0082FD16 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
+				A100000D0000000000000001 /* Localizable.xcstrings in Resources */,
 				D0A1D33D301B98AE0082FD16 /* content.js in Resources */,
 				A10000230000000000000001 /* detect.js in Resources */,
 				A10000250000000000000001 /* background.js in Resources */,
@@ -449,13 +447,13 @@
 				D0A1D33B301B98AE0082FD16 /* lib in Resources */,
 				D0A1D339301B98AE0082FD16 /* popup.html in Resources */,
 				A10000070000000000000001 /* icons in Resources */,
+				A10000090000000000000001 /* _locales in Resources */,
 			);
 		};
 		D0A1D305301B98AE0082FD16 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
+				A100000E0000000000000001 /* Localizable.xcstrings in Resources */,
 				D0A1D337301B98AE0082FD16 /* content.js in Resources */,
 				A10000220000000000000001 /* detect.js in Resources */,
 				A10000240000000000000001 /* background.js in Resources */,
@@ -465,6 +463,7 @@
 				D0A1D335301B98AE0082FD16 /* lib in Resources */,
 				D0A1D333301B98AE0082FD16 /* popup.html in Resources */,
 				A10000080000000000000001 /* icons in Resources */,
+				A100000A0000000000000001 /* _locales in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
@@ -472,8 +471,6 @@
 /* Begin PBXSourcesBuildPhase section */
 		D0A1D2DB301B98AE0082FD16 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
 				D0A1D315301B98AE0082FD16 /* ViewController.swift in Sources */,
 				A10000010000000000000001 /* Stores.swift in Sources */,
@@ -486,8 +483,6 @@
 		};
 		D0A1D2ED301B98AE0082FD16 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
 				A10000020000000000000001 /* Stores.swift in Sources */,
 				A10000320000000000000001 /* CloudSync.swift in Sources */,
@@ -500,8 +495,6 @@
 		};
 		D0A1D2F9301B98AE0082FD16 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
 				D0A1D319301B98AE0082FD16 /* SafariWebExtensionHandler.swift in Sources */,
 				A10000030000000000000001 /* Stores.swift in Sources */,
@@ -510,8 +503,6 @@
 		};
 		D0A1D303301B98AE0082FD16 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			runOnlyForDeploymentPostprocessing = 0;
 			files = (
 				D0A1D31A301B98AE0082FD16 /* SafariWebExtensionHandler.swift in Sources */,
 				A10000040000000000000001 /* Stores.swift in Sources */,
@@ -554,30 +545,12 @@
 			isa = PBXVariantGroup;
 			children = (
 				D0A1D2F6301B98AE0082FD16 /* Base */,
+				D0E8126A30AE842400227FD5 /* mul */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		A20000020000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sparkle-project/Sparkle";
-			requirement = {
-				kind = exactVersion;
-				version = 2.9.5;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		A20000030000000000000001 /* Sparkle */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A20000020000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */;
-			productName = Sparkle;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D0A1D31B301B98AE0082FD16 /* Debug configuration for PBXProject "Ume" */ = {
@@ -1064,6 +1037,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A20000020000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = exactVersion;
+				version = 2.9.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A20000030000000000000001 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A20000020000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D0A1D2CC301B98AD0082FD16 /* Project object */;
 	validationLevel = 1;

@@ -12,25 +12,25 @@
         <img class="app-icon" src="icons/icon-128.png" alt="">
         <div>
           <h1>Umete</h1>
-          <p>Fill in web forms automatically.</p>
+          <p data-i18n="tagline">Fill in web forms automatically.</p>
         </div>
       </header>
 
       <section id="get-started" class="get-started" hidden>
-        <h2>Finish setting up Umete</h2>
-        <p>Open the Umete app to finish setup before using the Safari extension.</p>
-        <button id="open-app" class="primary" type="button">Open Umete</button>
+        <h2 data-i18n="setupTitle">Finish setting up Umete</h2>
+        <p data-i18n="setupBody">Open the Umete app to finish setup before using the Safari extension.</p>
+        <button id="open-app" class="primary" type="button" data-i18n="openApp">Open Umete</button>
       </section>
 
       <div id="ready-content" hidden>
       <div class="actions">
-        <button id="learn" type="button">Remember my answers</button>
-        <button id="fill" type="button">Fill this form</button>
+        <button id="learn" type="button" data-i18n="learn">Remember my answers</button>
+        <button id="fill" type="button" data-i18n="fill">Fill this form</button>
       </div>
 
       <div id="activity" class="activity" hidden>
         <span class="spinner" aria-hidden="true"></span>
-        <span id="activity-label">Working…</span>
+        <span id="activity-label" data-i18n="working">Working…</span>
       </div>
       </div>
 
@@ -39,34 +39,35 @@
       <section id="form-badge-option" class="option" hidden>
         <label class="option-row">
           <input id="form-badge" type="checkbox">
-          <span>Badge the Umete icon on pages with forms it can fill</span>
+          <span data-i18n="badgeOption">Badge the Umete icon on pages with forms it can fill</span>
         </label>
-        <p class="option-note">Umete checks each page you open for forms, on your device only. Safari will ask you to allow Umete on all websites.</p>
+        <p class="option-note" data-i18n="badgeNote">Umete checks each page you open for forms, on your device only. Safari will ask you to allow Umete on all websites.</p>
       </section>
 
       <footer>
         <div class="footer-buttons">
-          <button id="open-debug-log" class="settings-button" type="button">Debug Logs…</button>
-          <button id="open-settings" class="settings-button" type="button">Settings…</button>
+          <button id="open-debug-log" class="settings-button" type="button" data-i18n="debugLogs">Debug Logs…</button>
+          <button id="open-settings" class="settings-button" type="button" data-i18n="settings">Settings…</button>
         </div>
       </footer>
 
       <section id="debug-log-panel" class="debug-log-panel" hidden>
         <div class="debug-log-header">
-          <strong>Extension Debug Logs</strong>
-          <button id="close-debug-log" class="icon-button" type="button" aria-label="Close">Done</button>
+          <strong data-i18n="debugLogTitle">Extension Debug Logs</strong>
+          <button id="close-debug-log" class="icon-button" type="button" aria-label="Close" data-i18n-aria-label="close" data-i18n="done">Done</button>
         </div>
-        <p class="debug-log-note">Logs can include page URLs and form labels. Review them before sharing; Umete never sends them automatically.</p>
+        <p class="debug-log-note" data-i18n="debugLogNote">Logs can include page URLs and form labels. Review them before sharing; Umete never sends them automatically.</p>
         <textarea id="debug-log-text" readonly spellcheck="false"></textarea>
         <div class="debug-log-actions">
-          <button id="delete-debug-log" type="button">Delete Log</button>
+          <button id="delete-debug-log" type="button" data-i18n="deleteLog">Delete Log</button>
           <div class="debug-log-share-actions">
-            <button id="copy-debug-log" type="button">Copy</button>
-            <button id="email-debug-log" type="button">Email Logs…</button>
+            <button id="copy-debug-log" type="button" data-i18n="copy">Copy</button>
+            <button id="email-debug-log" type="button" data-i18n="emailLogs">Email Logs…</button>
           </div>
         </div>
       </section>
     </main>
+    <script src="lib/i18n.js"></script>
     <script src="lib/matcher.js"></script>
     <script src="lib/debug-email.js"></script>
     <script src="popup.js"></script>

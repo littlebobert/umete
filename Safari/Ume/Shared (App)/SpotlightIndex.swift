@@ -10,9 +10,9 @@ enum SpotlightIndex {
     static func update() {
         guard CSSearchableIndex.isIndexingAvailable() else { return }
         let attributes = CSSearchableItemAttributeSet(contentType: .text)
-        attributes.title = "Umete: Autofill forms"
-        attributes.displayName = "Umete: Autofill forms"
-        attributes.contentDescription = "Fill web forms in Safari with answers you’ve saved"
+        attributes.title = String(localized: "Umete: Autofill forms", comment: "Spotlight result title")
+        attributes.displayName = String(localized: "Umete: Autofill forms", comment: "Spotlight result title")
+        attributes.contentDescription = String(localized: "Fill web forms in Safari with answers you’ve saved", comment: "Spotlight result description")
         attributes.keywords = [
             "autofill", "auto fill", "auto-fill", "form", "forms", "form filler", "fill in",
             "自動入力", "フォーム", "フォーム入力", "入力", "埋める"

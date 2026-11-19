@@ -24,7 +24,7 @@ private enum SafariSettingsError: LocalizedError {
     case appNotInApplications
 
     var errorDescription: String? {
-        "Move Umete to Applications, reopen it, then try again."
+        String(localized: "Move Umete to Applications, reopen it, then try again.")
     }
 }
 
@@ -115,8 +115,8 @@ final class PhonePopoverViewController: ConfirmPopoverViewController {
 
     override func loadView() {
         view = NSView(frame: NSRect(x: 0, y: 0, width: 320, height: 118))
-        let countryLabel = NSTextField(labelWithString: "Country code")
-        let numberLabel = NSTextField(labelWithString: "Phone number")
+        let countryLabel = NSTextField(labelWithString: String(localized: "Country code", comment: "Phone calling code, like 81 for Japan"))
+        let numberLabel = NSTextField(labelWithString: String(localized: "Phone number"))
         countryField.translatesAutoresizingMaskIntoConstraints = false
         numberField.translatesAutoresizingMaskIntoConstraints = false
         let grid = NSGridView(views: [
@@ -128,7 +128,7 @@ final class PhonePopoverViewController: ConfirmPopoverViewController {
         grid.columnSpacing = 8
         grid.rowSpacing = 8
         grid.translatesAutoresizingMaskIntoConstraints = false
-        let done = NSButton(title: "Done", target: self, action: #selector(donePressed))
+        let done = NSButton(title: String(localized: "Done"), target: self, action: #selector(donePressed))
         done.keyEquivalent = "\r"
         done.bezelStyle = .rounded
         done.translatesAutoresizingMaskIntoConstraints = false
@@ -184,11 +184,11 @@ final class MultilineValuePopoverViewController: ConfirmPopoverViewController {
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false
-        let hint = NSTextField(labelWithString: "One item per line. Press Return to add a line.")
+        let hint = NSTextField(labelWithString: String(localized: "One item per line. Press Return to add a line."))
         hint.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
         hint.textColor = .secondaryLabelColor
         hint.translatesAutoresizingMaskIntoConstraints = false
-        let done = NSButton(title: "Done", target: self, action: #selector(donePressed))
+        let done = NSButton(title: String(localized: "Done"), target: self, action: #selector(donePressed))
         done.keyEquivalent = "\r"
         done.keyEquivalentModifierMask = [.command]
         done.bezelStyle = .rounded
@@ -232,8 +232,8 @@ final class AddressEditorViewController: NSViewController {
     private let localityField = NSTextField()
     private let areaField = NSTextField()
     private let postalField = NSTextField()
-    private let areaLabel = NSTextField(labelWithString: "State / province / region")
-    private let postalLabel = NSTextField(labelWithString: "Postal code")
+    private let areaLabel = NSTextField(labelWithString: String(localized: "State / province / region"))
+    private let postalLabel = NSTextField(labelWithString: String(localized: "Postal code"))
 
     init(label: String, address: [String: Any]) {
         initialLabel = label
@@ -246,13 +246,13 @@ final class AddressEditorViewController: NSViewController {
     override func loadView() {
         view = NSView(frame: NSRect(x: 0, y: 0, width: 480, height: 310))
         labelField.stringValue = initialLabel
-        labelField.placeholderString = "Home address"
+        labelField.placeholderString = String(localized: "Home address", comment: "Example label for a saved address")
         line1Field.stringValue = initialAddress["addressLine1"] as? String ?? ""
-        line1Field.placeholderString = "Street address"
+        line1Field.placeholderString = String(localized: "Street address")
         line2Field.stringValue = initialAddress["addressLine2"] as? String ?? ""
-        line2Field.placeholderString = "Apartment, suite, building, etc."
+        line2Field.placeholderString = String(localized: "Apartment, suite, building, etc.")
         localityField.stringValue = initialAddress["locality"] as? String ?? ""
-        localityField.placeholderString = "City or locality"
+        localityField.placeholderString = String(localized: "City or locality")
         areaField.stringValue = initialAddress["administrativeArea"] as? String ?? ""
         postalField.stringValue = initialAddress["postalCode"] as? String ?? ""
 
@@ -273,11 +273,11 @@ final class AddressEditorViewController: NSViewController {
         countryPopup.action = #selector(countryChanged)
 
         let grid = NSGridView(views: [
-            [NSTextField(labelWithString: "Label"), labelField],
-            [NSTextField(labelWithString: "Country / region"), countryPopup],
-            [NSTextField(labelWithString: "Street address"), line1Field],
-            [NSTextField(labelWithString: "Address line 2"), line2Field],
-            [NSTextField(labelWithString: "City / locality"), localityField],
+            [NSTextField(labelWithString: String(localized: "Label", comment: "Name a saved answer is shown under (column header, field label, placeholder)")), labelField],
+            [NSTextField(labelWithString: String(localized: "Country / region")), countryPopup],
+            [NSTextField(labelWithString: String(localized: "Street address")), line1Field],
+            [NSTextField(labelWithString: String(localized: "Address line 2")), line2Field],
+            [NSTextField(labelWithString: String(localized: "City / locality")), localityField],
             [areaLabel, areaField],
             [postalLabel, postalField]
         ])
@@ -287,9 +287,9 @@ final class AddressEditorViewController: NSViewController {
         grid.rowSpacing = 10
         grid.translatesAutoresizingMaskIntoConstraints = false
 
-        let cancel = NSButton(title: "Cancel", target: self, action: #selector(cancelPressed))
+        let cancel = NSButton(title: String(localized: "Cancel"), target: self, action: #selector(cancelPressed))
         cancel.bezelStyle = .rounded
-        let save = NSButton(title: "Save Address", target: self, action: #selector(savePressed))
+        let save = NSButton(title: String(localized: "Save Address"), target: self, action: #selector(savePressed))
         save.bezelStyle = .rounded
         save.keyEquivalent = "\r"
         let buttons = NSStackView(views: [cancel, save])
@@ -331,17 +331,17 @@ final class AddressEditorViewController: NSViewController {
     private func updateRegionalLabels() {
         switch selectedCountryCode {
         case "US":
-            areaLabel.stringValue = "State"
-            postalLabel.stringValue = "ZIP code"
+            areaLabel.stringValue = String(localized: "State", comment: "US address field")
+            postalLabel.stringValue = String(localized: "ZIP code", comment: "US postal code field")
         case "CA":
-            areaLabel.stringValue = "Province"
-            postalLabel.stringValue = "Postal code"
+            areaLabel.stringValue = String(localized: "Province", comment: "Canadian address field")
+            postalLabel.stringValue = String(localized: "Postal code")
         case "JP":
-            areaLabel.stringValue = "Prefecture"
-            postalLabel.stringValue = "Postal code"
+            areaLabel.stringValue = String(localized: "Prefecture", comment: "Japanese address field")
+            postalLabel.stringValue = String(localized: "Postal code")
         default:
-            areaLabel.stringValue = "State / province / region"
-            postalLabel.stringValue = "Postal code"
+            areaLabel.stringValue = String(localized: "State / province / region")
+            postalLabel.stringValue = String(localized: "Postal code")
         }
     }
 
@@ -387,15 +387,43 @@ final class ContactEditorViewController: NSViewController {
     var onSave: ((String, [String: Any]) -> Void)?
 
     private static let categories = AnswerStore.contactCategories
-    private static let categoryTitles = ["Doctor", "Emergency contact"]
+    private static let categoryTitles = [
+        String(localized: "Doctor", comment: "Kind of saved contact"),
+        String(localized: "Emergency contact", comment: "Kind of saved contact")
+    ]
     private static let doctorRoles = [
-        "Primary care", "Cardiologist", "Dentist", "Dermatologist", "Endocrinologist", "Gastroenterologist",
-        "Neurologist", "Oncologist", "Ophthalmologist", "Orthopedist", "Psychiatrist", "Pulmonologist",
-        "Rheumatologist", "Surgeon", "Urologist"
+        String(localized: "Primary care", comment: "Suggested doctor specialty"),
+        String(localized: "Cardiologist", comment: "Suggested doctor specialty"),
+        String(localized: "Dentist", comment: "Suggested doctor specialty"),
+        String(localized: "Dermatologist", comment: "Suggested doctor specialty"),
+        String(localized: "Endocrinologist", comment: "Suggested doctor specialty"),
+        String(localized: "Gastroenterologist", comment: "Suggested doctor specialty"),
+        String(localized: "Neurologist", comment: "Suggested doctor specialty"),
+        String(localized: "Oncologist", comment: "Suggested doctor specialty"),
+        String(localized: "Ophthalmologist", comment: "Suggested doctor specialty"),
+        String(localized: "Orthopedist", comment: "Suggested doctor specialty"),
+        String(localized: "Psychiatrist", comment: "Suggested doctor specialty"),
+        String(localized: "Pulmonologist", comment: "Suggested doctor specialty"),
+        String(localized: "Rheumatologist", comment: "Suggested doctor specialty"),
+        String(localized: "Surgeon", comment: "Suggested doctor specialty"),
+        String(localized: "Urologist", comment: "Suggested doctor specialty")
     ]
     private static let emergencyRoles = [
-        "Spouse", "Partner", "Parent", "Mother", "Father", "Child", "Son", "Daughter", "Sibling", "Brother",
-        "Sister", "Friend", "Neighbor", "Caregiver", "Guardian"
+        String(localized: "Spouse", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Partner", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Parent", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Mother", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Father", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Child", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Son", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Daughter", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Sibling", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Brother", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Sister", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Friend", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Neighbor", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Caregiver", comment: "Suggested relationship of an emergency contact to the user"),
+        String(localized: "Guardian", comment: "Suggested relationship of an emergency contact to the user")
     ]
 
     private let initialLabel: String
@@ -409,8 +437,8 @@ final class ContactEditorViewController: NSViewController {
     private let emailField = NSTextField()
     private let organizationField = NSTextField()
     private let addressField = NSTextField()
-    private let roleLabel = NSTextField(labelWithString: "Specialty")
-    private let organizationLabel = NSTextField(labelWithString: "Practice or clinic")
+    private let roleLabel = NSTextField(labelWithString: String(localized: "Specialty", comment: "Doctor's medical specialty"))
+    private let organizationLabel = NSTextField(labelWithString: String(localized: "Practice or clinic", comment: "Where a doctor works"))
     private let saveButton = NSButton()
 
     init(label: String, contact: [String: Any]) {
@@ -433,25 +461,25 @@ final class ContactEditorViewController: NSViewController {
         roleField.stringValue = initialContact["role"] as? String ?? ""
         roleField.completes = true
         phoneField.stringValue = initialContact["phone"] as? String ?? ""
-        phoneField.placeholderString = "Phone number"
+        phoneField.placeholderString = String(localized: "Phone number")
         faxField.stringValue = initialContact["fax"] as? String ?? ""
-        faxField.placeholderString = "Fax number"
+        faxField.placeholderString = String(localized: "Fax number")
         emailField.stringValue = initialContact["email"] as? String ?? ""
-        emailField.placeholderString = "Email address"
+        emailField.placeholderString = String(localized: "Email address")
         organizationField.stringValue = initialContact["organization"] as? String ?? ""
         addressField.stringValue = initialContact["address"] as? String ?? ""
-        addressField.placeholderString = "Street, city, state, postal code"
+        addressField.placeholderString = String(localized: "Street, city, state, postal code")
 
         let grid = NSGridView(views: [
-            [NSTextField(labelWithString: "Label"), labelField],
-            [NSTextField(labelWithString: "Kind"), categoryPopup],
-            [NSTextField(labelWithString: "Name"), nameField],
+            [NSTextField(labelWithString: String(localized: "Label", comment: "Name a saved answer is shown under (column header, field label, placeholder)")), labelField],
+            [NSTextField(labelWithString: String(localized: "Kind", comment: "Field label: whether a contact is a doctor or an emergency contact")), categoryPopup],
+            [NSTextField(labelWithString: String(localized: "Name", comment: "Field label: a contact's name")), nameField],
             [roleLabel, roleField],
-            [NSTextField(labelWithString: "Phone"), phoneField],
-            [NSTextField(labelWithString: "Fax"), faxField],
-            [NSTextField(labelWithString: "Email"), emailField],
+            [NSTextField(labelWithString: String(localized: "Phone", comment: "Field label: a contact's phone number")), phoneField],
+            [NSTextField(labelWithString: String(localized: "Fax")), faxField],
+            [NSTextField(labelWithString: String(localized: "Email")), emailField],
             [organizationLabel, organizationField],
-            [NSTextField(labelWithString: "Address"), addressField]
+            [NSTextField(labelWithString: String(localized: "Address", comment: "Field label: a contact's address")), addressField]
         ])
         grid.column(at: 0).xPlacement = .trailing
         grid.rowAlignment = .firstBaseline
@@ -459,7 +487,7 @@ final class ContactEditorViewController: NSViewController {
         grid.rowSpacing = 10
         grid.translatesAutoresizingMaskIntoConstraints = false
 
-        let cancel = NSButton(title: "Cancel", target: self, action: #selector(cancelPressed))
+        let cancel = NSButton(title: String(localized: "Cancel"), target: self, action: #selector(cancelPressed))
         cancel.bezelStyle = .rounded
         saveButton.target = self
         saveButton.action = #selector(savePressed)
@@ -503,14 +531,14 @@ final class ContactEditorViewController: NSViewController {
 
     private func updateCategoryUI() {
         let isDoctor = selectedCategory == "doctor"
-        roleLabel.stringValue = isDoctor ? "Specialty" : "Relationship"
+        roleLabel.stringValue = isDoctor ? String(localized: "Specialty", comment: "Doctor's medical specialty") : String(localized: "Relationship", comment: "How an emergency contact is related to the user")
         roleField.removeAllItems()
         roleField.addItems(withObjectValues: isDoctor ? Self.doctorRoles : Self.emergencyRoles)
-        roleField.placeholderString = isDoctor ? "e.g. Cardiologist or Primary care" : "e.g. Daughter"
-        organizationLabel.stringValue = isDoctor ? "Practice or clinic" : "Employer"
-        nameField.placeholderString = isDoctor ? "Dr. Anita Patel" : "Full name"
-        labelField.placeholderString = isDoctor ? "Defaults to the doctor's name" : "Defaults to the contact's name"
-        saveButton.title = isDoctor ? "Save Doctor" : "Save Contact"
+        roleField.placeholderString = isDoctor ? String(localized: "e.g. Cardiologist or Primary care") : String(localized: "e.g. Daughter")
+        organizationLabel.stringValue = isDoctor ? String(localized: "Practice or clinic", comment: "Where a doctor works") : String(localized: "Employer", comment: "Where an emergency contact works")
+        nameField.placeholderString = isDoctor ? String(localized: "Dr. Anita Patel", comment: "Example doctor's name; use a typical name for the locale") : String(localized: "Full name")
+        labelField.placeholderString = isDoctor ? String(localized: "Defaults to the doctor's name") : String(localized: "Defaults to the contact's name")
+        saveButton.title = isDoctor ? String(localized: "Save Doctor") : String(localized: "Save Contact")
     }
 
     @objc private func cancelPressed() {
@@ -550,7 +578,7 @@ final class DebugLogWindowController: NSWindowController, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "AI Debug Log"
+        window.title = String(localized: "AI Debug Log")
         window.minSize = NSSize(width: 480, height: 320)
         window.isReleasedWhenClosed = false
         window.contentViewController = DebugLogViewController()
@@ -570,8 +598,8 @@ final class DebugLogViewController: NSViewController {
         noteLabel.textColor = .secondaryLabelColor
         noteLabel.font = .systemFont(ofSize: 11)
         noteLabel.stringValue = AIDebugLogStore.hidesSensitiveInfo
-            ? "Sensitive field details are hidden. Saved answer values and API keys are never logged."
-            : "This log may contain field labels and other potentially sensitive form details, but never saved answer values or API keys."
+            ? String(localized: "Sensitive field details are hidden. Saved answer values and API keys are never logged.")
+            : String(localized: "This log may contain field labels and other potentially sensitive form details, but never saved answer values or API keys.")
 
         textView.isEditable = false
         textView.isSelectable = true
@@ -586,9 +614,9 @@ final class DebugLogViewController: NSViewController {
         scroll.borderType = .bezelBorder
         scroll.translatesAutoresizingMaskIntoConstraints = false
 
-        let deleteButton = NSButton(title: "Delete Log", target: self, action: #selector(deleteLog))
+        let deleteButton = NSButton(title: String(localized: "Delete Log"), target: self, action: #selector(deleteLog))
         deleteButton.bezelStyle = .rounded
-        let doneButton = NSButton(title: "Done", target: self, action: #selector(closeWindow))
+        let doneButton = NSButton(title: String(localized: "Done"), target: self, action: #selector(closeWindow))
         doneButton.bezelStyle = .rounded
         doneButton.keyEquivalent = "\r"
         noteLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -622,13 +650,13 @@ final class DebugLogViewController: NSViewController {
         if !log.isEmpty {
             textView.string = log
         } else if let error = AIDebugLogStore.lastError {
-            textView.string = "Umete attempted to write the AI debug log, but it failed:\n\n\(error)"
+            textView.string = String(localized: "Umete attempted to write the AI debug log, but it failed:\n\n\(error)", comment: "The placeholder is an error message")
         } else if let attempt = AIDebugLogStore.lastAttempt {
-            textView.string = "Umete attempted to write the AI debug log at \(attempt.formatted()), but no entries could be read."
+            textView.string = String(localized: "Umete attempted to write the AI debug log at \(attempt.formatted()), but no entries could be read.", comment: "The placeholder is a date and time")
         } else if !AIDebugLogStore.isEnabled {
-            textView.string = "AI debug logging is disabled. Enable it in AI Provider settings, then fill a form again."
+            textView.string = String(localized: "AI debug logging is disabled. Enable it in AI Provider settings, then fill a form again.", comment: "AI Provider is the name of a settings tab")
         } else {
-            textView.string = "No AI debug request has reached the native extension yet."
+            textView.string = String(localized: "No AI debug request has reached the native extension yet.")
         }
     }
 
@@ -660,7 +688,7 @@ final class DatePopoverViewController: ConfirmPopoverViewController {
             picker.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             picker.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-        let done = NSButton(title: "Done", target: self, action: #selector(donePressed))
+        let done = NSButton(title: String(localized: "Done"), target: self, action: #selector(donePressed))
         done.keyEquivalent = "\r"
         done.isBordered = false
         done.isTransparent = true
@@ -679,7 +707,12 @@ final class DatePopoverViewController: ConfirmPopoverViewController {
 
 // AI provider choices shared by onboarding and the AI settings pane.
 private let aiProviderIDs = SafariWebExtensionHandlerProviders.supported
-private let aiProviderTitles = ["Umete (free, no API key)", "OpenAI", "Anthropic", "OpenAI Decisions (your key)"]
+private let aiProviderTitles = [
+    String(localized: "Umete (free, no API key)", comment: "AI provider choice"),
+    "OpenAI",
+    "Anthropic",
+    String(localized: "OpenAI Decisions (your key)", comment: "AI provider choice; OpenAI Decisions is a product name")
+]
 private let aiDefaultModels = ["umete": "", "openai": "gpt-5.6-sol", "anthropic": "claude-opus-5", "openai-decisions": "gpt-6-luna"]
 
 private func aiProviderIndex(_ provider: String?) -> Int {
@@ -693,10 +726,10 @@ private func updateKeyFields(provider: String, model: NSTextField, apiKey: NSTex
     apiKey.isEnabled = needsKey
     if !needsKey {
         model.stringValue = ""
-        model.placeholderString = "Not needed"
-        apiKey.placeholderString = "Not needed"
-    } else if model.placeholderString == "Not needed" {
-        model.placeholderString = "Provider model name"
+        model.placeholderString = String(localized: "Not needed", comment: "Placeholder for a model or API key field the free provider doesn't use")
+        apiKey.placeholderString = String(localized: "Not needed", comment: "Placeholder for a model or API key field the free provider doesn't use")
+    } else if model.placeholderString == String(localized: "Not needed", comment: "Placeholder for a model or API key field the free provider doesn't use") {
+        model.placeholderString = String(localized: "Provider model name")
     }
 }
 
@@ -725,7 +758,7 @@ final class OnboardingWindowController: NSWindowController {
             backing: .buffered,
             defer: false
         )
-        window.title = "Get Started with Umete"
+        window.title = String(localized: "Get Started with Umete")
         window.isReleasedWhenClosed = false
         window.contentViewController = OnboardingViewController(completion: completion)
         window.center()
@@ -737,9 +770,9 @@ final class OnboardingWindowController: NSWindowController {
 
 final class OnboardingViewController: NSViewController {
     private let content = NSView()
-    private let backButton = NSButton(title: "Back", target: nil, action: nil)
-    private let nextButton = NSButton(title: "Continue", target: nil, action: nil)
-    private let safariSettingsButton = NSButton(title: "Open Safari Extension Settings…", target: nil, action: nil)
+    private let backButton = NSButton(title: String(localized: "Back"), target: nil, action: nil)
+    private let nextButton = NSButton(title: String(localized: "Continue"), target: nil, action: nil)
+    private let safariSettingsButton = NSButton(title: String(localized: "Open Safari Extension Settings…"), target: nil, action: nil)
     private let provider = NSPopUpButton()
     private let model = NSTextField()
     private let apiKey = NSSecureTextField()
@@ -795,25 +828,25 @@ final class OnboardingViewController: NSViewController {
         case 0:
             page = welcomePage()
             backButton.isHidden = true
-            nextButton.title = "Continue"
+            nextButton.title = String(localized: "Continue")
             nextButton.isEnabled = true
             nextButton.keyEquivalent = "\r"
         case 1:
             page = providerPage()
             backButton.isHidden = false
-            nextButton.title = "Save and Continue"
+            nextButton.title = String(localized: "Save and Continue")
             nextButton.isEnabled = true
             nextButton.keyEquivalent = "\r"
         case 2:
             page = safariPage()
             backButton.isHidden = false
-            nextButton.title = "Continue"
+            nextButton.title = String(localized: "Continue")
             nextButton.isEnabled = attemptedSafariSettings
             nextButton.keyEquivalent = attemptedSafariSettings ? "\r" : ""
         default:
             page = readyPage()
             backButton.isHidden = true
-            nextButton.title = "Open Safari"
+            nextButton.title = String(localized: "Open Safari")
             nextButton.isEnabled = true
             nextButton.keyEquivalent = "\r"
         }
@@ -836,7 +869,7 @@ final class OnboardingViewController: NSViewController {
             icon.heightAnchor.constraint(equalToConstant: 82)
         ])
         return centeredPage(
-            views: [icon, heading("Welcome to Umete"), body("Umete remembers answers you choose and fills similar web forms automatically.")],
+            views: [icon, heading(String(localized: "Welcome to Umete")), body(String(localized: "Umete remembers answers you choose and fills similar web forms automatically."))],
             spacing: 13
         )
     }
@@ -849,21 +882,21 @@ final class OnboardingViewController: NSViewController {
             let settings = SettingsStore.load()
             provider.selectItem(at: aiProviderIndex(settings?.provider))
             model.stringValue = settings?.model ?? defaultModel
-            apiKey.placeholderString = settings?.apiKey.isEmpty == false ? "A key is already saved" : "Paste your API key"
+            apiKey.placeholderString = settings?.apiKey.isEmpty == false ? String(localized: "A key is already saved") : String(localized: "Paste your API key")
             updateKeyFields(provider: selectedProvider, model: model, apiKey: apiKey)
         }
         status.stringValue = ""
         let form = NSGridView(views: [
-            [NSTextField(labelWithString: "Provider:"), provider],
-            [NSTextField(labelWithString: "Model:"), model],
-            [NSTextField(labelWithString: "API key:"), apiKey]
+            [NSTextField(labelWithString: String(localized: "Provider:")), provider],
+            [NSTextField(labelWithString: String(localized: "Model:")), model],
+            [NSTextField(labelWithString: String(localized: "API key:")), apiKey]
         ])
         form.rowSpacing = 12
         form.columnSpacing = 16
         form.column(at: 0).xPlacement = .trailing
         form.column(at: 0).width = 80
         form.column(at: 1).width = 330
-        return centeredPage(views: [heading("Choose AI matching"), body("When local matching isn’t sure, Umete can ask an AI which saved answer fits a field. Your saved answers are never sent. Only info about the form you’re on is, like its field labels."), form, body("Umete (free) works without a key, with a daily limit. Bring your own key for unlimited use; it’s stored in Apple Keychain."), status], spacing: 10)
+        return centeredPage(views: [heading(String(localized: "Choose AI matching")), body(String(localized: "When local matching isn’t sure, Umete can ask an AI which saved answer fits a field. Your saved answers are never sent. Only info about the form you’re on is, like its field labels.")), form, body(String(localized: "Umete (free) works without a key, with a daily limit. Bring your own key for unlimited use; it’s stored in Apple Keychain.")), status], spacing: 10)
     }
 
     private func safariPage() -> NSView {
@@ -880,11 +913,11 @@ final class OnboardingViewController: NSViewController {
         safariSettingsButton.action = #selector(openSafariSettings)
         safariSettingsButton.bezelStyle = .rounded
         safariSettingsButton.keyEquivalent = attemptedSafariSettings ? "" : "\r"
-        return centeredPage(views: [safariIcon, heading("Enable Umete in Safari"), safariSettingsButton, body("If the button doesn’t work, open Safari → Settings → Extensions and turn on Umete."), body("Return here after Umete is enabled.")], spacing: 12)
+        return centeredPage(views: [safariIcon, heading(String(localized: "Enable Umete in Safari")), safariSettingsButton, body(String(localized: "If the button doesn’t work, open Safari → Settings → Extensions and turn on Umete.", comment: "Safari → Settings → Extensions is a menu path in Safari; use Safari's own localized names")), body(String(localized: "Return here after Umete is enabled."))], spacing: 12)
     }
 
     private func readyPage() -> NSView {
-        let checkImage = symbol("checkmark.circle.fill", fallback: "Ready")?.withSymbolConfiguration(.init(pointSize: 52, weight: .regular)) ?? NSImage()
+        let checkImage = symbol("checkmark.circle.fill", fallback: String(localized: "Ready", comment: "Accessibility description of a checkmark: setup is finished"))?.withSymbolConfiguration(.init(pointSize: 52, weight: .regular)) ?? NSImage()
         let image = NSImageView(image: checkImage)
         image.contentTintColor = .systemGreen
         image.imageScaling = .scaleProportionallyUpOrDown
@@ -893,7 +926,7 @@ final class OnboardingViewController: NSViewController {
             image.widthAnchor.constraint(equalToConstant: 62),
             image.heightAnchor.constraint(equalToConstant: 62)
         ])
-        return centeredPage(views: [image, heading("Umete is ready"), body("Use Remember my answers on a completed form. Later, choose Fill this form to reuse them.")], spacing: 14)
+        return centeredPage(views: [image, heading(String(localized: "Umete is ready")), body(String(localized: "Use Remember my answers on a completed form. Later, choose Fill this form to reuse them.", comment: "Remember my answers and Fill this form are command names in the Umete Safari extension; use the same translations"))], spacing: 14)
     }
 
     private func centeredPage(views: [NSView], spacing: CGFloat) -> NSView {
@@ -933,7 +966,7 @@ final class OnboardingViewController: NSViewController {
 
     @objc private func providerChanged() {
         model.stringValue = defaultModel
-        if apiKey.placeholderString == "Not needed" { apiKey.placeholderString = "Paste your API key" }
+        if apiKey.placeholderString == String(localized: "Not needed", comment: "Placeholder for a model or API key field the free provider doesn't use") { apiKey.placeholderString = String(localized: "Paste your API key") }
         updateKeyFields(provider: selectedProvider, model: model, apiKey: apiKey)
     }
 
@@ -972,7 +1005,7 @@ final class OnboardingViewController: NSViewController {
         let key = suppliedKey.isEmpty ? SettingsStore.load()?.apiKey ?? "" : suppliedKey
         let needsKey = SafariWebExtensionHandlerProviders.requiresKey(selectedProvider)
         guard !needsKey || (!trimmedModel.isEmpty && !key.isEmpty) else {
-            status.stringValue = "Enter a model and API key to continue."
+            status.stringValue = String(localized: "Enter a model and API key to continue.")
             return
         }
         do {
@@ -990,9 +1023,9 @@ final class SettingsTabViewController: NSTabViewController {
         preferredContentSize = settingsPaneSize
         tabStyle = .toolbar
         transitionOptions = []
-        addTabViewItem(item(GeneralSettingsViewController(), label: "General", image: "gearshape"))
-        addTabViewItem(item(AISettingsViewController(), label: "AI Provider", image: "sparkles"))
-        addTabViewItem(item(SavedDataViewController(), label: "Saved Data", image: "tray.full"))
+        addTabViewItem(item(GeneralSettingsViewController(), label: String(localized: "General", comment: "Settings tab name"), image: "gearshape"))
+        addTabViewItem(item(AISettingsViewController(), label: String(localized: "AI Provider", comment: "Settings tab name"), image: "sparkles"))
+        addTabViewItem(item(SavedDataViewController(), label: String(localized: "Saved Data", comment: "Settings tab name"), image: "tray.full"))
     }
 
     override func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
@@ -1017,15 +1050,15 @@ final class SettingsTabViewController: NSTabViewController {
 
 final class GeneralSettingsViewController: NSViewController {
     private let stateIcon = NSImageView()
-    private let stateLabel = descriptionLabel("Checking Safari extension status…")
-    private let syncToggle = NSButton(checkboxWithTitle: "Sync saved answers across your devices with iCloud", target: nil, action: nil)
-    private let syncStatus = descriptionLabel("Checking iCloud…")
-    private let syncNowButton = NSButton(title: "Sync Now", target: nil, action: nil)
+    private let stateLabel = descriptionLabel(String(localized: "Checking Safari extension status…"))
+    private let syncToggle = NSButton(checkboxWithTitle: String(localized: "Sync saved answers across your devices with iCloud"), target: nil, action: nil)
+    private let syncStatus = descriptionLabel(String(localized: "Checking iCloud…"))
+    private let syncNowButton = NSButton(title: String(localized: "Sync Now"), target: nil, action: nil)
     private var syncObservers: [NSObjectProtocol] = []
 
     override func loadView() {
         view = settingsPaneView()
-        let extensionTitle = titleLabel("Safari Extension")
+        let extensionTitle = titleLabel(String(localized: "Safari Extension", comment: "Section heading"))
         extensionTitle.font = .systemFont(ofSize: 13, weight: .semibold)
         stateIcon.imageScaling = .scaleProportionallyUpOrDown
         stateIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -1033,19 +1066,19 @@ final class GeneralSettingsViewController: NSViewController {
         stateRow.orientation = .horizontal
         stateRow.alignment = .centerY
         stateRow.spacing = 6
-        let openButton = NSButton(title: "Open Safari Settings…", target: self, action: #selector(openSafariSettings))
+        let openButton = NSButton(title: String(localized: "Open Safari Settings…"), target: self, action: #selector(openSafariSettings))
         openButton.bezelStyle = .rounded
         let extensionRow = NSStackView(views: [extensionTitle, stateRow, openButton])
         extensionRow.orientation = .vertical
         extensionRow.alignment = .leading
         extensionRow.spacing = 7
 
-        let syncTitle = titleLabel("iCloud Sync")
+        let syncTitle = titleLabel(String(localized: "iCloud Sync", comment: "Section heading"))
         syncTitle.font = .systemFont(ofSize: 13, weight: .semibold)
         syncToggle.target = self
         syncToggle.action = #selector(syncToggled)
         syncToggle.state = CloudSync.isEnabled ? .on : .off
-        let syncNote = descriptionLabel("Answers are encrypted on your devices with a key that lives only in your iCloud Keychain. Apple cannot read them.")
+        let syncNote = descriptionLabel(String(localized: "Answers are encrypted on your devices with a key that lives only in your iCloud Keychain. Apple cannot read them."))
         syncNote.lineBreakMode = .byWordWrapping
         syncNote.maximumNumberOfLines = 0
         syncNowButton.target = self
@@ -1103,7 +1136,7 @@ final class GeneralSettingsViewController: NSViewController {
         CloudSync.isEnabled = syncToggle.state == .on
         syncNowButton.isEnabled = CloudSync.isEnabled
         if CloudSync.isEnabled {
-            syncStatus.stringValue = "Syncing…"
+            syncStatus.stringValue = String(localized: "Syncing…")
             CloudSync.shared.syncInBackground(reason: .manual)
         } else {
             refreshSyncStatus()
@@ -1111,7 +1144,7 @@ final class GeneralSettingsViewController: NSViewController {
     }
 
     @objc private func syncNow() {
-        syncStatus.stringValue = "Syncing…"
+        syncStatus.stringValue = String(localized: "Syncing…")
         syncNowButton.isEnabled = false
         Task { @MainActor in
             _ = try? await CloudSync.shared.sync(reason: .manual)
@@ -1124,21 +1157,21 @@ final class GeneralSettingsViewController: NSViewController {
         stateIcon.image = nil
         guard isInstalledInApplicationsDirectory else {
             stateLabel.stringValue = SafariSettingsError.appNotInApplications.localizedDescription
-            stateIcon.image = NSImage(systemSymbolName: "folder.fill.badge.questionmark", accessibilityDescription: "Move to Applications")
+            stateIcon.image = NSImage(systemSymbolName: "folder.fill.badge.questionmark", accessibilityDescription: String(localized: "Move to Applications", comment: "Accessibility description of a warning icon"))
             stateIcon.contentTintColor = .systemOrange
             return
         }
-        stateLabel.stringValue = "Checking Safari extension status…"
+        stateLabel.stringValue = String(localized: "Checking Safari extension status…")
         SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { [weak self] state, _ in
             DispatchQueue.main.async {
                 guard let self else { return }
                 let isEnabled = state?.isEnabled == true
                 self.stateLabel.stringValue = isEnabled
-                    ? "Umete is enabled and ready in Safari."
-                    : "Umete is disabled. Enable it in Safari Settings → Extensions."
+                    ? String(localized: "Umete is enabled and ready in Safari.")
+                    : String(localized: "Umete is disabled. Enable it in Safari Settings → Extensions.", comment: "Safari Settings → Extensions is a menu path in Safari; use Safari's own localized names")
                 self.stateIcon.image = NSImage(
                     systemSymbolName: isEnabled ? "checkmark.circle.fill" : "exclamationmark.circle.fill",
-                    accessibilityDescription: isEnabled ? "Enabled" : "Disabled"
+                    accessibilityDescription: isEnabled ? String(localized: "Enabled", comment: "Accessibility description: the Safari extension is turned on") : String(localized: "Disabled", comment: "Accessibility description: the Safari extension is turned off")
                 )
                 self.stateIcon.contentTintColor = isEnabled ? .systemGreen : .systemOrange
             }
@@ -1146,7 +1179,7 @@ final class GeneralSettingsViewController: NSViewController {
     }
 
     @objc private func openSafariSettings() {
-        stateLabel.stringValue = "Opening Safari extension settings…"
+        stateLabel.stringValue = String(localized: "Opening Safari extension settings…")
         openSafariExtensionSettings { [weak self] error in
             guard let self else { return }
             if let error {
@@ -1163,27 +1196,27 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
     private let model = NSTextField()
     private let apiKey = NSSecureTextField()
     private let status = descriptionLabel("")
-    private let debugLogging = NSButton(checkboxWithTitle: "Enable logging for bug reports", target: nil, action: nil)
-    private let debugNote = descriptionLabel("Your logs are never sent automatically. Open Debug Logs… in the Safari extension to review or email them.")
-    private let hideSensitive = NSButton(checkboxWithTitle: "Hide potentially sensitive info in AI debug logs", target: nil, action: nil)
+    private let debugLogging = NSButton(checkboxWithTitle: String(localized: "Enable logging for bug reports"), target: nil, action: nil)
+    private let debugNote = descriptionLabel(String(localized: "Your logs are never sent automatically. Open Debug Logs… in the Safari extension to review or email them.", comment: "Open Debug Logs… is a command name in the Umete Safari extension; use the same translation"))
+    private let hideSensitive = NSButton(checkboxWithTitle: String(localized: "Hide potentially sensitive info in AI debug logs"), target: nil, action: nil)
     private let debugButtons = NSStackView()
     private var keyRows: [NSGridRow] = []
-    private let deleteButton = NSButton(title: "Delete Saved Key", target: nil, action: nil)
+    private let deleteButton = NSButton(title: String(localized: "Delete Saved Key"), target: nil, action: nil)
 
     override func loadView() {
         view = settingsPaneView()
         provider.addItems(withTitles: aiProviderTitles)
         provider.target = self
         provider.action = #selector(providerChanged)
-        model.placeholderString = "Provider model name"
+        model.placeholderString = String(localized: "Provider model name")
         model.delegate = self
-        apiKey.placeholderString = "Leave blank to keep the saved key"
+        apiKey.placeholderString = String(localized: "Leave blank to keep the saved key")
         apiKey.delegate = self
 
         let form = NSGridView(views: [
-            [NSTextField(labelWithString: "Provider:"), provider],
-            [NSTextField(labelWithString: "Model:"), model],
-            [NSTextField(labelWithString: "API key:"), apiKey]
+            [NSTextField(labelWithString: String(localized: "Provider:")), provider],
+            [NSTextField(labelWithString: String(localized: "Model:")), model],
+            [NSTextField(labelWithString: String(localized: "API key:")), apiKey]
         ])
         form.rowSpacing = 12
         form.columnSpacing = 18
@@ -1207,8 +1240,8 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         debugLogging.action = #selector(debugLoggingChanged)
         hideSensitive.target = self
         hideSensitive.action = #selector(hideSensitiveChanged)
-        let viewLog = NSButton(title: "View Log…", target: self, action: #selector(viewDebugLog))
-        let clearLog = NSButton(title: "Clear Log", target: self, action: #selector(clearDebugLog))
+        let viewLog = NSButton(title: String(localized: "View Log…"), target: self, action: #selector(viewDebugLog))
+        let clearLog = NSButton(title: String(localized: "Clear Log"), target: self, action: #selector(clearDebugLog))
         debugButtons.addArrangedSubview(viewLog)
         debugButtons.addArrangedSubview(clearLog)
         debugButtons.orientation = .horizontal
@@ -1218,7 +1251,7 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         debugSection.alignment = .leading
         debugSection.spacing = 7
 
-        let stack = paneStack(title: "AI Provider", description: "Used only when on-device matching cannot identify a field confidently.")
+        let stack = paneStack(title: String(localized: "AI Provider", comment: "Settings tab name"), description: String(localized: "Used only when on-device matching cannot identify a field confidently."))
         stack.spacing = 18
         stack.addArrangedSubview(form)
         stack.addArrangedSubview(status)
@@ -1244,9 +1277,9 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         updateKeyFields(provider: selectedProvider, model: model, apiKey: apiKey)
         updateKeyRows()
         if !SafariWebExtensionHandlerProviders.requiresKey(selectedProvider) {
-            status.stringValue = "Free, with a daily limit. No key needed."
+            status.stringValue = String(localized: "Free, with a daily limit. No key needed.")
         } else {
-            status.stringValue = settings?.apiKey.isEmpty == false ? "A key is saved in Apple Keychain." : "No key is saved."
+            status.stringValue = settings?.apiKey.isEmpty == false ? String(localized: "A key is saved in Apple Keychain.") : String(localized: "No key is saved.")
         }
         debugLogging.state = AIDebugLogStore.isEnabled ? .on : .off
         hideSensitive.state = AIDebugLogStore.hidesSensitiveInfo ? .on : .off
@@ -1274,8 +1307,8 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         if model.stringValue.isEmpty || ["gpt-5.6-terra", "gpt-5.6-sol", "gpt-6-luna", "claude-haiku-4-5", "claude-opus-5"].contains(model.stringValue) {
             model.stringValue = defaultModel
         }
-        if apiKey.placeholderString == "Not needed" { apiKey.placeholderString = "Leave blank to keep the saved key" }
-        model.placeholderString = "Provider model name"
+        if apiKey.placeholderString == String(localized: "Not needed", comment: "Placeholder for a model or API key field the free provider doesn't use") { apiKey.placeholderString = String(localized: "Leave blank to keep the saved key") }
+        model.placeholderString = String(localized: "Provider model name")
         updateKeyFields(provider: selectedProvider, model: model, apiKey: apiKey)
         updateKeyRows()
         autosave()
@@ -1291,7 +1324,7 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
             let existingKey = SettingsStore.load()?.apiKey ?? ""
             do {
                 try SettingsStore.save(AISettings(provider: selectedProvider, model: "", apiKey: existingKey))
-                status.stringValue = "Free, with a daily limit. No key needed."
+                status.stringValue = String(localized: "Free, with a daily limit. No key needed.")
             } catch {
                 status.stringValue = error.localizedDescription
             }
@@ -1300,17 +1333,17 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         let key = apiKey.stringValue.isEmpty ? SettingsStore.load()?.apiKey ?? "" : apiKey.stringValue
         let trimmedModel = model.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedModel.isEmpty else {
-            status.stringValue = "Enter a model name."
+            status.stringValue = String(localized: "Enter a model name.")
             return
         }
         guard !key.isEmpty else {
-            status.stringValue = "Enter an API key to finish setup."
+            status.stringValue = String(localized: "Enter an API key to finish setup.")
             return
         }
         do {
             try SettingsStore.save(AISettings(provider: selectedProvider, model: trimmedModel, apiKey: key))
             apiKey.stringValue = ""
-            status.stringValue = "Saved automatically in Apple Keychain."
+            status.stringValue = String(localized: "Saved automatically in Apple Keychain.")
         } catch {
             status.stringValue = error.localizedDescription
         }
@@ -1322,9 +1355,9 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
         if !enabled {
             do {
                 try AIDebugLogStore.clear()
-                status.stringValue = "Logging disabled and saved logs deleted."
+                status.stringValue = String(localized: "Logging disabled and saved logs deleted.")
             } catch {
-                status.stringValue = "Logging disabled, but saved logs could not be deleted: \(error.localizedDescription)"
+                status.stringValue = String(localized: "Logging disabled, but saved logs could not be deleted: \(error.localizedDescription)", comment: "The placeholder is an error message")
             }
         }
         updateDebugDependentControls()
@@ -1346,7 +1379,7 @@ final class AISettingsViewController: NSViewController, NSTextFieldDelegate {
     @objc private func clearDebugLog() {
         do {
             try AIDebugLogStore.clear()
-            status.stringValue = "AI debug log cleared."
+            status.stringValue = String(localized: "AI debug log cleared.")
         } catch {
             status.stringValue = error.localizedDescription
         }
@@ -1370,19 +1403,26 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
     private var draftEditorObserver: NSObjectProtocol?
     private var remoteChangeObserver: NSObjectProtocol?
     private static let answerTypes = ["", "address", "contact", "date", "gender", "phone"]
-    private static let typeTitles = ["Default", "Address", "Contact", "Date", "Gender", "Phone"]
+    private static let typeTitles = [
+        String(localized: "Default", comment: "Answer type: plain text with no special handling"),
+        String(localized: "Address", comment: "Answer type"),
+        String(localized: "Contact", comment: "Answer type: a doctor or emergency contact"),
+        String(localized: "Date", comment: "Answer type"),
+        String(localized: "Gender", comment: "Answer type"),
+        String(localized: "Phone", comment: "Answer type")
+    ]
     private static let aggregateTypes = AnswerStore.aggregateTypes
 
     override func loadView() {
         view = settingsPaneView()
         let labelColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("label"))
-        labelColumn.title = "Label"
+        labelColumn.title = String(localized: "Label", comment: "Name a saved answer is shown under (column header, field label, placeholder)")
         labelColumn.width = 220
         let valueColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("value"))
-        valueColumn.title = "Value"
+        valueColumn.title = String(localized: "Value", comment: "Column header: the saved answer itself")
         valueColumn.width = 300
         let typeColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("type"))
-        typeColumn.title = "Type"
+        typeColumn.title = String(localized: "Type", comment: "Column header: kind of saved answer, like Address or Date")
         typeColumn.width = 110
         table.addTableColumn(typeColumn)
         table.addTableColumn(labelColumn)
@@ -1411,32 +1451,32 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
         scroll.borderType = .bezelBorder
 
         addMenu.bezelStyle = .rounded
-        addMenu.addItem(withTitle: "Add")
+        addMenu.addItem(withTitle: String(localized: "Add", comment: "Pull-down menu button for adding a new saved answer"))
         let addItems: [(String, Selector)] = [
-            ("Text Answer…", #selector(addAnswer)),
-            ("Address…", #selector(addAddress)),
-            ("Doctor…", #selector(addDoctor)),
-            ("Emergency Contact…", #selector(addEmergencyContact)),
-            ("Date…", #selector(addDate)),
-            ("Gender…", #selector(addGender)),
-            ("Phone…", #selector(addPhone))
+            (String(localized: "Text Answer…", comment: "Item in the Add menu"), #selector(addAnswer)),
+            (String(localized: "Address…", comment: "Item in the Add menu"), #selector(addAddress)),
+            (String(localized: "Doctor…", comment: "Item in the Add menu"), #selector(addDoctor)),
+            (String(localized: "Emergency Contact…", comment: "Item in the Add menu"), #selector(addEmergencyContact)),
+            (String(localized: "Date…", comment: "Item in the Add menu"), #selector(addDate)),
+            (String(localized: "Gender…", comment: "Item in the Add menu"), #selector(addGender)),
+            (String(localized: "Phone…", comment: "Item in the Add menu"), #selector(addPhone))
         ]
         for (title, action) in addItems {
             addMenu.addItem(withTitle: title)
             addMenu.lastItem?.target = self
             addMenu.lastItem?.action = action
         }
-        deleteButton.title = "Delete"
+        deleteButton.title = String(localized: "Delete")
         deleteButton.target = self
         deleteButton.action = #selector(deleteSelected)
         deleteButton.bezelStyle = .rounded
         deleteButton.isEnabled = false
-        let clear = NSButton(title: "Clear All Answers…", target: self, action: #selector(clearAll))
+        let clear = NSButton(title: String(localized: "Clear All Answers…"), target: self, action: #selector(clearAll))
         let buttons = NSStackView(views: [addMenu, deleteButton, NSView(), clear])
         buttons.orientation = .horizontal
         buttons.spacing = 8
 
-        let stack = paneStack(title: "Saved Data", description: "Double-click a label or value to edit; click a type to change it. A value with several lines, like a medication list, opens in a larger editor; press Option-Return while editing a value to give it more lines. Phone, Address, and Contact use structured editors so Umete can fill related fields automatically. Add each doctor or emergency contact once and Umete fills their name, phone, and other details wherever a form asks for them.")
+        let stack = paneStack(title: String(localized: "Saved Data", comment: "Settings tab name"), description: String(localized: "Double-click a label or value to edit; click a type to change it. A value with several lines, like a medication list, opens in a larger editor; press Option-Return while editing a value to give it more lines. Phone, Address, and Contact use structured editors so Umete can fill related fields automatically. Add each doctor or emergency contact once and Umete fills their name, phone, and other details wherever a form asks for them."))
         stack.addArrangedSubview(scroll)
         stack.addArrangedSubview(buttons)
         view.addSubview(stack)
@@ -1791,10 +1831,10 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
     private func presentPhonePopover(row: Int) {
         guard let answer = answerForRow(row) else { return }
         let countryField = NSTextField()
-        countryField.placeholderString = "e.g. 81"
+        countryField.placeholderString = String(localized: "e.g. 81", comment: "Example phone calling code; use the code for a country where this language is spoken")
         countryField.stringValue = Self.inferredCallingCode(from: answer)
         let numberField = NSTextField()
-        numberField.placeholderString = "Local number"
+        numberField.placeholderString = String(localized: "Local number", comment: "Phone number without the country code")
         numberField.stringValue = answer["value"] as? String ?? ""
         let controller = PhonePopoverViewController(countryField: countryField, numberField: numberField)
         controller.onApply = { [weak self] in
@@ -1965,10 +2005,10 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
         cell.textField?.isEditable = false
         if identifier.rawValue == "label" {
             cell.textField?.stringValue = answer["userLabel"] as? String ?? displayLabel(answer, row: row)
-            cell.textField?.placeholderString = "Label"
+            cell.textField?.placeholderString = String(localized: "Label", comment: "Name a saved answer is shown under (column header, field label, placeholder)")
         } else {
             cell.textField?.stringValue = displayValue(answer)
-            cell.textField?.placeholderString = answer["value"] is Bool ? "Yes or No" : "Value"
+            cell.textField?.placeholderString = answer["value"] is Bool ? String(localized: "Yes or No") : String(localized: "Value", comment: "Column header: the saved answer itself")
         }
         return cell
     }
@@ -1977,11 +2017,11 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
         for key in ["userLabel", "accessibleName", "label", "placeholder", "name", "autocomplete"] {
             if let value = answer[key] as? String, !value.isEmpty { return value }
         }
-        return "Saved answer \(row + 1)"
+        return String(localized: "Saved answer \(row + 1)", comment: "Fallback name for an unlabeled saved answer; the placeholder is its row number")
     }
 
     private func valueString(_ value: Any?) -> String {
-        if let bool = value as? Bool { return bool ? "Yes" : "No" }
+        if let bool = value as? Bool { return bool ? String(localized: "Yes", comment: "A saved yes/no answer") : String(localized: "No", comment: "A saved yes/no answer") }
         return value.map(String.init(describing:)) ?? ""
     }
 
@@ -2091,12 +2131,14 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
             value = answer["value"] ?? ""
         } else if answer["value"] is Bool {
             let normalized = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            guard ["yes", "no", "true", "false", "1", "0", "on", "off"].contains(normalized) else {
+            let localizedYes = valueString(true).lowercased()
+            let localizedNo = valueString(false).lowercased()
+            guard ["yes", "no", "true", "false", "1", "0", "on", "off", localizedYes, localizedNo].contains(normalized) else {
                 field.stringValue = valueString(answer["value"])
                 NSSound.beep()
                 return
             }
-            value = ["yes", "true", "1", "on"].contains(normalized)
+            value = ["yes", "true", "1", "on", localizedYes].contains(normalized)
         } else {
             value = field.stringValue
         }
@@ -2205,13 +2247,13 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
 
     @objc private func clearAll() {
         let alert = NSAlert()
-        alert.messageText = CloudSync.isEnabled ? "Clear all saved answers on all your devices?" : "Clear all saved answers?"
+        alert.messageText = CloudSync.isEnabled ? String(localized: "Clear all saved answers on all your devices?") : String(localized: "Clear all saved answers?")
         alert.informativeText = CloudSync.isEnabled
-            ? "Answers synced through iCloud will be removed from your other devices too. Your AI provider, model, and API key will be kept. This cannot be undone."
-            : "Your AI provider, model, and API key will be kept. This cannot be undone."
+            ? String(localized: "Answers synced through iCloud will be removed from your other devices too. Your AI provider, model, and API key will be kept. This cannot be undone.")
+            : String(localized: "Your AI provider, model, and API key will be kept. This cannot be undone.")
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Clear All Answers")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Clear All Answers"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
         guard alert.runModal() == .alertFirstButtonReturn else { return }
         do { try AnswerStore.clear(); reload() } catch { present(error) }
     }

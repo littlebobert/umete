@@ -1,0 +1,5341 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ Answers are encrypted on your devices with a key in your iCloud Keychain, so Apple can’t read them." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@回答はiCloudキーチェーン内の鍵を使ってデバイス上で暗号化されるため、Appleが読み取ることはできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 답변은 iCloud 키체인에 있는 키로 기기에서 암호화되므로 Apple이 읽을 수 없습니다."
+          }
+        }
+      }
+    },
+    "%lld answers from another device can't be read until that device syncs again." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別のデバイスからの%lld件の回答は、そのデバイスが再度同期するまで読み取れません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 기기의 답변 %lld개는 해당 기기가 다시 동기화될 때까지 읽을 수 없습니다."
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld answer from another device can't be read until that device syncs again."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld answers from another device can't be read until that device syncs again."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld saved answers, encrypted. Tap an answer to edit it." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答は%lld件で、暗号化されています。回答をタップすると編集できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변 %lld개(암호화됨). 답변을 탭하여 편집하세요."
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld saved answer, encrypted. Tap an answer to edit it."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld saved answers, encrypted. Tap an answer to edit it."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "A key is already saved" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーはすでに保存されています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "키가 이미 저장되어 있음"
+          }
+        }
+      }
+    },
+    "A key is saved in Apple Keychain." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーはキーチェーンに保存されています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 키체인에 키가 저장되어 있습니다."
+          }
+        }
+      }
+    },
+    "A saved answer could not be encrypted for iCloud." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答をiCloud用に暗号化できませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변 하나를 iCloud용으로 암호화할 수 없습니다."
+          }
+        }
+      }
+    },
+    "About Umete" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteについて"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete에 관하여"
+          }
+        }
+      }
+    },
+    "Add" : {
+      "comment" : "Pull-down menu button for adding a new saved answer",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가"
+          }
+        }
+      }
+    },
+    "Add addresses and contacts on the Mac. Saved answers sync through iCloud; AI settings stay on each device." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "住所と連絡先はMacで追加してください。保存済みの回答はiCloudで同期されます。AIの設定はデバイスごとに保持されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주소와 연락처는 Mac에서 추가하세요. 저장된 답변은 iCloud를 통해 동기화되며, AI 설정은 각 기기에 유지됩니다."
+          }
+        }
+      }
+    },
+    "Add Answer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答を追加"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답변 추가"
+          }
+        }
+      }
+    },
+    "Address" : {
+      "comment" : "Answer type\nField label: a contact's address",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "住所"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주소"
+          }
+        }
+      }
+    },
+    "Address line 2" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "住所（2行目）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "상세 주소"
+          }
+        }
+      }
+    },
+    "Address…" : {
+      "comment" : "Item in the Add menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "住所…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주소…"
+          }
+        }
+      }
+    },
+    "AI Debug Log" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIデバッグログ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 디버그 로그"
+          }
+        }
+      }
+    },
+    "AI debug log cleared." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIデバッグログを消去しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 디버그 로그를 지웠습니다."
+          }
+        }
+      }
+    },
+    "AI debug logging is disabled. Enable it in AI Provider settings, then fill a form again." : {
+      "comment" : "AI Provider is the name of a settings tab",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIデバッグログは無効になっています。「AIプロバイダ」設定で有効にしてから、もう一度フォームに入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 디버그 로그 기록이 꺼져 있습니다. 'AI 제공자' 설정에서 켠 다음 양식을 다시 채우세요."
+          }
+        }
+      }
+    },
+    "AI Matching" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIマッチング"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 매칭"
+          }
+        }
+      }
+    },
+    "AI Provider" : {
+      "comment" : "Settings tab name",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIプロバイダ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 제공자"
+          }
+        }
+      }
+    },
+    "AI receives field context, not answers" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIに送信されるのは項目の情報だけで、回答は送信されません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI에는 답변이 아닌 항목 정보만 전달됩니다"
+          }
+        }
+      }
+    },
+    "All saved answers were deleted from this device and will be removed from your other devices. Your AI settings were kept." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスから保存済みの回答をすべて削除しました。ほかのデバイスからも削除されます。AIの設定はそのまま残っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변이 이 기기에서 모두 삭제되었으며, 다른 기기에서도 제거됩니다. AI 설정은 유지되었습니다."
+          }
+        }
+      }
+    },
+    "All saved answers were deleted. Your AI settings were kept." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答をすべて削除しました。AIの設定はそのまま残っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변이 모두 삭제되었습니다. AI 설정은 유지되었습니다."
+          }
+        }
+      }
+    },
+    "Answer values are never sent to AI" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答の値がAIに送信されることはありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답변 값은 AI로 전송되지 않습니다"
+          }
+        }
+      }
+    },
+    "Answers are encrypted" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答は暗号化されます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답변은 암호화됩니다"
+          }
+        }
+      }
+    },
+    "Answers are encrypted on your devices with a key that lives only in your iCloud Keychain. Apple cannot read them." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答は、iCloudキーチェーンにのみ保管される鍵を使ってデバイス上で暗号化されます。Appleが読み取ることはできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답변은 iCloud 키체인에만 있는 키로 기기에서 암호화됩니다. Apple은 답변을 읽을 수 없습니다."
+          }
+        }
+      }
+    },
+    "Answers Deleted" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答を削除しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답변 삭제됨"
+          }
+        }
+      }
+    },
+    "Answers synced through iCloud will be removed from your other devices too. Your AI provider, model, and API key will be kept. This cannot be undone." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloudで同期された回答は、ほかのデバイスからも削除されます。AIプロバイダ、モデル、APIキーは保持されます。この操作は取り消せません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud를 통해 동기화된 답변은 다른 기기에서도 제거됩니다. AI 제공자, 모델 및 API 키는 유지됩니다. 이 작업은 실행 취소할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Anthropic returned an unreadable response." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anthropicから読み取れない応答が返されました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anthropic이 읽을 수 없는 응답을 반환했습니다."
+          }
+        }
+      }
+    },
+    "Anthropic returned no mapping." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anthropicから対応付けが返されませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anthropic이 매핑을 반환하지 않았습니다."
+          }
+        }
+      }
+    },
+    "Apartment, suite, building, etc." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建物名、部屋番号など"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아파트, 동·호수, 건물명 등"
+          }
+        }
+      }
+    },
+    "API key" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "APIキー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 키"
+          }
+        }
+      }
+    },
+    "API key (saved)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "APIキー（保存済み）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 키(저장됨)"
+          }
+        }
+      }
+    },
+    "API key:" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "APIキー："
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 키:"
+          }
+        }
+      }
+    },
+    "Apple Keychain could not migrate Umete's protected data." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーチェーンでUmeteの保護データを移行できませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 키체인이 Umete의 보호 데이터를 마이그레이션할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Apple Keychain could not protect saved answers." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーチェーンで保存済みの回答を保護できませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 키체인이 저장된 답변을 보호할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Apple Keychain could not read Umete's older protected data." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーチェーンからUmeteの古い保護データを読み取れませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 키체인이 Umete의 이전 보호 데이터를 읽을 수 없습니다."
+          }
+        }
+      }
+    },
+    "Apple Keychain could not read Umete's protected data." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーチェーンからUmeteの保護データを読み取れませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 키체인이 Umete의 보호 데이터를 읽을 수 없습니다."
+          }
+        }
+      }
+    },
+    "Apple Keychain could not save these settings." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーチェーンにこれらの設定を保存できませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 키체인에 이 설정을 저장할 수 없습니다."
+          }
+        }
+      }
+    },
+    "As you’d answer on a form, like Female." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォームで回答するときの表記で入力します（例：女性）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "양식에 답하는 그대로 입력하세요(예: 여성)."
+          }
+        }
+      }
+    },
+    "Back" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "뒤로"
+          }
+        }
+      }
+    },
+    "Brother" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "兄弟"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "형제"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
+          }
+        }
+      }
+    },
+    "Cardiologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循環器内科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "심장내과 전문의"
+          }
+        }
+      }
+    },
+    "Caregiver" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "介護者"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "간병인"
+          }
+        }
+      }
+    },
+    "Changes on this device are waiting to upload." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスでの変更はアップロード待ちです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기의 변경 사항이 업로드를 기다리는 중입니다."
+          }
+        }
+      }
+    },
+    "Check for Updates…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデートを確認…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트 확인…"
+          }
+        }
+      }
+    },
+    "Checking iCloud…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloudを確認中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 확인 중…"
+          }
+        }
+      }
+    },
+    "Checking Safari extension status…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari機能拡張の状態を確認中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari 확장 프로그램 상태 확인 중…"
+          }
+        }
+      }
+    },
+    "Child" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자녀"
+          }
+        }
+      }
+    },
+    "Choose a contact kind." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連絡先の種類を選択してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연락처 종류를 선택하세요."
+          }
+        }
+      }
+    },
+    "Choose a country or region." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国または地域を選択してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "국가 또는 지역을 선택하세요."
+          }
+        }
+      }
+    },
+    "Choose AI matching" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIマッチングを選択"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 매칭 선택"
+          }
+        }
+      }
+    },
+    "City / locality" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "市区町村"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도시/지역"
+          }
+        }
+      }
+    },
+    "City or locality" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "市区町村"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도시 또는 지역"
+          }
+        }
+      }
+    },
+    "Clear All Answers" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべての回答を消去"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 답변 지우기"
+          }
+        }
+      }
+    },
+    "Clear All Answers…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべての回答を消去…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 답변 지우기…"
+          }
+        }
+      }
+    },
+    "Clear all saved answers on all your devices?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのデバイスで保存済みの回答をすべて消去しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 기기에서 저장된 답변을 모두 지우겠습니까?"
+          }
+        }
+      }
+    },
+    "Clear all saved answers?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答をすべて消去しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변을 모두 지우겠습니까?"
+          }
+        }
+      }
+    },
+    "Clear Log" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログを消去"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그 지우기"
+          }
+        }
+      }
+    },
+    "Close Window" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウを閉じる"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "윈도우 닫기"
+          }
+        }
+      }
+    },
+    "Contact" : {
+      "comment" : "Answer type: a doctor or emergency contact",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連絡先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연락처"
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속"
+          }
+        }
+      }
+    },
+    "Copy" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コピー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복사하기"
+          }
+        }
+      }
+    },
+    "Could not encode sanitized field schemas." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サニタイズした項目スキーマをエンコードできませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "민감한 정보를 제거한 항목 스키마를 인코딩할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Couldn’t Delete" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "削除できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제할 수 없음"
+          }
+        }
+      }
+    },
+    "Couldn’t Save" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장할 수 없음"
+          }
+        }
+      }
+    },
+    "Country / region" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国または地域"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "국가/지역"
+          }
+        }
+      }
+    },
+    "Country code" : {
+      "comment" : "Phone calling code, like 81 for Japan",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国番号"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "국가 번호"
+          }
+        }
+      }
+    },
+    "Cut" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오려두기"
+          }
+        }
+      }
+    },
+    "Date" : {
+      "comment" : "Answer type",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜"
+          }
+        }
+      }
+    },
+    "Date…" : {
+      "comment" : "Item in the Add menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜…"
+          }
+        }
+      }
+    },
+    "Daughter" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "娘"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "딸"
+          }
+        }
+      }
+    },
+    "Default" : {
+      "comment" : "Answer type: plain text with no special format\nAnswer type: plain text with no special handling",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標準"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본"
+          }
+        }
+      }
+    },
+    "Defaults to the contact's name" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空欄の場合は連絡先の名前を使用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본값: 연락처 이름"
+          }
+        }
+      }
+    },
+    "Defaults to the doctor's name" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空欄の場合は医師の名前を使用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본값: 의사 이름"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제"
+          }
+        }
+      }
+    },
+    "Delete All Answers" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべての回答を削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 답변 삭제"
+          }
+        }
+      }
+    },
+    "Delete every saved answer on all your devices?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのデバイスで保存済みの回答をすべて削除しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 기기에서 저장된 답변을 모두 삭제하겠습니까?"
+          }
+        }
+      }
+    },
+    "Delete every saved answer on this device?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスの保存済みの回答をすべて削除しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에서 저장된 답변을 모두 삭제하겠습니까?"
+          }
+        }
+      }
+    },
+    "Delete Key" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーを削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "키 삭제"
+          }
+        }
+      }
+    },
+    "Delete Log" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログを削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그 삭제"
+          }
+        }
+      }
+    },
+    "Delete Saved Key" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みのキーを削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 키 삭제"
+          }
+        }
+      }
+    },
+    "Delete the saved API key?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みのAPIキーを削除しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 API 키를 삭제하겠습니까?"
+          }
+        }
+      }
+    },
+    "Deletes every saved answer and keeps your AI settings." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答をすべて削除します。AIの設定は残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변을 모두 삭제하고 AI 설정은 유지합니다."
+          }
+        }
+      }
+    },
+    "Dentist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "歯科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "치과의사"
+          }
+        }
+      }
+    },
+    "Dermatologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "皮膚科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "피부과 전문의"
+          }
+        }
+      }
+    },
+    "Disabled" : {
+      "comment" : "Accessibility description: the Safari extension is turned off",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無効"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "꺼짐"
+          }
+        }
+      }
+    },
+    "Doctor" : {
+      "comment" : "Kind of saved contact",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "医師"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "의사"
+          }
+        }
+      }
+    },
+    "Doctor…" : {
+      "comment" : "Item in the Add menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "医師…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "의사…"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        }
+      }
+    },
+    "Double-click a label or value to edit; click a type to change it. A value with several lines, like a medication list, opens in a larger editor; press Option-Return while editing a value to give it more lines. Phone, Address, and Contact use structured editors so Umete can fill related fields automatically. Add each doctor or emergency contact once and Umete fills their name, phone, and other details wherever a form asks for them." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ラベルまたは値をダブルクリックすると編集でき、種類をクリックすると変更できます。服用中の薬の一覧のように複数行ある値は、大きなエディタで開きます。値の編集中にOptionキーを押しながらReturnキーを押すと、行を追加できます。「電話番号」「住所」「連絡先」は専用のエディタで編集するため、Umeteが関連する項目にも自動で入力できます。医師や緊急連絡先は一度追加しておけば、フォームで求められたときにUmeteが名前や電話番号などの詳細を入力します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레이블이나 값을 이중 클릭하여 편집하고, 유형을 클릭하여 변경하세요. 복용 약 목록처럼 여러 줄로 된 값은 더 큰 편집기에서 열리며, 값을 편집하는 동안 Option-Return을 누르면 줄을 추가할 수 있습니다. 전화번호, 주소, 연락처는 구조화된 편집기를 사용하므로 Umete가 관련 항목을 자동으로 채울 수 있습니다. 의사나 비상 연락처를 한 번만 추가하면 양식에서 요청할 때마다 Umete가 이름, 전화번호 및 기타 세부 정보를 채웁니다."
+          }
+        }
+      }
+    },
+    "Dr. Anita Patel" : {
+      "comment" : "Example doctor's name; use a typical name for the locale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "山田 花子 先生"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "김지현 선생님"
+          }
+        }
+      }
+    },
+    "e.g. 81" : {
+      "comment" : "Example phone calling code; use the code for a country where this language is spoken",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例：81"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예: 82"
+          }
+        }
+      }
+    },
+    "e.g. Cardiologist or Primary care" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例：循環器内科医、かかりつけ医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예: 심장내과 전문의 또는 주치의"
+          }
+        }
+      }
+    },
+    "e.g. Daughter" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例：娘"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예: 딸"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "comment" : "Edit menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "편집"
+          }
+        }
+      }
+    },
+    "Edit Answer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答を編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답변 편집"
+          }
+        }
+      }
+    },
+    "Edits this answer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この回答を編集します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 답변을 편집합니다"
+          }
+        }
+      }
+    },
+    "Email" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メール"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일"
+          }
+        }
+      }
+    },
+    "Email address" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレス"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일 주소"
+          }
+        }
+      }
+    },
+    "Emergency contact" : {
+      "comment" : "Kind of saved contact",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "緊急連絡先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비상 연락처"
+          }
+        }
+      }
+    },
+    "Emergency Contact…" : {
+      "comment" : "Item in the Add menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "緊急連絡先…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비상 연락처…"
+          }
+        }
+      }
+    },
+    "Employer" : {
+      "comment" : "Where an emergency contact works",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "勤務先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "직장"
+          }
+        }
+      }
+    },
+    "Enable logging for bug reports" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バグ報告用のログを有効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "버그 보고용 로그 기록 켜기"
+          }
+        }
+      }
+    },
+    "Enable Umete in Safari" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SafariでUmeteを有効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari에서 Umete 켜기"
+          }
+        }
+      }
+    },
+    "Enabled" : {
+      "comment" : "Accessibility description: the Safari extension is turned on",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有効"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "켜짐"
+          }
+        }
+      }
+    },
+    "Encrypted answer storage" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答を暗号化して保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "암호화된 답변 저장소"
+          }
+        }
+      }
+    },
+    "Endocrinologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内分泌内科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내분비내과 전문의"
+          }
+        }
+      }
+    },
+    "Enter a model and an API key for %@, or choose Umete (free)." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のモデルとAPIキーを入力するか、「Umete（無料）」を選択してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@의 모델과 API 키를 입력하거나 'Umete(무료)'를 선택하세요."
+          }
+        }
+      }
+    },
+    "Enter a model and API key to continue." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続けるには、モデルとAPIキーを入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속하려면 모델과 API 키를 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter a model name." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モデル名を入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델 이름을 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter a street address." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "町名・番地を入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도로명 주소를 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter an address label." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "住所のラベルを入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주소 레이블을 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter an API key for %@, or choose Umete (free)." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のAPIキーを入力するか、「Umete（無料）」を選択してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@의 API 키를 입력하거나 'Umete(무료)'를 선택하세요."
+          }
+        }
+      }
+    },
+    "Enter an API key to finish setup." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定を完了するには、APIキーを入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정을 완료하려면 API 키를 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter both a label and a value." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ラベルと値の両方を入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레이블과 값을 모두 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter the contact's name." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連絡先の名前を入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연락처 이름을 입력하세요."
+          }
+        }
+      }
+    },
+    "Father" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "父"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아버지"
+          }
+        }
+      }
+    },
+    "Fax" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファックス"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "팩스"
+          }
+        }
+      }
+    },
+    "Fax number" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファックス番号"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "팩스 번호"
+          }
+        }
+      }
+    },
+    "Fill web forms in Safari with answers you’ve saved" : {
+      "comment" : "Spotlight result description",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存した回答でSafariのWebフォームに入力"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장한 답변으로 Safari의 웹 양식 채우기"
+          }
+        }
+      }
+    },
+    "Fills in web forms automatically." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Webフォームを自動で入力します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 양식을 자동으로 채웁니다."
+          }
+        }
+      }
+    },
+    "Fills in web forms in Safari, with answers you’ve saved." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存した回答を使って、SafariのWebフォームに入力します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장한 답변으로 Safari의 웹 양식을 채웁니다."
+          }
+        }
+      }
+    },
+    "For a list, put each item on its own line." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リストの場合は、1行に1項目ずつ入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목록은 한 줄에 하나씩 입력하세요."
+          }
+        }
+      }
+    },
+    "For fields Umete can’t match itself, it sends only descriptions such as labels, field types, headings, and menu options, plus the labels of your saved answers. Saved values, values in the form, addresses, and contacts’ names stay on your device." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteが自分で照合できない項目については、ラベル、項目の種類、見出し、メニューの選択肢などの説明と、保存済みの回答のラベルだけを送信します。保存された値、フォームに入力された値、住所、連絡先の名前がデバイスの外に送信されることはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 직접 매칭할 수 없는 항목에 대해서는 레이블, 항목 유형, 제목, 메뉴 옵션과 같은 설명과 저장된 답변의 레이블만 전송합니다. 저장된 값, 양식에 입력된 값, 주소 및 연락처 이름은 기기에 남아 있습니다."
+          }
+        }
+      }
+    },
+    "For fields Umete can’t match itself, it sends only descriptions such as labels, field types, headings, and menu options, plus the labels of your saved answers. Saved values, values in the form, addresses, and contacts’ names stay on your Mac." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteが自分で照合できない項目については、ラベル、項目の種類、見出し、メニューの選択肢などの説明と、保存済みの回答のラベルだけを送信します。保存された値、フォームに入力された値、住所、連絡先の名前がMacの外に送信されることはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 직접 매칭할 수 없는 항목에 대해서는 레이블, 항목 유형, 제목, 메뉴 옵션과 같은 설명과 저장된 답변의 레이블만 전송합니다. 저장된 값, 양식에 입력된 값, 주소 및 연락처 이름은 Mac에 남아 있습니다."
+          }
+        }
+      }
+    },
+    "Free, with a daily limit. No key needed." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無料（1日あたりの上限あり）。キーは不要です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무료이며 일일 한도가 있습니다. 키가 필요하지 않습니다."
+          }
+        }
+      }
+    },
+    "Friend" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "友人"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "친구"
+          }
+        }
+      }
+    },
+    "Full name" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "氏名"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "성명"
+          }
+        }
+      }
+    },
+    "Gastroenterologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消化器内科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소화기내과 전문의"
+          }
+        }
+      }
+    },
+    "Gender" : {
+      "comment" : "Answer type",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "性別"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "성별"
+          }
+        }
+      }
+    },
+    "Gender…" : {
+      "comment" : "Item in the Add menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "性別…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "성별…"
+          }
+        }
+      }
+    },
+    "General" : {
+      "comment" : "Settings tab name",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一般"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일반"
+          }
+        }
+      }
+    },
+    "Get Started with Umete" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteを使い始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete 시작하기"
+          }
+        }
+      }
+    },
+    "Get Umete for Mac" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac版Umeteを入手"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac용 Umete 받기"
+          }
+        }
+      }
+    },
+    "GPT-6.1 Sol (medium, fast)" : {
+      "comment" : "OpenAI mode: model name (keep as is), medium reasoning effort, fast service tier",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPT-6.1 Sol（推論：中、高速）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPT-6.1 Sol(중간, 빠름)"
+          }
+        }
+      }
+    },
+    "Guardian" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "後見人"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보호자"
+          }
+        }
+      }
+    },
+    "Hide potentially sensitive info in AI debug logs" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIデバッグログで機密情報の可能性がある内容を非表示にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 디버그 로그에서 민감할 수 있는 정보 가리기"
+          }
+        }
+      }
+    },
+    "Home address" : {
+      "comment" : "Example label for a saved address",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自宅住所"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "집 주소"
+          }
+        }
+      }
+    },
+    "How Umete Fills Forms" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteがフォームに入力するしくみ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 양식을 채우는 방법"
+          }
+        }
+      }
+    },
+    "iCloud" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud"
+          }
+        }
+      }
+    },
+    "iCloud is busy. Umete will retry." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloudがビジー状態です。Umeteが再試行します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud가 사용 중입니다. Umete가 다시 시도합니다."
+          }
+        }
+      }
+    },
+    "iCloud is restricted on this device, so answers stay here." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスではiCloudが制限されているため、回答はこのデバイスに保存されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에서는 iCloud가 제한되어 있어 답변이 이 기기에만 보관됩니다."
+          }
+        }
+      }
+    },
+    "iCloud is unavailable right now. Umete will retry." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloudは現在利用できません。Umeteが再試行します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재 iCloud를 사용할 수 없습니다. Umete가 다시 시도합니다."
+          }
+        }
+      }
+    },
+    "iCloud Sync" : {
+      "comment" : "Section heading",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud同期"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 동기화"
+          }
+        }
+      }
+    },
+    "iCloud sync stays private" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud同期もプライベート"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 동기화는 비공개로 유지됩니다"
+          }
+        }
+      }
+    },
+    "If the button doesn’t work, open Safari → Settings → Extensions and turn on Umete." : {
+      "comment" : "Safari → Settings → Extensions is a menu path in Safari; use Safari's own localized names",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボタンが機能しない場合は、「Safari」→「設定」→「機能拡張」を開いて、Umeteをオンにしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "버튼이 작동하지 않으면 Safari > 설정 > 확장 프로그램을 열고 Umete를 켜세요."
+          }
+        }
+      }
+    },
+    "Invalid provider endpoint." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダのエンドポイントが無効です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제공자 엔드포인트가 유효하지 않습니다."
+          }
+        }
+      }
+    },
+    "Key Deleted" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーを削除しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "키 삭제됨"
+          }
+        }
+      }
+    },
+    "Kind" : {
+      "comment" : "Field label: whether a contact is a doctor or an emergency contact",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "종류"
+          }
+        }
+      }
+    },
+    "Label" : {
+      "comment" : "Name a saved answer is shown under (column header, field label, placeholder)",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ラベル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레이블"
+          }
+        }
+      }
+    },
+    "Last synced %@." : {
+      "comment" : "iCloud sync status; the value is a relative time such as “2 minutes ago”",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@に同期しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에 마지막으로 동기화되었습니다."
+          }
+        }
+      }
+    },
+    "Leave blank to keep the saved key" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空欄のままにすると保存済みのキーを使用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 키를 유지하려면 비워 두세요"
+          }
+        }
+      }
+    },
+    "Local number" : {
+      "comment" : "Phone number without the country code",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号（国番号を除く）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "국내 전화번호"
+          }
+        }
+      }
+    },
+    "Logging disabled and saved logs deleted." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログを無効にし、保存されていたログを削除しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그 기록을 끄고 저장된 로그를 삭제했습니다."
+          }
+        }
+      }
+    },
+    "Logging disabled, but saved logs could not be deleted: %@" : {
+      "comment" : "The placeholder is an error message",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログを無効にしましたが、保存されていたログを削除できませんでした：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그 기록을 껐지만 저장된 로그를 삭제할 수 없습니다: %@"
+          }
+        }
+      }
+    },
+    "Made in Japan" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日本で開発"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일본에서 제작"
+          }
+        }
+      }
+    },
+    "Minimize" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "しまう"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최소화"
+          }
+        }
+      }
+    },
+    "Missing Details" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未入力の項目があります"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "누락된 정보"
+          }
+        }
+      }
+    },
+    "Mode" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모드"
+          }
+        }
+      }
+    },
+    "Model" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モデル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델"
+          }
+        }
+      }
+    },
+    "Model:" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モデル："
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델:"
+          }
+        }
+      }
+    },
+    "Mother" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "母"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어머니"
+          }
+        }
+      }
+    },
+    "Move to Applications" : {
+      "comment" : "Accessibility description of a warning icon",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「アプリケーション」フォルダに移動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "응용 프로그램 폴더로 이동"
+          }
+        }
+      }
+    },
+    "Move Umete to Applications, reopen it, then try again." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteを「アプリケーション」フォルダに移動し、もう一度開いてから、再度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete를 응용 프로그램 폴더로 옮기고 다시 연 다음 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "Name" : {
+      "comment" : "Field label: a contact's name",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름"
+          }
+        }
+      }
+    },
+    "Neighbor" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "近所の人"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이웃"
+          }
+        }
+      }
+    },
+    "Neurologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "脳神経内科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신경과 전문의"
+          }
+        }
+      }
+    },
+    "New Answer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい回答"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새로운 답변"
+          }
+        }
+      }
+    },
+    "No" : {
+      "comment" : "A saved yes/no answer\nValue of a saved yes-or-no answer",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いいえ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아니요"
+          }
+        }
+      }
+    },
+    "No AI debug request has reached the native extension yet." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIデバッグのリクエストはまだネイティブ機能拡張に届いていません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 네이티브 확장 프로그램에 도달한 AI 디버그 요청이 없습니다."
+          }
+        }
+      }
+    },
+    "No analytics" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解析データの収集なし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "분석 데이터 수집 없음"
+          }
+        }
+      }
+    },
+    "No key is saved." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーは保存されていません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 키가 없습니다."
+          }
+        }
+      }
+    },
+    "Not needed" : {
+      "comment" : "Placeholder for a model or API key field the free provider doesn't use",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不要"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필요 없음"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인"
+          }
+        }
+      }
+    },
+    "Oncologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "腫瘍内科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "종양내과 전문의"
+          }
+        }
+      }
+    },
+    "One item per line. Press Return to add a line." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行に1項目ずつ入力します。Returnキーを押すと行を追加できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한 줄에 하나씩 입력하세요. 줄을 추가하려면 Return 키를 누르세요."
+          }
+        }
+      }
+    },
+    "Open Safari" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safariを開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari 열기"
+          }
+        }
+      }
+    },
+    "Open Safari Extension Settings…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari機能拡張の設定を開く…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari 확장 프로그램 설정 열기…"
+          }
+        }
+      }
+    },
+    "Open Safari Settings…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safariの設定を開く…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari 설정 열기…"
+          }
+        }
+      }
+    },
+    "Open source under the MIT License" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MITライセンスのもとでオープンソースとして公開"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIT 라이선스에 따른 오픈 소스"
+          }
+        }
+      }
+    },
+    "Open the Umete app and add an API key, or switch AI matching to Umete (free)." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteアプリを開いてAPIキーを追加するか、AIマッチングを「Umete（無料）」に切り替えてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete 앱을 열어 API 키를 추가하거나 AI 매칭을 'Umete(무료)'로 전환하세요."
+          }
+        }
+      }
+    },
+    "OpenAI Decisions (your key)" : {
+      "comment" : "AI provider choice; OpenAI Decisions is a product name",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI Decisions（自分のキー）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI Decisions(사용자 키)"
+          }
+        }
+      }
+    },
+    "OpenAI returned an unreadable decision." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAIから読み取れない判定が返されました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI가 읽을 수 없는 결정을 반환했습니다."
+          }
+        }
+      }
+    },
+    "OpenAI returned an unreadable response." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAIから読み取れない応答が返されました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI가 읽을 수 없는 응답을 반환했습니다."
+          }
+        }
+      }
+    },
+    "OpenAI returned no decisions." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAIから判定が返されませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI가 결정을 반환하지 않았습니다."
+          }
+        }
+      }
+    },
+    "OpenAI returned no mapping." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAIから対応付けが返されませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI가 매핑을 반환하지 않았습니다."
+          }
+        }
+      }
+    },
+    "Opening Safari extension settings…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari機能拡張の設定を開いています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari 확장 프로그램 설정을 여는 중…"
+          }
+        }
+      }
+    },
+    "Ophthalmologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "眼科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "안과 전문의"
+          }
+        }
+      }
+    },
+    "Orthopedist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "整形外科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정형외과 전문의"
+          }
+        }
+      }
+    },
+    "Parent" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "親"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "부모"
+          }
+        }
+      }
+    },
+    "Partner" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パートナー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파트너"
+          }
+        }
+      }
+    },
+    "Paste" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペースト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "붙여넣기"
+          }
+        }
+      }
+    },
+    "Paste your API key" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "APIキーをペースト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 키 붙여넣기"
+          }
+        }
+      }
+    },
+    "Phone" : {
+      "comment" : "Answer type\nAnswer type: phone number\nField label: a contact's phone number",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전화번호"
+          }
+        }
+      }
+    },
+    "Phone number" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전화번호"
+          }
+        }
+      }
+    },
+    "Phone…" : {
+      "comment" : "Item in the Add menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전화번호…"
+          }
+        }
+      }
+    },
+    "Postal code" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "郵便番号"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "우편번호"
+          }
+        }
+      }
+    },
+    "Practice or clinic" : {
+      "comment" : "Where a doctor works",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "病院・診療所"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "병원 또는 의원"
+          }
+        }
+      }
+    },
+    "Prefecture" : {
+      "comment" : "Japanese address field",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "都道府県"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도도부현"
+          }
+        }
+      }
+    },
+    "Primary care" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "かかりつけ医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주치의"
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보 보호"
+          }
+        }
+      }
+    },
+    "Privacy Policy" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシーポリシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보 처리방침"
+          }
+        }
+      }
+    },
+    "Privacy…" : {
+      "comment" : "About window button that opens the privacy window",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシー…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보 보호…"
+          }
+        }
+      }
+    },
+    "Private iCloud sync" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライベートなiCloud同期"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비공개 iCloud 동기화"
+          }
+        }
+      }
+    },
+    "Provider" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제공자"
+          }
+        }
+      }
+    },
+    "Provider model name" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダのモデル名"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제공자 모델 이름"
+          }
+        }
+      }
+    },
+    "Provider:" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダ："
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제공자:"
+          }
+        }
+      }
+    },
+    "Province" : {
+      "comment" : "Canadian address field",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "州"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주"
+          }
+        }
+      }
+    },
+    "Psychiatrist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "精神科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정신건강의학과 전문의"
+          }
+        }
+      }
+    },
+    "Pulmonologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼吸器内科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "호흡기내과 전문의"
+          }
+        }
+      }
+    },
+    "Read the full privacy policy" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシーポリシーの全文を読む"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전체 개인정보 처리방침 읽기"
+          }
+        }
+      }
+    },
+    "Ready" : {
+      "comment" : "Accessibility description of a checkmark: setup is finished",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "準備完了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "준비됨"
+          }
+        }
+      }
+    },
+    "Redo" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "やり直す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 복귀"
+          }
+        }
+      }
+    },
+    "Relationship" : {
+      "comment" : "How an emergency contact is related to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続柄"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "관계"
+          }
+        }
+      }
+    },
+    "Report a Bug…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バグを報告…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "버그 신고…"
+          }
+        }
+      }
+    },
+    "Return here after Umete is enabled." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteを有効にしたら、ここに戻ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete를 켠 후 여기로 돌아오세요."
+          }
+        }
+      }
+    },
+    "Rheumatologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リウマチ科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "류마티스내과 전문의"
+          }
+        }
+      }
+    },
+    "Safari Extension" : {
+      "comment" : "Section heading",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari機能拡張"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari 확장 프로그램"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장"
+          }
+        }
+      }
+    },
+    "Save Address" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "住所を保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주소 저장"
+          }
+        }
+      }
+    },
+    "Save and Continue" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存して続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 후 계속"
+          }
+        }
+      }
+    },
+    "Save Contact" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連絡先を保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연락처 저장"
+          }
+        }
+      }
+    },
+    "Save Doctor" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "医師を保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "의사 저장"
+          }
+        }
+      }
+    },
+    "Saved" : {
+      "comment" : "Alert title after AI settings are saved",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장됨"
+          }
+        }
+      }
+    },
+    "Saved answer %lld" : {
+      "comment" : "Fallback label for a saved answer with no label; the number is its position in the list\nFallback name for an unlabeled saved answer; the placeholder is its row number",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答%lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변 %lld"
+          }
+        }
+      }
+    },
+    "Saved answers are encrypted with AES-GCM in Umete’s app storage. The key is kept in Apple Keychain, and in your iCloud Keychain when sync is on." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答は、AES-GCMで暗号化されてUmeteのアプリストレージに保管されます。鍵はキーチェーンに保管され、同期がオンのときはiCloudキーチェーンにも保管されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변은 Umete의 앱 저장 공간에 AES-GCM으로 암호화되어 저장됩니다. 키는 Apple 키체인에 보관되며, 동기화가 켜져 있으면 iCloud 키체인에도 보관됩니다."
+          }
+        }
+      }
+    },
+    "Saved answers are encrypted with AES-GCM in Umete’s shared app container. The key is kept in Apple Keychain, and in your iCloud Keychain when sync is on." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答は、AES-GCMで暗号化されてUmeteの共有アプリコンテナに保管されます。鍵はキーチェーンに保管され、同期がオンのときはiCloudキーチェーンにも保管されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변은 Umete의 공유 앱 컨테이너에 AES-GCM으로 암호화되어 저장됩니다. 키는 Apple 키체인에 보관되며, 동기화가 켜져 있으면 iCloud 키체인에도 보관됩니다."
+          }
+        }
+      }
+    },
+    "Saved answers could not be encrypted." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答を暗号化できませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변을 암호화할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Saved answers could not be read." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答を読み取れませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변을 읽을 수 없습니다."
+          }
+        }
+      }
+    },
+    "Saved automatically in Apple Keychain." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーチェーンに自動的に保存されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 키체인에 자동으로 저장됩니다."
+          }
+        }
+      }
+    },
+    "Saved Data" : {
+      "comment" : "Settings tab name",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みデータ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 데이터"
+          }
+        }
+      }
+    },
+    "Select All" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてを選択"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전체 선택"
+          }
+        }
+      }
+    },
+    "Sensitive field details are hidden. Saved answer values and API keys are never logged." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "機密情報の可能性がある項目の詳細は非表示になります。保存済みの回答の値とAPIキーが記録されることはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "민감한 항목의 세부 정보는 가려집니다. 저장된 답변 값과 API 키는 기록되지 않습니다."
+          }
+        }
+      }
+    },
+    "Sensitive fields are skipped" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "機密性の高い項目は保存されません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "민감한 항목은 건너뜁니다"
+          }
+        }
+      }
+    },
+    "Settings…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정…"
+          }
+        }
+      }
+    },
+    "Sibling" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "きょうだい"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "형제자매"
+          }
+        }
+      }
+    },
+    "Sign in to iCloud on this device to sync saved answers." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答を同期するには、このデバイスでiCloudにサインインしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변을 동기화하려면 이 기기에서 iCloud에 로그인하세요."
+          }
+        }
+      }
+    },
+    "Sign in to iCloud to sync." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同期するには、iCloudにサインインしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동기화하려면 iCloud에 로그인하세요."
+          }
+        }
+      }
+    },
+    "Sister" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "姉妹"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자매"
+          }
+        }
+      }
+    },
+    "Son" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "息子"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아들"
+          }
+        }
+      }
+    },
+    "Specialty" : {
+      "comment" : "Doctor's medical specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "診療科"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전문 분야"
+          }
+        }
+      }
+    },
+    "Spouse" : {
+      "comment" : "Suggested relationship of an emergency contact to the user",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配偶者"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배우자"
+          }
+        }
+      }
+    },
+    "State" : {
+      "comment" : "US address field",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "州"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주"
+          }
+        }
+      }
+    },
+    "State / province / region" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "都道府県・州・地域"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주/도/지역"
+          }
+        }
+      }
+    },
+    "Street address" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "町名・番地"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도로명 주소"
+          }
+        }
+      }
+    },
+    "Street, city, state, postal code" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "郵便番号、都道府県、市区町村、番地"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도로명, 도시, 주/도, 우편번호"
+          }
+        }
+      }
+    },
+    "Surgeon" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "외과 전문의"
+          }
+        }
+      }
+    },
+    "Sync is off. Saved answers stay on this device." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同期はオフです。保存済みの回答はこのデバイスにのみ保存されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동기화가 꺼져 있습니다. 저장된 답변은 이 기기에만 보관됩니다."
+          }
+        }
+      }
+    },
+    "Sync Now" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ同期"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 동기화"
+          }
+        }
+      }
+    },
+    "Sync problem: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同期の問題：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동기화 문제: %@"
+          }
+        }
+      }
+    },
+    "Sync saved answers across your devices with iCloud" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloudで保存済みの回答をデバイス間で同期"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud로 여러 기기에서 저장된 답변 동기화"
+          }
+        }
+      }
+    },
+    "Sync with iCloud" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloudと同期"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud와 동기화"
+          }
+        }
+      }
+    },
+    "Syncing…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同期中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동기화 중…"
+          }
+        }
+      }
+    },
+    "Text Answer…" : {
+      "comment" : "Item in the Add menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキストの回答…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "텍스트 답변…"
+          }
+        }
+      }
+    },
+    "That saved address no longer exists." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その保存済みの住所はもう存在しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 해당 주소가 더 이상 존재하지 않습니다."
+          }
+        }
+      }
+    },
+    "That saved answer no longer exists." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その保存済みの回答はもう存在しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 해당 답변이 더 이상 존재하지 않습니다."
+          }
+        }
+      }
+    },
+    "That saved contact no longer exists." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その保存済みの連絡先はもう存在しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 해당 연락처가 더 이상 존재하지 않습니다."
+          }
+        }
+      }
+    },
+    "The AI provider rejected the request." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIプロバイダがリクエストを拒否しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 제공자가 요청을 거부했습니다."
+          }
+        }
+      }
+    },
+    "The form mapping request was invalid or too large." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォームの対応付けリクエストが無効か、大きすぎます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "양식 매핑 요청이 유효하지 않거나 너무 큽니다."
+          }
+        }
+      }
+    },
+    "The provider returned an invalid field mapping." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダから無効な項目の対応付けが返されました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제공자가 유효하지 않은 항목 매핑을 반환했습니다."
+          }
+        }
+      }
+    },
+    "The saved address was invalid." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの住所が無効です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 주소가 유효하지 않습니다."
+          }
+        }
+      }
+    },
+    "The saved address was too long." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの住所が長すぎます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 주소가 너무 깁니다."
+          }
+        }
+      }
+    },
+    "The saved answer data was invalid or too large." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答データが無効か、大きすぎます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변 데이터가 유효하지 않거나 너무 큽니다."
+          }
+        }
+      }
+    },
+    "The saved API key was deleted." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みのAPIキーを削除しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 API 키를 삭제했습니다."
+          }
+        }
+      }
+    },
+    "The saved contact was invalid." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの連絡先が無効です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 연락처가 유효하지 않습니다."
+          }
+        }
+      }
+    },
+    "The saved contact was too long." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの連絡先が長すぎます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 연락처가 너무 깁니다."
+          }
+        }
+      }
+    },
+    "This log may contain field labels and other potentially sensitive form details, but never saved answer values or API keys." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このログには、項目のラベルなど、機密情報の可能性があるフォームの詳細が含まれることがありますが、保存済みの回答の値やAPIキーが含まれることはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 로그에는 항목 레이블 및 기타 민감할 수 있는 양식 세부 정보가 포함될 수 있지만, 저장된 답변 값이나 API 키는 포함되지 않습니다."
+          }
+        }
+      }
+    },
+    "Turn on Umete in Settings → Apps → Safari → Extensions, then open it from Safari’s page menu on a form." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「設定」→「アプリ」→「Safari」→「機能拡張」でUmeteをオンにしてから、フォームのあるページでSafariのページメニューからUmeteを開いてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정 > 앱 > Safari > 확장 프로그램에서 Umete를 켠 다음, 양식이 있는 페이지에서 Safari의 페이지 메뉴를 통해 Umete를 여세요."
+          }
+        }
+      }
+    },
+    "Type" : {
+      "comment" : "Column header: kind of saved answer, like Address or Date",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "유형"
+          }
+        }
+      }
+    },
+    "Umete" : {},
+    "Umete (free, no API key)" : {
+      "comment" : "AI provider choice",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete（無料、APIキー不要）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete(무료, API 키 불필요)"
+          }
+        }
+      }
+    },
+    "Umete (free)" : {
+      "comment" : "AI provider: Umete's free matching service",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete（無料）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete(무료)"
+          }
+        }
+      }
+    },
+    "Umete (free) works without a key, with a daily limit. Bring your own key for unlimited use; it’s stored in Apple Keychain." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「Umete（無料）」はキーなしで使えますが、1日あたりの上限があります。無制限に使うには、自分のキーを追加してください。キーはキーチェーンに保管されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete(무료)는 키 없이 사용할 수 있으며 일일 한도가 있습니다. 무제한으로 사용하려면 자신의 키를 사용하세요. 키는 Apple 키체인에 저장됩니다."
+          }
+        }
+      }
+    },
+    "Umete (free) works without a key, with a daily limit. Keys you add are stored in Apple Keychain. Saved answer values are never sent for AI matching." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「Umete（無料）」はキーなしで使えますが、1日あたりの上限があります。追加したキーはキーチェーンに保管されます。保存済みの回答の値がAIマッチングのために送信されることはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete(무료)는 키 없이 사용할 수 있으며 일일 한도가 있습니다. 추가한 키는 Apple 키체인에 저장됩니다. 저장된 답변 값은 AI 매칭을 위해 전송되지 않습니다."
+          }
+        }
+      }
+    },
+    "Umete attempted to write the AI debug log at %@, but no entries could be read." : {
+      "comment" : "The placeholder is a date and time",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteは%@にAIデバッグログへの書き込みを試みましたが、記録を読み取れませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 %@에 AI 디버그 로그를 기록하려고 했지만 기록된 내용을 읽을 수 없습니다."
+          }
+        }
+      }
+    },
+    "Umete attempted to write the AI debug log, but it failed:\n\n%@" : {
+      "comment" : "The placeholder is an error message",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UmeteはAIデバッグログへの書き込みを試みましたが、失敗しました：\n\n%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 AI 디버그 로그를 기록하려고 했지만 실패했습니다:\n\n%@"
+          }
+        }
+      }
+    },
+    "Umete could not access its shared data container." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteの共有データコンテナにアクセスできませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 공유 데이터 컨테이너에 접근할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Umete could not delete all saved answers." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答をすべて削除することはできませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 저장된 답변을 모두 삭제할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Umete could not delete that answer." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その回答を削除できませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 해당 답변을 삭제할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Umete could not open the companion app." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コンパニオンアプリを開けませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 동반 앱을 열 수 없습니다."
+          }
+        }
+      }
+    },
+    "Umete does not save passwords, payment fields, hidden values, or fields identified as security secrets." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteは、パスワード、支払い情報の項目、非表示の値、セキュリティ上の秘密情報と判断された項目を保存しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete는 암호, 결제 항목, 숨겨진 값 또는 보안 비밀로 식별된 항목을 저장하지 않습니다."
+          }
+        }
+      }
+    },
+    "Umete found protected data from an older build that macOS no longer recognizes. Remove the old Umete keychain items and reopen Umete." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOSが認識できなくなった古いビルドの保護データが見つかりました。古いUmeteのキーチェーン項目を削除してから、Umeteをもう一度開いてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 macOS에서 더 이상 인식하지 않는 이전 빌드의 보호 데이터를 발견했습니다. 이전 Umete 키체인 항목을 제거한 후 Umete를 다시 여세요."
+          }
+        }
+      }
+    },
+    "Umete has no account and collects no analytics." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteにはアカウントがなく、解析データも収集しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete는 계정이 없으며 분석 데이터를 수집하지 않습니다."
+          }
+        }
+      }
+    },
+    "Umete is disabled. Enable it in Safari Settings → Extensions." : {
+      "comment" : "Safari Settings → Extensions is a menu path in Safari; use Safari's own localized names",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteは無効になっています。「Safari」→「設定」→「機能拡張」で有効にしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 꺼져 있습니다. Safari 설정 > 확장 프로그램에서 켜세요."
+          }
+        }
+      }
+    },
+    "Umete is enabled and ready in Safari." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UmeteはSafariで有効になっていて、使用できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete가 Safari에서 켜져 있으며 사용할 준비가 되었습니다."
+          }
+        }
+      }
+    },
+    "Umete is ready" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteの準備ができました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete 준비 완료"
+          }
+        }
+      }
+    },
+    "Umete keeps your answers encrypted, has no account, and collects no analytics." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteは回答を暗号化して保管し、アカウントは不要で、解析データも収集しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete는 답변을 암호화하여 보관하고, 계정이 없으며, 분석 데이터를 수집하지 않습니다."
+          }
+        }
+      }
+    },
+    "Umete matches fields on your device first. AI matching is used only for fields it can’t match itself." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteはまずデバイス上で項目を照合します。AIマッチングは、Umeteが自分で照合できない項目にのみ使用されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete는 먼저 기기에서 항목을 매칭합니다. AI 매칭은 Umete가 직접 매칭할 수 없는 항목에만 사용됩니다."
+          }
+        }
+      }
+    },
+    "Umete Privacy" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteのプライバシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete 개인정보 보호"
+          }
+        }
+      }
+    },
+    "Umete remembers answers you choose and fills similar web forms automatically." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteは、選んだ回答を記憶し、似たWebフォームに自動で入力します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete는 사용자가 선택한 답변을 기억하고 비슷한 웹 양식을 자동으로 채웁니다."
+          }
+        }
+      }
+    },
+    "Umete remembers answers you choose and fills similar web forms in Safari. It matches on your device first and uses AI only when needed." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteは、選んだ回答を記憶し、Safariで似たWebフォームに入力します。まずデバイス上で照合し、必要なときだけAIを使用します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete는 사용자가 선택한 답변을 기억하고 Safari에서 비슷한 웹 양식을 채웁니다. 먼저 기기에서 매칭하고 필요할 때만 AI를 사용합니다."
+          }
+        }
+      }
+    },
+    "Umete Settings" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteの設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete 설정"
+          }
+        }
+      }
+    },
+    "Umete Settings could not be opened." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteの設定を開けませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete 설정을 열 수 없습니다."
+          }
+        }
+      }
+    },
+    "Umete: Autofill forms" : {
+      "comment" : "Spotlight result title",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete：フォームを自動入力"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete: 양식 자동 완성"
+          }
+        }
+      }
+    },
+    "Undo" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 취소"
+          }
+        }
+      }
+    },
+    "Unsupported native message." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サポートされていないネイティブメッセージです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지원되지 않는 네이티브 메시지입니다."
+          }
+        }
+      }
+    },
+    "Urologist" : {
+      "comment" : "Suggested doctor specialty",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "泌尿器科医"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비뇨의학과 전문의"
+          }
+        }
+      }
+    },
+    "Use Remember my answers on a completed form in Safari, or tap + to add an answer here." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safariで入力済みのフォームに対して「回答を保存」を使うか、「+」をタップしてここに回答を追加してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari에서 작성을 마친 양식에 '답변 저장'을 사용하거나, +를 탭하여 여기에서 답변을 추가하세요."
+          }
+        }
+      }
+    },
+    "Use Remember my answers on a completed form. Later, choose Fill this form to reuse them." : {
+      "comment" : "Remember my answers and Fill this form are command names in the Umete Safari extension; use the same translations",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入力済みのフォームで「回答を保存」を使います。あとで「このフォームに入力」を選ぶと、回答を再利用できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작성을 마친 양식에 '답변 저장'을 사용하세요. 나중에 '이 양식 채우기'를 선택하면 답변을 다시 사용할 수 있습니다."
+          }
+        }
+      }
+    },
+    "Used only when on-device matching cannot identify a field confidently." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイス上の照合で項目を確実に特定できない場合にのみ使用されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기기 내 매칭으로 항목을 확실하게 식별할 수 없을 때만 사용됩니다."
+          }
+        }
+      }
+    },
+    "Value" : {
+      "comment" : "Column header: the saved answer itself",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "값"
+          }
+        }
+      }
+    },
+    "Version %@" : {
+      "comment" : "About window: the app's version number",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バージョン %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "버전 %@"
+          }
+        }
+      }
+    },
+    "View Log…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログを表示…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그 보기…"
+          }
+        }
+      }
+    },
+    "Waiting for the first sync." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初の同期を待っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 번째 동기화를 기다리는 중입니다."
+          }
+        }
+      }
+    },
+    "Welcome to Umete" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umeteへようこそ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umete에 오신 것을 환영합니다"
+          }
+        }
+      }
+    },
+    "What a form calls it, like Medications or Passport number." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォームでの呼び方を入力します（例：服用中の薬、パスポート番号）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "양식에서 사용하는 이름을 입력하세요(예: 복용 약 또는 여권 번호)."
+          }
+        }
+      }
+    },
+    "When local matching isn’t sure, Umete can ask an AI which saved answer fits a field. Your saved answers are never sent. Only info about the form you’re on is, like its field labels." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイス上の照合で確信が持てない場合、Umeteはどの保存済みの回答が項目に合うかをAIに問い合わせることができます。保存済みの回答が送信されることはありません。送信されるのは、項目のラベルなど、開いているフォームに関する情報だけです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기기 내 매칭으로 확실하지 않을 때 Umete는 어떤 저장된 답변이 항목에 맞는지 AI에 물어볼 수 있습니다. 저장된 답변은 전송되지 않으며, 항목 레이블처럼 현재 양식에 대한 정보만 전송됩니다."
+          }
+        }
+      }
+    },
+    "Window" : {
+      "comment" : "Window menu",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "윈도우"
+          }
+        }
+      }
+    },
+    "With iCloud sync on, each answer is encrypted on this Mac before it goes to your private iCloud database, so Apple can’t read it. You can turn sync off in Settings → General." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud同期がオンのときは、各回答がこのMac上で暗号化されてから、あなた専用のiCloudデータベースに送信されるため、Appleが読み取ることはできません。同期は「設定」→「一般」でオフにできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 동기화가 켜져 있으면 각 답변은 비공개 iCloud 데이터베이스로 전송되기 전에 이 Mac에서 암호화되므로 Apple이 읽을 수 없습니다. 설정 > 일반에서 동기화를 끌 수 있습니다."
+          }
+        }
+      }
+    },
+    "With Sync with iCloud on, each answer is encrypted on this device before it goes to your private iCloud database, so Apple can’t read it. You can turn sync off on the General tab." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「iCloudと同期」がオンのときは、各回答がこのデバイス上で暗号化されてから、あなた専用のiCloudデータベースに送信されるため、Appleが読み取ることはできません。同期は「一般」タブでオフにできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "'iCloud와 동기화'가 켜져 있으면 각 답변은 비공개 iCloud 데이터베이스로 전송되기 전에 이 기기에서 암호화되므로 Apple이 읽을 수 없습니다. '일반' 탭에서 동기화를 끌 수 있습니다."
+          }
+        }
+      }
+    },
+    "With the country code, like +81 90-1234-5678." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国番号を付けて入力します（例：+81 90-1234-5678）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "국가 번호를 포함하여 입력하세요(예: +82 10-1234-5678)."
+          }
+        }
+      }
+    },
+    "Year, month, and day, like 1990-04-12." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "年、月、日の順に入力します（例：1990-04-12）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연도, 월, 일 순으로 입력하세요(예: 1990-04-12)."
+          }
+        }
+      }
+    },
+    "Yes" : {
+      "comment" : "A saved yes/no answer\nValue of a saved yes-or-no answer",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はい"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예"
+          }
+        }
+      }
+    },
+    "Yes or No" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はい/いいえ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예 또는 아니요"
+          }
+        }
+      }
+    },
+    "You appear to be offline." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフラインのようです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오프라인 상태인 것 같습니다."
+          }
+        }
+      }
+    },
+    "You can edit or delete your saved answers at any time." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの回答はいつでも編集・削除できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 답변은 언제든지 편집하거나 삭제할 수 있습니다."
+          }
+        }
+      }
+    },
+    "You stay in control" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "データはあなたが管理"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자가 직접 관리합니다"
+          }
+        }
+      }
+    },
+    "Your AI provider, model, and API key will be kept. This cannot be undone." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIプロバイダ、モデル、APIキーは保持されます。この操作は取り消せません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 제공자, 모델 및 API 키는 유지됩니다. 이 작업은 실행 취소할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Your AI settings and API key are kept. This can’t be undone." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIの設定とAPIキーは保持されます。この操作は取り消せません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 설정과 API 키는 유지됩니다. 이 작업은 실행 취소할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Your AI settings are stored securely in Apple Keychain." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIの設定はキーチェーンに安全に保管されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 설정은 Apple 키체인에 안전하게 저장됩니다."
+          }
+        }
+      }
+    },
+    "Your iCloud storage is full." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloudストレージがいっぱいです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 저장 공간이 가득 찼습니다."
+          }
+        }
+      }
+    },
+    "Your key is stored in Apple Keychain on this device. It isn’t synced." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーはこのデバイスのキーチェーンに保管されます。同期はされません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "키는 이 기기의 Apple 키체인에 저장되며 동기화되지 않습니다."
+          }
+        }
+      }
+    },
+    "Your key is stored in Apple Keychain on this device. It isn’t synced. Fast mode costs twice OpenAI’s standard rate." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーはこのデバイスのキーチェーンに保管されます。同期はされません。高速モードの料金はOpenAIの標準料金の2倍です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "키는 이 기기의 Apple 키체인에 저장되며 동기화되지 않습니다. 빠른 모드는 OpenAI 표준 요금의 2배가 부과됩니다."
+          }
+        }
+      }
+    },
+    "Your logs are never sent automatically. Open Debug Logs… in the Safari extension to review or email them." : {
+      "comment" : "Open Debug Logs… is a command name in the Umete Safari extension; use the same translation",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログが自動的に送信されることはありません。ログを確認したりメールで送信したりするには、Safari機能拡張で「デバッグログ…」を開いてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그는 자동으로 전송되지 않습니다. 로그를 검토하거나 이메일로 보내려면 Safari 확장 프로그램에서 '디버그 로그…'를 여세요."
+          }
+        }
+      }
+    },
+    "ZIP code" : {
+      "comment" : "US postal code field",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZIPコード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZIP 코드"
+          }
+        }
+      }
+    },
+    "Zoom" : {
+      "comment" : "Window menu command that zooms (maximizes) the window",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拡大/縮小"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확대/축소"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
