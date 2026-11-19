@@ -24,6 +24,14 @@ test("calling codes are read from select values or labels", () => {
   assert.equal(callingCodeFromOption("81|JP", "Japan +81"), "81");
   assert.equal(callingCodeFromOption("1|US", "United States +1"), "1");
   assert.equal(callingCodeFromOption("1 684|AS", "American Samoa +1 684"), "1684");
+  // Delta: "Japan (81)", with an ISO code or the calling code as the value.
+  assert.equal(callingCodeFromOption("JP", "Japan (81)"), "81");
+  assert.equal(callingCodeFromOption("KR", "Korea, Republic of (82)"), "82");
+  assert.equal(callingCodeFromOption("", "United States (1)"), "1");
+  assert.equal(callingCodeFromOption("Japan (81)", "Japan (81)"), "81");
+  assert.equal(callingCodeFromOption("United States (1)", "United States (1), selected"), "1");
+  assert.equal(callingCodeFromOption("Holy See (Vatican City) (39)", "Holy See (Vatican City) (39)"), "39");
+  assert.equal(callingCodeFromOption("Cocos (Keeling) Islands (61)", "Cocos (Keeling) Islands (61)"), "61");
   assert.equal(callingCodeFromOption("JP", "Japan +81"), "81");
 });
 

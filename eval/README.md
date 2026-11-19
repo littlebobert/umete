@@ -16,6 +16,10 @@ npm run eval      # writes reports/<time>-<variant>.md and .json
 
 `--ai dry` reports which fields local matching missed that Fill would ask the AI about, and how many requests that takes, without sending anything. `--ai openai` sends them to the OpenAI Decisions API with `OPENAI_API_KEY`, as **OpenAI Decisions (your key)** does: same questions, `gpt-6-luna` (or `--model`), the same 0.6 confidence cutoff, applied through `UME_APPLY_MAPPINGS`. [ai.js](ai.js) is a port of the app's Swift request code, so keep the two in step. A full run is about 530 requests across both variants.
 
+### Scenarios
+
+`node scenarios.js` fills pages that imitate one site's widgets closely, with their own scripts running, using answers typed in Settings (a phone with its country code, a date of birth, a gender), and checks each field. [scenarios/delta-passenger.html](scenarios/delta-passenger.html) is Delta's passenger form, whose dropdowns are `<button role="combobox">` lists. It exits non-zero on any wrong field.
+
 ## How it works
 
 1. A fictional person ([persona/persona.json](persona/persona.json)) remembers [persona/learn-full.html](persona/learn-full.html) through the real content scripts (`UME_COLLECT`), as **Remember my answers** does.

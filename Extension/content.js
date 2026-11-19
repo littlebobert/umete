@@ -51,8 +51,28 @@
   function labelFor(element) {
     if (element.labels?.length) return compactText([...element.labels].map(labelText).filter(Boolean).join(" "));
     return referencedText(element, "aria-labelledby")
-      || compactText(element.getAttribute("aria-label"))
+      || comboboxOwnLabel(element)
+      || ariaLabel(element)
       || labelText(element.closest("label"));
+  }
+
+  // A dropdown button can carry its title in a <label> inside it, as Delta's do
+  // ("Month" inside the button that shows "MM").
+  function comboboxOwnLabel(element) {
+    return isCustomCombobox(element) ? textOf(element.querySelector("label")) : "";
+  }
+
+  // Dropdown buttons often put what's chosen after the name ("Trip Type, Round
+  // Trip") or say it's required ("Month, required"); the field is just the name.
+  function ariaLabel(element) {
+    let label = compactText(element.getAttribute("aria-label"));
+    if (!isCustomCombobox(element)) return label;
+    label = label.replace(/,\s*required$/i, "");
+    const comma = label.lastIndexOf(", ");
+    if (comma <= 0) return label;
+    const shown = UmeMatcher.normalize(element.textContent);
+    const tail = UmeMatcher.normalize(label.slice(comma + 2));
+    return tail && shown.includes(tail) ? label.slice(0, comma) : label;
   }
 
   function descriptionFor(element) {
@@ -65,7 +85,7 @@
 
   function accessibleNameFor(element) {
     return referencedText(element, "aria-labelledby")
-      || compactText(element.getAttribute("aria-label"))
+      || ariaLabel(element)
       || labelFor(element)
       || compactText(element.placeholder);
   }
@@ -212,6 +232,11 @@
     return chosen;
   }
 
+  // A <button> dropdown reports type "submit"; it's still a field.
+  function controlType(element) {
+    return isCustomCombobox(element) ? "" : String(element.type || "").toLowerCase();
+  }
+
   function kindOf(element) {
     if (isDropdown(element)) return "select";
     if (element.tagName === "TEXTAREA") return "textarea";
@@ -222,7 +247,7 @@
   function isEligible(element) {
     if (!(element instanceof HTMLInputElement || element instanceof HTMLSelectElement || element instanceof HTMLTextAreaElement || isCustomCombobox(element))) return false;
     if (element.getAttribute("aria-disabled") === "true") return false;
-    const type = (element.type || "").toLowerCase();
+    const type = controlType(element);
     const hints = [element.name, element.id, element.autocomplete, element.placeholder, labelFor(element), groupFor(element)]
       .filter(Boolean)
       .join(" ")
@@ -252,7 +277,7 @@
       form: formFor(element),
       group: groupFor(element),
       id: element.id || "",
-      inputType: (element.type || "").toLowerCase(),
+      inputType: controlType(element),
       kind: kindOf(element),
       label: labelFor(element),
       name: element.name || "",

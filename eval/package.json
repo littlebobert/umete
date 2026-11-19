@@ -4,7 +4,8 @@
   "description": "Replays saved real-world forms against a test person's answers in WebKit and scores what Umete fills.",
   "scripts": {
     "fetch": "./fetch-chromium.sh",
-    "eval": "node run.js"
+    "eval": "node run.js",
+    "scenarios": "node scenarios.js"
   },
   "devDependencies": {
     "playwright": "^1.50.0"

@@ -28,10 +28,8 @@ const { webkit } = require("playwright");
 const { expectations, matches } = require("./expect.js");
 const { parseExpected, mapRows } = require("./corpus.js");
 const ai = require("./ai.js");
+const { injectUmete } = require("./inject.js");
 
-const ROOT = path.resolve(__dirname, "..");
-const EXTENSION = path.join(ROOT, "Extension");
-const CONTENT_SCRIPT_FILES = ["lib/matcher.js", "lib/dom.js", "lib/date.js", "lib/phone.js", "content.js"];
 const CORPUS = path.join(__dirname, "corpus", "chromium");
 // Umete's own forms with hand-written labels, for cases the corpus lacks.
 const FIXTURES = path.join(__dirname, "fixtures");
@@ -54,34 +52,6 @@ function parseArgs(argv) {
   if (!["off", "dry", "openai"].includes(args.ai)) throw new Error("--ai is off, dry, or openai");
   if (args.ai === "openai" && !process.env.OPENAI_API_KEY) throw new Error("--ai openai needs OPENAI_API_KEY in the environment.");
   return args;
-}
-
-// Stands in for Safari's extension API: content.js only registers a message
-// listener, which the runner then calls directly.
-const SHIM = `
-  globalThis.browser = {
-    runtime: {
-      onMessage: {
-        addListener(listener) { globalThis.__umeEvalListener = listener; },
-        removeListener() {}
-      }
-    }
-  };
-  globalThis.__umeEvalSend = (message) => new Promise((resolve) => {
-    const returned = globalThis.__umeEvalListener(message, {}, resolve);
-    if (returned !== true) setTimeout(() => resolve(undefined), 0);
-  });
-`;
-
-// Pages load with their own scripts off: saved snapshots can't reach their
-// sites, and with scripting on, fields inside <noscript> fallbacks vanish.
-// Umete's scripts still run, through Playwright's evaluate.
-const UMETE_SOURCES = [SHIM, ...CONTENT_SCRIPT_FILES.map((file) => fs.readFileSync(path.join(EXTENSION, file), "utf8"))];
-
-async function injectUmete(page) {
-  await page.evaluate((sources) => {
-    for (const source of sources) new Function(source)();
-  }, UMETE_SOURCES);
 }
 
 // Every form control in DOM order, open shadow roots included, with what a

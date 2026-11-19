@@ -36,7 +36,14 @@
   function callingCodeFromOption(value, label) {
     const codePart = String(value || "").split("|", 1)[0].trim();
     if (/^\+?\d(?:[\s-]?\d){0,4}$/.test(codePart)) return digitsOnly(codePart);
-    const match = String(label || "").match(/\+(\d(?:[\s-]?\d){0,4})(?:\D|$)/);
+    const text = String(label || "");
+    // A code in parentheses after the country, without a plus: "Japan (81)".
+    // Delta repeats the text as the value, which stays clean when the shown
+    // text gains a hidden ", selected".
+    const inParentheses = (candidate) => String(candidate || "").trim().match(/\p{L}.*\((\d{1,4})\)$/u);
+    const match = text.match(/\+(\d(?:[\s-]?\d){0,4})(?:\D|$)/)
+      || inParentheses(value)
+      || inParentheses(text);
     return match ? digitsOnly(match[1]) : "";
   }
 
