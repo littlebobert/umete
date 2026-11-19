@@ -1,3 +1,3 @@
-Add answers by hand: tap + under Saved Data, give the answer a label and a type like Date or Phone, and type its value on as many lines as you like, for things like a medication list. Tap any saved answer to edit it.
-Find Umete by searching for “autofill” in Spotlight.
-Using your own OpenAI key? AI Matching now offers two modes: GPT-6.1 Sol and the Decisions API.
+Umete fills more forms correctly. It no longer puts your email in a field asking for your address, or your street in Address line 2.
+Phone numbers split across several boxes, like area code and number, are now filled box by box. ZIP+4 and phone extension boxes are left empty.
+Answers remembered from dropdowns now match more easily on other forms.
