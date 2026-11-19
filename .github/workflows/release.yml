@@ -36,12 +36,14 @@ concurrency:
 jobs:
   release:
     name: Sign and release Umete
-    runs-on: macos-26
+    # App Store Connect wants apps built with the current iOS SDK; only GitHub's
+    # xcode-27 image (a preview, as Karui's and Kaketa's TestFlight builds use) has it.
+    runs-on: xcode-27
     timeout-minutes: 60
     environment: release
 
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       MATCH_GIT_PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
       APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
@@ -144,6 +146,13 @@ jobs:
             exit 1
           fi
           xcodebuild -version
+          # Xcode point releases can keep the previous SDK (26.6 shipped iOS 26.5), so check the SDK itself.
+          ios_sdk="$(xcrun --sdk iphoneos --show-sdk-version)"
+          echo "iOS SDK $ios_sdk"
+          if [[ "${ios_sdk%%.*}" -lt 27 ]]; then
+            echo "The iOS SDK is $ios_sdk; App Store Connect wants the iOS 27 SDK. Repoint DEVELOPER_DIR at Xcode 27 or newer." >&2
+            exit 1
+          fi
 
       - name: Build and upload iOS app to TestFlight
         if: inputs.platform != 'mac'
