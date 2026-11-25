@@ -47,9 +47,18 @@ test("similar labels match across differently named forms", () => {
 });
 
 test("different field kinds never match", () => {
-  const saved = entry({ label: "State", kind: "select" });
-  const field = entry({ label: "State", kind: "text" });
+  const saved = entry({ label: "Shirt size", kind: "select" });
+  const field = entry({ label: "Shirt size", kind: "text" });
   assert.equal(bestMatch([saved], field), null);
+});
+
+test("the same part of an address fills a menu or a text box alike", () => {
+  const state = entry({ label: "State", accessibleName: "State", name: "state", kind: "select", inputType: "select-one", value: "California" });
+  assert.equal(bestMatch([state], entry({ label: "State:", accessibleName: "State:", name: "province", kind: "text" })), state);
+  const typed = entry({ label: "State", accessibleName: "State", name: "state", kind: "text", value: "California" });
+  assert.equal(bestMatch([typed], entry({ label: "State/Province", accessibleName: "State/Province", name: "stateProvince", kind: "select", inputType: "select-one" })), typed);
+  // Not into a checkbox, and not into a different part.
+  assert.equal(bestMatch([state], entry({ label: "City", accessibleName: "City", name: "city", kind: "text" })), null);
 });
 
 test("incompatible input types never match for ordinary answers", () => {
@@ -362,6 +371,14 @@ test("first and last name boxes take those parts whatever the label says", () =>
   const last = entry({ accessibleName: "Last name", label: "Last name", name: "lastName", value: "Sato" });
   assert.equal(bestMatch([first, last], entry({ accessibleName: "Surname:", label: "Surname:", name: "surname" })), last);
   assert.equal(bestMatch([first, last], entry({ accessibleName: "Name:", label: "Name:", name: "name", namePart: "given" })), first);
+});
+
+test("Company Name gets the company, not a first or last name", () => {
+  const first = entry({ accessibleName: "First name", label: "First name", name: "first_name", value: "Hana" });
+  const last = entry({ accessibleName: "Last name", label: "Last name", name: "last_name", value: "Sato" });
+  const company = entry({ accessibleName: "Company", label: "Company", name: "company", value: "Plum Labs" });
+  assert.equal(bestMatch([first, last, company], entry({ accessibleName: "Company Name", label: "Company Name", name: "FormField[2][6]" })), company);
+  assert.equal(bestMatch([first, last], entry({ accessibleName: "User Name", label: "User Name", name: "user" })), null);
 });
 
 test("a shared etc. doesn't match an apartment answer to an unrelated field", () => {

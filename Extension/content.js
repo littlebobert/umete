@@ -63,6 +63,9 @@
   }
 
   const SHORT_LABEL_MAX_LENGTH = 40;
+  // Fields a person sees. Hidden inputs often sit right before a field (McPhee's,
+  // OfficeMax's) and don't make the text before them another field's label.
+  const VISIBLE_FIELD_SELECTOR = "input:not([type='hidden']), select, textarea, [role='combobox']";
 
   // Older pages put a field's name beside it rather than in a <label>: in the
   // cell or <div> before its own ("<div>Company</div><div><input></div>"), or as
@@ -79,7 +82,7 @@
     for (const node of element.parentElement?.childNodes || []) {
       if (node === element) break;
       if (node.nodeType === Node.TEXT_NODE) before += node.textContent;
-      else if (node.nodeType === Node.ELEMENT_NODE) before = node.matches(FORM_CONTROL_SELECTOR) || node.querySelector(FORM_CONTROL_SELECTOR) ? "" : `${before} ${node.textContent}`;
+      else if (node.nodeType === Node.ELEMENT_NODE) before = node.matches(VISIBLE_FIELD_SELECTOR) || node.querySelector(VISIBLE_FIELD_SELECTOR) ? "" : `${before} ${node.textContent}`;
     }
     if (short(before)) return short(before);
     const above = labelAbove(element);
@@ -87,19 +90,20 @@
     let node = element;
     for (let depth = 0; node?.parentElement && depth < 3; depth += 1) {
       let sibling = node.previousElementSibling;
-      while (sibling && !textOf(sibling) && !sibling.matches(FORM_CONTROL_SELECTOR) && !sibling.querySelector(FORM_CONTROL_SELECTOR)) sibling = sibling.previousElementSibling;
+      while (sibling && !textOf(sibling) && !sibling.matches(VISIBLE_FIELD_SELECTOR) && !sibling.querySelector(VISIBLE_FIELD_SELECTOR)) sibling = sibling.previousElementSibling;
       if (sibling) {
-        if (sibling.matches(`${FORM_CONTROL_SELECTOR}, ${HEADING_SELECTOR}, label`) || sibling.querySelector(FORM_CONTROL_SELECTOR)) return "";
+        if (sibling.matches(`${VISIBLE_FIELD_SELECTOR}, ${HEADING_SELECTOR}, label`) || sibling.querySelector(VISIBLE_FIELD_SELECTOR)) return "";
         // Text right after another field is that field's note ("Street address
         // or P.O. box" under line 1), not this field's name.
         let before = sibling.previousElementSibling;
-        while (before && !textOf(before) && !before.matches(FORM_CONTROL_SELECTOR) && !before.querySelector(FORM_CONTROL_SELECTOR)) before = before.previousElementSibling;
-        if (before && (before.matches(FORM_CONTROL_SELECTOR) || before.querySelector(FORM_CONTROL_SELECTOR))) return "";
+        while (before && !textOf(before) && !before.matches(VISIBLE_FIELD_SELECTOR) && !before.querySelector(VISIBLE_FIELD_SELECTOR)) before = before.previousElementSibling;
+        // A <dt> names the <dd> after it, though another field comes just before it.
+        if (sibling.tagName !== "DT" && before && (before.matches(VISIBLE_FIELD_SELECTOR) || before.querySelector(VISIBLE_FIELD_SELECTOR))) return "";
         return short(textOf(sibling));
       }
       // Climb only while the container holds just this field.
       const parent = node.parentElement;
-      if (parent.querySelectorAll(FORM_CONTROL_SELECTOR).length > 1) return "";
+      if (parent.querySelectorAll(VISIBLE_FIELD_SELECTOR).length > 1) return "";
       node = parent;
     }
     return "";
@@ -110,12 +114,12 @@
   function labelAbove(element) {
     const cell = element.closest("td, th");
     const row = cell?.parentElement;
-    if (!cell || row?.tagName !== "TR" || cell.querySelectorAll(FORM_CONTROL_SELECTOR).length !== 1) return "";
+    if (!cell || row?.tagName !== "TR" || cell.querySelectorAll(VISIBLE_FIELD_SELECTOR).length !== 1) return "";
     // Only when nothing to the left names it.
     const left = cell.previousElementSibling;
-    if (left && textOf(left) && !left.querySelector(FORM_CONTROL_SELECTOR)) return "";
+    if (left && textOf(left) && !left.querySelector(VISIBLE_FIELD_SELECTOR)) return "";
     const previousRow = row.previousElementSibling;
-    if (!previousRow || previousRow.tagName !== "TR" || previousRow.querySelector(FORM_CONTROL_SELECTOR)) return "";
+    if (!previousRow || previousRow.tagName !== "TR" || previousRow.querySelector(VISIBLE_FIELD_SELECTOR)) return "";
     const cellAbove = previousRow.cells[cell.cellIndex];
     return cellAbove && previousRow.cells.length === row.cells.length ? textOf(cellAbove) : "";
   }
@@ -162,6 +166,12 @@
   function placeholderFor(element) {
     if (element.placeholder) return compactText(element.placeholder);
     if (!(element instanceof HTMLInputElement) || !["", "text", "email", "tel"].includes(element.type)) return "";
+    if (element.getAttribute("aria-labelledby") || element.labels?.length) return "";
+    // A title or aria-label must agree with it: Google Calendar's box titled
+    // "Event title" can hold the word "State" as a real value, while REI's
+    // value "Email Address" sits under "Enter email address to sign up…".
+    const otherName = element.title || element.getAttribute("aria-label") || "";
+    if (otherName && !` ${UmeMatcher.normalize(otherName)} `.includes(` ${UmeMatcher.normalize(element.getAttribute("value") || "")} `)) return "";
     const initial = element.getAttribute("value") || "";
     if (!initial || element.value !== initial || initial.length > SHORT_LABEL_MAX_LENGTH || !/\p{L}{2}/u.test(initial) || /@|\d{3}/.test(initial)) return "";
     return compactText(initial);

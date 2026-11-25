@@ -19,6 +19,16 @@
       <div><input type="text" id="shipLast" value="Last Name"></div>
       <div><input type="text" id="shipEmail" value="Email Address"></div>
     </fieldset>
+
+    <!-- A label before hidden inputs (as McPhee's are), and a State text box for a
+         state remembered from a menu. -->
+    <dl>
+      <dt><span>*</span> <span>Email Address:</span></dt>
+      <dd><input type="hidden" value="1"><input type="hidden" value="EmailAddress"><input type="text" name="FormField[1][1]"></dd>
+      <dt><span>*</span> <span>Company Name:</span></dt>
+      <dd><input type="hidden" value="6"><input type="text" name="FormField[2][6]"></dd>
+    </dl>
+    <p>State: <input type="text" name="province"></p>
   </form>
 </body>
 </html>

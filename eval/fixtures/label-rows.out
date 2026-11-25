@@ -6,3 +6,6 @@ ADDRESS_HOME_ZIP_SUFFIX | a$postal_code2 | 4-digit Ext. |  | f1
 NAME_FIRST | shipFirst | First Name |  | f1
 NAME_LAST | shipLast | Last Name |  | f1
 EMAIL_ADDRESS | shipEmail | Email Address |  | f1
+EMAIL_ADDRESS | FormField[1][1] | Email Address: |  | f1
+COMPANY_NAME | FormField[2][6] | Company Name: |  | f1
+ADDRESS_HOME_STATE | province | State: |  | f1

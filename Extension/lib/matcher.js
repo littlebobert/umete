@@ -458,6 +458,10 @@
     // A remembered ZIP code only fills a field that asks for one: sharing the word
     // "code" doesn't make a coupon, captcha, or verification code a ZIP code.
     if (savedPart === "postalCode" && !fieldPart) return false;
+    // A person's name never goes into a field for a company, business, username,
+    // or login: "Company Name" shares "name" with "First name" but isn't one.
+    if (["given", "family", "middle", "full"].includes(nameFieldPart(saved))
+        && /(?:^| )(?:company|business|organi[sz]ation|user ?name|login|display name|file name)(?: |$)/.test(normalize([nameText(field), field.label, field.placeholder].filter(Boolean).join(" ")))) return false;
     // An email address never goes into a field asking for a street address.
     if (fieldCategory !== "email" && semanticCategory(saved) === "email"
         && /(?:^| )address(?: |$)/.test(normalize([nameText(field), field.label, field.placeholder].filter(Boolean).join(" ")))) return false;
@@ -473,6 +477,7 @@
       const callingCode = /(?:^| )(?:country (?:phone )?code|phone country|calling code|dial code|international code|country dialing)(?: |$)/.test(fieldText);
       const datePart = /(?:^| )(?:month|mm|day|dd|year|yyyy|yy)(?: |$)/.test(fieldText);
       const crossKind = (savedType === "gender")
+        || sameAddressPartInTextOrMenu(saved, field)
         || (savedType === "address" && fieldCategory === "address")
         || (savedType === "date" && (fieldCategory === "date" || datePart))
         || (savedType === "phone" && callingCode);
@@ -487,6 +492,15 @@
     return !(savedCategory && fieldCategory && savedCategory !== fieldCategory);
   }
 
+  // The same part of an address fills a menu or a text box alike: a state
+  // remembered from a menu ("California") goes into a State text box too.
+  function sameAddressPartInTextOrMenu(saved, field) {
+    const savedPart = addressFieldPart(saved);
+    const fieldPart = semanticCategory(field) === "address" ? addressFieldPart(field) : "";
+    return Boolean(savedPart && fieldPart && sameAddressPart(savedPart, fieldPart))
+      && [saved.kind, field.kind].every((kind) => kind === "text" || kind === "select");
+  }
+
   function sameAddressPart(left, right) {
     if (left === right) return true;
     const street = new Set(["addressLine1", "streetAddress"]);
@@ -499,7 +513,7 @@
     if (saved.inputType && field.inputType && saved.inputType !== field.inputType) {
       const compatibleTextTypes = new Set(["", "email", "search", "tel", "text", "url"]);
       const compatibleTextInput = compatibleTextTypes.has(saved.inputType) && compatibleTextTypes.has(field.inputType);
-      if (!savedType && !compatibleTextInput) return -Infinity;
+      if (!savedType && !compatibleTextInput && !sameAddressPartInTextOrMenu(saved, field)) return -Infinity;
     }
 
     let total = 0;
