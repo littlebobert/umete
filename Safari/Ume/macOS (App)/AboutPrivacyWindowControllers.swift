@@ -14,7 +14,7 @@ final class AboutWindowController: NSWindowController {
         windowTitle.font = .systemFont(ofSize: 13, weight: .semibold)
         windowTitle.alignment = .center
         // The size of the art in the 78-point app icon this replaced, so the layout holds.
-        let icon = NSHostingView(rootView: AnimatedAppIcon(name: "umete-icon-sketch", size: 64).padding(7))
+        let icon = NSHostingView(rootView: AnimatedAppIcon(name: "umete-icon-sketch", firstFrameName: "umete-icon-sketch-first", size: 64).padding(7))
         icon.translatesAutoresizingMaskIntoConstraints = false
         let name = NSTextField(labelWithString: "Umete")
         name.font = .systemFont(ofSize: 26, weight: .bold)

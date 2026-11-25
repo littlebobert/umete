@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """The header animation on the umete.jp pages (the sibling littlebobert.github.io
-repository), in the app icon's glass, as Karui's is: the glass plum catches the light,
-drains to an empty glass shell, and fills back up with its colour, the way a form is
-filled in (埋めて). Built on the app icon itself, so the full plum is exactly the icon,
-and the cycle starts and ends on it; the page's <video loop> repeats it. Writes
-umete-icon-sketch.mp4 and, for no motion or a blocked video, the full plum as
-umete-icon-sketch.jpg, both 224 px. The pages load them with ?v= cache versions: bump
-those after a change. Umete for Mac's About window plays the same pair. Nothing is
-committed or pushed. Replaces sketch.mjs, the pencil flipbook it used to be.
+repository), in the app icon's glass, as Karui's is: an empty glass shell fills up with
+the plum's colour, the way a form is filled in (埋めて), catches the light, and drains
+back to empty; the page's <video loop> repeats it. Built on the app icon itself, so the
+full plum is exactly the icon. Writes umete-icon-sketch.mp4; the full plum as
+umete-icon-sketch.jpg, for no motion or a blocked video; and the empty glass, the video's
+first frame, as umete-icon-sketch-first.jpg, to show while it starts, all 224 px. The
+pages load them with ?v= cache versions: bump those after a change. Umete for Mac's
+About window plays the same files. Nothing is committed or pushed. Replaces sketch.mjs,
+the pencil flipbook it used to be.
 
     /usr/bin/python3 AppStoreScreenshots/scripts/landing-animation.py [--mac] [--frames] [ICON_1024.png] [OUT_DIR]
 
@@ -174,30 +175,17 @@ def glint(progress):
     return band.crop((SIZE // 2, SIZE // 2, SIZE // 2 + SIZE, SIZE // 2 + SIZE))
 
 
-# The cycle, in seconds, as the pencil sketch's was one: the full plum catches the light,
-# drains to an empty glass shell, and fills back up. It starts and ends on the full
-# plum, the still, so it loops without a seam.
-SHINE, HOLD, DRAIN, EMPTY, FILL, REST = 0.9, 0.8, 1.6, 0.5, 2.5, 0.7
-marks = [SHINE, HOLD, DRAIN, EMPTY, FILL, REST]
+# The cycle, in seconds: it starts on the empty glass shell, which fills up with the
+# plum's colour, catches the light, and drains back to empty, so it loops without a seam.
+EMPTY, FILL, REST, SHINE, HOLD, DRAIN = 0.6, 2.5, 0.3, 0.9, 1.2, 1.6
+marks = [EMPTY, FILL, REST, SHINE, HOLD, DRAIN]
 starts = [sum(marks[:i]) for i in range(len(marks))]
 total = sum(marks)
 frames = round(total * FPS)
 
 
 def frame_at(t):
-    shine, hold, drain, empty_at, fill, rest = starts
-    if t < hold:
-        frame = base.copy()
-        light_band = ImageChops.multiply(glint(ease(t / SHINE)), shape).point(lambda v: v * 165 // 255)
-        frame.paste(Image.new("RGB", base.size, (255, 253, 246)), (0, 0), light_band)
-        return frame
-    if t < drain:
-        return base.copy()
-    if t < empty_at:
-        k = (t - drain) / DRAIN
-        # Runs out quickly at first, and slows as the glass empties; the leaf clears first.
-        return filled((1 - k) ** 2, tilt=0.035 * math.sin(k * 9) * (1 - k), ripple=3 * (1 - k), phase=t * 6,
-                      leaf_k=1 - ease(k / 0.3), surface_k=ease(k / 0.12))
+    empty_at, fill, rest, shine, hold, drain = starts
     if t < fill:
         return empty.copy()
     if t < rest:
@@ -206,7 +194,19 @@ def frame_at(t):
         # takes its colour last.
         return filled(ease(k), tilt=0.085 * math.sin(t * 5.2) * (1 - 0.75 * k), ripple=7 * (1 - k) + 2, phase=t * 7,
                       leaf_k=ease((k - 0.78) / 0.22), surface_k=1 - ease((k - 0.86) / 0.14))
-    return base.copy()
+    if t < shine:
+        return base.copy()
+    if t < hold:
+        frame = base.copy()
+        light_band = ImageChops.multiply(glint(ease((t - shine) / SHINE)), shape).point(lambda v: v * 165 // 255)
+        frame.paste(Image.new("RGB", base.size, (255, 253, 246)), (0, 0), light_band)
+        return frame
+    if t < drain:
+        return base.copy()
+    k = (t - drain) / DRAIN
+    # Runs out quickly at first, and slows as the glass empties; the leaf clears first.
+    return filled((1 - k) ** 2, tilt=0.035 * math.sin(k * 9) * (1 - k), ripple=3 * (1 - k), phase=t * 6,
+                  leaf_k=1 - ease(k / 0.3), surface_k=ease(k / 0.12))
 
 
 out_dir.mkdir(parents=True, exist_ok=True)
@@ -215,7 +215,7 @@ try:
     for i in range(frames):
         frame_at(i / FPS).resize((OUT, OUT), Image.LANCZOS).save(work / f"f{i:04d}.png")
     if PREVIEW:
-        for name, t in [("draining", starts[2] + DRAIN * 0.4), ("empty", starts[3]), ("filling", starts[4] + FILL * 0.4), ("nearly", starts[4] + FILL * 0.75), ("shine", SHINE * 0.5)]:
+        for name, t in [("empty", 0), ("filling", starts[1] + FILL * 0.4), ("nearly", starts[1] + FILL * 0.75), ("shine", starts[3] + SHINE * 0.5), ("draining", starts[5] + DRAIN * 0.4)]:
             frame_at(t).resize((512, 512), Image.LANCZOS).save(out_dir / f"umete-anim-{name}.png")
     subprocess.run([
         "ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-i", str(work / "f%04d.png"),
@@ -223,6 +223,9 @@ try:
         "-movflags", "+faststart", "-an", str(out_dir / "umete-icon-sketch.mp4"),
     ], check=True)
     base.resize((OUT, OUT), Image.LANCZOS).save(out_dir / "umete-icon-sketch.jpg", quality=90)
+    # The video's first frame, the empty glass, to show under it while it starts, so the
+    # full plum doesn't flash first.
+    empty.resize((OUT, OUT), Image.LANCZOS).save(out_dir / "umete-icon-sketch-first.jpg", quality=90)
 finally:
     shutil.rmtree(work)
 print(f"{frames} frames, {total:.1f} s, into {out_dir}")

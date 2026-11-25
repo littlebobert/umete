@@ -35,6 +35,7 @@
 		A10000630000000000000001 /* AnimatedAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000600000000000000001 /* AnimatedAppIcon.swift */; };
 		A10000640000000000000001 /* umete-icon-sketch.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A10000610000000000000001 /* umete-icon-sketch.jpg */; };
 		A10000650000000000000001 /* umete-icon-sketch.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A10000620000000000000001 /* umete-icon-sketch.mp4 */; };
+		A10000670000000000000001 /* umete-icon-sketch-first.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A10000660000000000000001 /* umete-icon-sketch-first.jpg */; };
 		A20000010000000000000001 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A20000030000000000000001 /* Sparkle */; };
 		D0A1D2E3301B98AE0082FD16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A1D2E2301B98AE0082FD16 /* AppDelegate.swift */; };
 		D0A1D2E5301B98AE0082FD16 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A1D2E4301B98AE0082FD16 /* SceneDelegate.swift */; };
@@ -118,6 +119,7 @@
 		A10000600000000000000001 /* AnimatedAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedAppIcon.swift; sourceTree = "<group>"; };
 		A10000610000000000000001 /* umete-icon-sketch.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "umete-icon-sketch.jpg"; sourceTree = "<group>"; };
 		A10000620000000000000001 /* umete-icon-sketch.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "umete-icon-sketch.mp4"; sourceTree = "<group>"; };
+		A10000660000000000000001 /* umete-icon-sketch-first.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "umete-icon-sketch-first.jpg"; sourceTree = "<group>"; };
 		D0A1D2D4301B98AD0082FD16 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		D0A1D2D7301B98AD0082FD16 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D0A1D2D8301B98AE0082FD16 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 				A10000600000000000000001 /* AnimatedAppIcon.swift */,
 				A10000610000000000000001 /* umete-icon-sketch.jpg */,
 				A10000620000000000000001 /* umete-icon-sketch.mp4 */,
+				A10000660000000000000001 /* umete-icon-sketch-first.jpg */,
 				D0A1D2F5301B98AE0082FD16 /* Main.storyboard */,
 				D0A1D2F8301B98AE0082FD16 /* Info.plist */,
 			);
@@ -431,6 +434,7 @@
 				D0A1D2F7301B98AE0082FD16 /* Main.storyboard in Resources */,
 				A10000640000000000000001 /* umete-icon-sketch.jpg in Resources */,
 				A10000650000000000000001 /* umete-icon-sketch.mp4 in Resources */,
+				A10000670000000000000001 /* umete-icon-sketch-first.jpg in Resources */,
 				D0A1D318301B98AE0082FD16 /* Assets.xcassets in Resources */,
 			);
 		};
