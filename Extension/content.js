@@ -82,6 +82,8 @@
       else if (node.nodeType === Node.ELEMENT_NODE) before = node.matches(FORM_CONTROL_SELECTOR) || node.querySelector(FORM_CONTROL_SELECTOR) ? "" : `${before} ${node.textContent}`;
     }
     if (short(before)) return short(before);
+    const above = labelAbove(element);
+    if (above) return short(above);
     let node = element;
     for (let depth = 0; node?.parentElement && depth < 3; depth += 1) {
       let sibling = node.previousElementSibling;
@@ -101,6 +103,21 @@
       node = parent;
     }
     return "";
+  }
+
+  // A table of fields can put the labels in a row of their own, each above its
+  // field's cell: "Zip Code | 4-digit Ext." over the two boxes (Dell's).
+  function labelAbove(element) {
+    const cell = element.closest("td, th");
+    const row = cell?.parentElement;
+    if (!cell || row?.tagName !== "TR" || cell.querySelectorAll(FORM_CONTROL_SELECTOR).length !== 1) return "";
+    // Only when nothing to the left names it.
+    const left = cell.previousElementSibling;
+    if (left && textOf(left) && !left.querySelector(FORM_CONTROL_SELECTOR)) return "";
+    const previousRow = row.previousElementSibling;
+    if (!previousRow || previousRow.tagName !== "TR" || previousRow.querySelector(FORM_CONTROL_SELECTOR)) return "";
+    const cellAbove = previousRow.cells[cell.cellIndex];
+    return cellAbove && previousRow.cells.length === row.cells.length ? textOf(cellAbove) : "";
   }
 
   function labelFor(element) {
@@ -139,11 +156,22 @@
       : description;
   }
 
+  // Older pages show a field's name as its starting value instead of a
+  // placeholder (<input value="First Name">); while the field still holds it,
+  // it says what the field is.
+  function placeholderFor(element) {
+    if (element.placeholder) return compactText(element.placeholder);
+    if (!(element instanceof HTMLInputElement) || !["", "text", "email", "tel"].includes(element.type)) return "";
+    const initial = element.getAttribute("value") || "";
+    if (!initial || element.value !== initial || initial.length > SHORT_LABEL_MAX_LENGTH || !/\p{L}{2}/u.test(initial) || /@|\d{3}/.test(initial)) return "";
+    return compactText(initial);
+  }
+
   function accessibleNameFor(element) {
     return referencedText(element, "aria-labelledby")
       || ariaLabel(element)
       || labelFor(element)
-      || compactText(element.placeholder);
+      || placeholderFor(element);
   }
 
   function namedContainer(element, selector) {
@@ -346,7 +374,7 @@
       kind: kindOf(element),
       label: labelFor(element),
       name: element.name || "",
-      placeholder: isDropdown(element) ? "" : compactText(element.placeholder),
+      placeholder: isDropdown(element) ? "" : placeholderFor(element),
       required: Boolean(element.required || element.getAttribute("aria-required") === "true"),
       section: headingFor(element),
       tableHeaders: tableHeadersFor(element)
@@ -835,6 +863,9 @@
   }
 
   const failedApplications = new WeakSet();
+  // Fields Fill just filled. They never go to the AI: a field named only by its
+  // starting value ("First Name") no longer reads that way once it's filled.
+  const filledByUmete = new WeakSet();
   // Fields left empty on purpose (not failures), so they aren't sent to the AI.
   const intentionallySkipped = new WeakSet();
   // Phone numbers Umete filled on this page, mapped to the field that got each.
@@ -930,6 +961,7 @@
       }
       if (applied) {
         filled += 1;
+        filledByUmete.add(element);
         failedApplications.delete(element);
         intentionallySkipped.delete(element);
       } else if (intentionallySkipped.has(element)) {
@@ -958,7 +990,9 @@
     return eligibleElements().flatMap((element, index) => {
       const descriptor = describe(element);
       if (hasAddress && UmeMatcher.addressFieldPart(descriptor)) return [];
-      if (intentionallySkipped.has(element) || filledAsPhonePart.has(element)) return [];
+      // A ZIP+4 box stays empty: there's no saved answer for it to get.
+      if (UmeMatcher.addressFieldPart(descriptor) === "postalCodeSuffix") return [];
+      if (intentionallySkipped.has(element) || filledAsPhonePart.has(element) || filledByUmete.has(element)) return [];
       if (!failedApplications.has(element) && matchForElement(savedEntries, element)) return [];
       const options = isDropdown(element)
         ? dropdownOptions(element).map((option) => compactText(option.text)).filter(Boolean).slice(0, 50)

@@ -121,7 +121,7 @@
     // "City / State / Zip" over a row of boxes names the city box first.
     if (/^(?:city|town)(?: |$)/.test(ownNames) && /(?:^| )(?:state|province|zip|postal code)(?: |$)/.test(ownNames)) return "locality";
     // The four-digit ZIP+4 box, which Umete has no value for.
-    if (/(?:^| )(?:zip|zip code|zipcode|postal code)(?: |$)|zipcode/.test(`${ownNames} ${machineNames.join(" ")}`)
+    if (/(?:^| )(?:zip|zip code|zipcode|postal code)\d?(?: |$)|zipcode/.test(`${ownNames} ${machineNames.join(" ")}`)
         && /(?:^| )(?:ext|extn|extension|suffix|plus 4|4)(?: |$)|zip4|zipcode ext/.test(`${ownNames} ${machineNames.join(" ")}`)) return "postalCodeSuffix";
     if (/(?:^| )(?:postal code|postcode|post code|zip|zip code)(?: |$)/.test(text)) return "postalCode";
     if (hasExactName("city", "town", "locality") || hasExactTail("city", "town") || /(?:^| )(?:address city|shipping city|billing city)(?: |$)/.test(text)) return "locality";

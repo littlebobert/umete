@@ -327,6 +327,11 @@ test("a ZIP+4 box labeled Extn is the ZIP suffix, not the ZIP code", () => {
   assert.equal(addressFieldPart(entry({ accessibleName: "ZIP Code", name: "ctl00$Body$zipCode" })), "postalCode");
 });
 
+test("a 4-digit Ext. box named postal_code2 is the ZIP suffix", () => {
+  assert.equal(addressFieldPart(entry({ accessibleName: "4-digit Ext.", name: "address$ctl00$address$_EditView$postal_code2" })), "postalCodeSuffix");
+  assert.equal(addressFieldPart(entry({ accessibleName: "Zip Code", name: "address$ctl00$address$_EditView$postal_code" })), "postalCode");
+});
+
 test("a remembered ZIP code never fills coupon, captcha, or verification code fields", () => {
   const zip = entry({ accessibleName: "ZIP code", label: "ZIP code", name: "zip", value: "94102" });
   for (const label of ["Coupon Code:", "Verification code:", "Type the code shown", "Promo code"]) {

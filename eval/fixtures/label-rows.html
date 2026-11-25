@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Labels above, and starting values as labels</title></head>
+<body>
+  <!-- Umete's own fixture: two more older layouts from the corpora. -->
+  <form>
+    <!-- Labels in a row of their own above the fields (as Dell's are). -->
+    <table>
+      <tr><td>First Name</td><td>MI</td><td>Last Name</td></tr>
+      <tr><td><input type="text" name="n$first"></td><td><input type="text" name="n$mi" maxlength="1"></td><td><input type="text" name="n$last"></td></tr>
+      <tr><td>Zip Code</td><td>4-digit Ext.</td><td></td></tr>
+      <tr><td><input type="text" name="a$postal_code" maxlength="5"> -</td><td><input type="text" name="a$postal_code2" maxlength="4"></td><td></td></tr>
+    </table>
+
+    <!-- No labels: the starting value says what each field is (as Urban
+         Outfitters' do). -->
+    <fieldset>
+      <div><input type="text" id="shipFirst" value="First Name"></div>
+      <div><input type="text" id="shipLast" value="Last Name"></div>
+      <div><input type="text" id="shipEmail" value="Email Address"></div>
+    </fieldset>
+  </form>
+</body>
+</html>

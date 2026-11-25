@@ -1,0 +1,8 @@
+NAME_FIRST | n$first | First Name |  | f1
+NAME_MIDDLE_INITIAL | n$mi | MI |  | f1
+NAME_LAST | n$last | Last Name |  | f1
+ADDRESS_HOME_ZIP | a$postal_code | Zip Code |  | f1
+ADDRESS_HOME_ZIP_SUFFIX | a$postal_code2 | 4-digit Ext. |  | f1
+NAME_FIRST | shipFirst | First Name |  | f1
+NAME_LAST | shipLast | Last Name |  | f1
+EMAIL_ADDRESS | shipEmail | Email Address |  | f1
