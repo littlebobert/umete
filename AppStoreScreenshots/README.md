@@ -44,6 +44,10 @@ npm run preview -- duo   # just the Duo preview
 
 For social posts, `npm run social` makes `output/social/umete-duo-en-US.mp4` (1080×1350): the same recordings and voice in the closed Duo's frame, with what's said as subtitles beneath it, and `umete-duo-en-US-ja.mp4`, the English voice with Japanese subtitles. The frame is Karui's `assets/bezels/iphone-duo-closed-720.png`, or `DUO_BEZEL=<png>`. The subtitles and their timings are `social.cues` and `social.translated` in `config.mjs`; if the voice-over is recorded again, transcribe it again rather than copying the script, since a take can differ from it.
 
+## Landing page carousel
+
+`npm run landing` renders umete.jp's three carousel screens in the closed iPhone Duo, its frame drawn as for the Duo's App Store screenshots, from `captures/duo-closed/`, as `output/landing/umete-landing-<id>.webp` (900×1275, transparent); copy them to the site's `assets/` and bump their `?v=`. The fill capture predates the glass icon, so the app icon is drawn over the old one in Umete's sheet. `npm run landing -- --iphone` renders the iPhone 18 Pro Max versions instead.
+
 ## Landing page icon
 
 `npm run landing-animation` renders umete.jp's header icon in the app icon's glass, in the way of Karui's: an empty glass shell fills up with the plum's colour, its surface swaying as it rises, catches the light, and drains back to empty. It's built on the app icon, so the full plum is exactly the icon. It writes `umete-icon-sketch.mp4` (224 px, 7 s, looping), the full plum as `umete-icon-sketch.jpg`, shown with no motion, and the empty first frame as `umete-icon-sketch-first.jpg`, shown while the video starts, into the site's `assets/`; bump the pages' `?v=` cache versions after. `npm run landing-animation -- --mac` writes the same files into `Safari/Ume/macOS (App)/` for the Mac app's About window. Needs ffmpeg and Pillow, which macOS's `/usr/bin/python3` has.
