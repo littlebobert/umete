@@ -6,15 +6,15 @@ filled in (埋めて). Built on the app icon itself, so the full plum is exactly
 and the cycle starts and ends on it; the page's <video loop> repeats it. Writes
 umete-icon-sketch.mp4 and, for no motion or a blocked video, the full plum as
 umete-icon-sketch.jpg, both 224 px. The pages load them with ?v= cache versions: bump
-those after a change. Nothing is committed or pushed. The pages used sketch.mjs's pencil
-flipbook before; the Mac app's About window still does.
+those after a change. Umete for Mac's About window plays the same pair. Nothing is
+committed or pushed. Replaces sketch.mjs, the pencil flipbook it used to be.
 
-    /usr/bin/python3 AppStoreScreenshots/scripts/landing-animation.py [ICON_1024.png] [OUT_DIR] [--frames]
+    /usr/bin/python3 AppStoreScreenshots/scripts/landing-animation.py [--mac] [--frames] [ICON_1024.png] [OUT_DIR]
 
---frames also writes a few 512 px stills of the cycle, to look at without the video.
-
-ICON defaults to the app icon in the asset catalog, OUT_DIR to the site's assets. Needs
-Pillow (macOS's /usr/bin/python3 has it) and ffmpeg.
+ICON defaults to the app icon in the asset catalog, OUT_DIR to the site's assets, or with
+--mac to the Mac app's sources, for its About window. --frames also writes a few 512 px
+stills of the cycle, to look at without the video. Needs Pillow (macOS's
+/usr/bin/python3 has it) and ffmpeg.
 """
 import math
 import shutil
@@ -28,7 +28,8 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageMath
 root = Path(__file__).resolve().parents[2]
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 icon_path = Path(args[0]) if args else root / "Safari/Ume/Shared (App)/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
-out_dir = Path(args[1]) if len(args) > 1 else root.parent / "littlebobert.github.io/assets"
+default_out = root / "Safari/Ume/macOS (App)" if "--mac" in sys.argv else root.parent / "littlebobert.github.io/assets"
+out_dir = Path(args[1]) if len(args) > 1 else default_out
 PREVIEW = "--frames" in sys.argv  # Also keep a few stills, to look at without the video.
 
 SIZE = 1024

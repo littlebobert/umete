@@ -46,7 +46,7 @@ For social posts, `npm run social` makes `output/social/umete-duo-en-US.mp4` (10
 
 ## Landing page icon
 
-`npm run sketch` draws umete.jp's header icon as a pencil sketch flipbook, in the way of Karui's: a bud opens into a plum blossom, its petals fall as the fruit swells and is coloured in, and after a while the fruit drops and the next bud comes. It writes `output/landing/umete-icon-sketch.mp4` (224 px, 6.4 s, looping) and the finished fruit as `umete-icon-sketch.jpg`, shown with no motion; copy both to the site's `assets/`.
+`npm run landing-animation` renders umete.jp's header icon in the app icon's glass, in the way of Karui's: the glass plum catches the light, drains to an empty glass shell, and fills back up with its colour, its surface swaying as it rises. It's built on the app icon, so the full plum is exactly the icon, and the cycle starts and ends on it. It writes `umete-icon-sketch.mp4` (224 px, 7 s, looping) and the full plum as `umete-icon-sketch.jpg`, shown with no motion, into the site's `assets/`; bump the pages' `?v=` cache versions after. `npm run landing-animation -- --mac` writes the same pair into `Safari/Ume/macOS (App)/` for the Mac app's About window. Needs ffmpeg and Pillow, which macOS's `/usr/bin/python3` has.
 
 ## App Preview
 
