@@ -120,7 +120,7 @@
     if (hasExactName("address", "street", "home address", "street line", "shipping address", "billing address") || hasExactTail("address", "street")) return entry?.kind === "textarea" ? "streetAddress" : "addressLine1";
     // The four-digit ZIP+4 box, which Umete has no value for.
     if (/(?:^| )(?:zip|zip code|zipcode|postal code)(?: |$)|zipcode/.test(`${ownNames} ${machineNames.join(" ")}`)
-        && /(?:^| )(?:ext|extension|suffix|plus 4|4)(?: |$)|zip4|zipcode ext/.test(`${ownNames} ${machineNames.join(" ")}`)) return "postalCodeSuffix";
+        && /(?:^| )(?:ext|extn|extension|suffix|plus 4|4)(?: |$)|zip4|zipcode ext/.test(`${ownNames} ${machineNames.join(" ")}`)) return "postalCodeSuffix";
     if (/(?:^| )(?:postal code|postcode|post code|zip|zip code)(?: |$)/.test(text)) return "postalCode";
     if (hasExactName("city", "town", "locality") || hasExactTail("city", "town") || /(?:^| )(?:address city|shipping city|billing city)(?: |$)/.test(text)) return "locality";
     if (hasExactName("state", "province", "prefecture", "region") || hasExactTail("state", "province") || /(?:^| )(?:address|shipping|billing) (?:state|province|prefecture|region)(?: |$)/.test(text)) return "administrativeArea";
@@ -442,6 +442,9 @@
     const savedPart = addressFieldPart(saved);
     const fieldPart = fieldCategory === "address" ? addressFieldPart(field) : "";
     if (savedPart && fieldPart && !sameAddressPart(savedPart, fieldPart)) return false;
+    // A remembered ZIP code only fills a field that asks for one: sharing the word
+    // "code" doesn't make a coupon, captcha, or verification code a ZIP code.
+    if (savedPart === "postalCode" && !fieldPart) return false;
     // An email address never goes into a field asking for a street address.
     if (fieldCategory !== "email" && semanticCategory(saved) === "email"
         && /(?:^| )address(?: |$)/.test(normalize([nameText(field), field.label, field.placeholder].filter(Boolean).join(" ")))) return false;

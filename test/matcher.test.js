@@ -322,6 +322,21 @@ test("unrelated address labels and phone country codes are not address component
   assert.equal(addressFieldPart(entry({ accessibleName: "Building access code" })), "");
 });
 
+test("a ZIP+4 box labeled Extn is the ZIP suffix, not the ZIP code", () => {
+  assert.equal(addressFieldPart(entry({ accessibleName: "ZIP Extn", name: "ctl00$Body$zipCodeExtn" })), "postalCodeSuffix");
+  assert.equal(addressFieldPart(entry({ accessibleName: "ZIP Code", name: "ctl00$Body$zipCode" })), "postalCode");
+});
+
+test("a remembered ZIP code never fills coupon, captcha, or verification code fields", () => {
+  const zip = entry({ accessibleName: "ZIP code", label: "ZIP code", name: "zip", value: "94102" });
+  for (const label of ["Coupon Code:", "Verification code:", "Type the code shown", "Promo code"]) {
+    const field = entry({ accessibleName: label, label, name: "code", inputType: "tel" });
+    assert.equal(compatible(zip, field), false, label);
+    assert.equal(bestMatch([zip], field), null, label);
+  }
+  assert.equal(bestMatch([zip], entry({ accessibleName: "Postal code", label: "Postal code", name: "postcode" })), zip);
+});
+
 test("secondary address fallbacks require a dedicated line-two label or name", () => {
   assert.equal(addressFieldPart(entry({ accessibleName: "Apartment, suite, building, etc." })), "addressLine2");
   assert.equal(addressFieldPart(entry({ name: "shippingAddressLine2" })), "addressLine2");
