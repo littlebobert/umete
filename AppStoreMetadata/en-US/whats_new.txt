@@ -1,6 +1,1 @@
-Umete is now in Japanese and Korean.
-Dropdowns built from buttons, like Delta's date of birth, gender, and phone country code, are now filled.
-Settings… in Umete's Safari menu now opens the app.
-Umete fills more forms correctly. It no longer puts your email in a field asking for your address, or your street in Address line 2.
-Phone numbers split across several boxes, like area code and number, are now filled box by box. ZIP+4 and phone extension boxes are left empty.
-Answers remembered from dropdowns now match more easily on other forms.
+A new app icon: Umete's plum, now made of glass. The icon in Safari's toolbar is new too.
