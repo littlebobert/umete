@@ -27,12 +27,6 @@ function dataURL(relative) {
   return `data:image/png;base64,${readFileSync(file).toString("base64")}`;
 }
 
-// The Duo's fill capture predates the glass icon: Umete's sheet in it still shows the
-// old one, a 138-pixel tile at (92, 1130) of the 1398-pixel-wide capture, so the app's
-// icon goes on top.
-const appIcon = resolve(here, "../Safari/Ume/Shared (App)/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png");
-const iconPatches = { fill: { x: 92, y: 1130, size: 138, radius: 31 } };
-
 const width = 900;
 
 function iphoneHTML(slide) {
@@ -59,10 +53,6 @@ function duoHTML(slide) {
   const height = Math.round(shellHeight * scale);
   const px = (value) => `${value * scale}px`;
   const corners = (extra) => `${px(screen.left + extra)} ${px(screen.right + extra)} ${px(screen.right + extra)} ${px(screen.left + extra)}`;
-  const patch = iconPatches[slide.id];
-  const icon = patch
-    ? `<img src="data:image/png;base64,${readFileSync(appIcon).toString("base64")}" style="position:absolute;left:${px(rimmed + patch.x)};top:${px(rimmed + patch.y)};width:${px(patch.size)};height:${px(patch.size)};border-radius:${px(patch.radius)}">`
-    : "";
   return {
     height,
     markup: `<!doctype html><html><head><style>
@@ -71,7 +61,7 @@ function duoHTML(slide) {
     .screen { position: absolute; left: ${px(rimmed)}; top: ${px(rimmed)}; width: ${px(screen.width)}; height: ${px(screen.height)}; border-radius: ${corners(0)}; }
     .camera { position: absolute; left: ${px(rimmed + camera.x - camera.diameter / 2)}; top: ${px(rimmed + camera.y - camera.diameter / 2)}; width: ${px(camera.diameter)}; height: ${px(camera.diameter)}; border-radius: 50%; background: #000; }
   </style></head><body>
-    <div class="device"><img class="screen" src="${dataURL(duo.captures[slide.id])}">${icon}<div class="camera"></div></div>
+    <div class="device"><img class="screen" src="${dataURL(duo.captures[slide.id])}"><div class="camera"></div></div>
   </body></html>`,
   };
 }
