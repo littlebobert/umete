@@ -1,0 +1,12 @@
+NAME_FIRST | name | Name: |  | f1
+NAME_LAST | surname | Surname: |  | f1
+COMPANY_NAME | address2 | Company |  | f1
+EMAIL_ADDRESS | f7 | Email: |  | f1
+ADDRESS_HOME_LINE1 | street1 | Street Address: |  | f1
+ADDRESS_HOME_LINE2 | suite | Apt/Suite: |  | f1
+ADDRESS_HOME_LINE3 | street2 | Street Address Line 2 (optional): |  | f1
+ADDRESS_HOME_CITY | town | City |  | f1
+ADDRESS_HOME_ZIP | postal | ZIP Code: |  | f1
+PHONE_HOME_CITY_CODE | phoneArea | Area Code |  | f1
+PHONE_HOME_NUMBER | phoneExchange | Exchange |  | f1
+PHONE_HOME_EXTENSION | phoneExtension | Extension |  | f1

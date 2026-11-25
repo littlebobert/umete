@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Older form layouts</title></head>
+<body>
+  <!-- Umete's own fixture: layouts from older checkout pages in the corpora. -->
+  <form>
+    <!-- "Name" before "Surname" asks for the first name. -->
+    <p><label>Name: <input type="text" name="name"></label></p>
+    <p><label>Surname: <input type="text" name="surname"></label></p>
+
+    <!-- Labels in the cell or <div> beside the field, not in a <label>. The
+         Company field reuses the name "address2" (as Crutchfield's does). -->
+    <div class="row"><div class="left">Company</div><div class="right"><input type="text" name="address2"></div></div>
+    <table><tr><td>Email:</td><td><input type="text" name="f7"></td></tr></table>
+
+    <!-- A street line, an apartment box, then a second line: the apartment
+         goes in its box once, and the second line stays empty. -->
+    <p><label>Street Address: <input type="text" name="street1"></label></p>
+    <p><label>Apt/Suite: <input type="text" name="suite"></label></p>
+    <p><label>Street Address Line 2 (optional): <input type="text" name="street2"></label></p>
+
+    <!-- A label wrapping its field, followed by a validation message (as
+         Nordstrom's are). -->
+    <p><label><b>City</b> <input type="text" name="town">
+      <span>Please enter a city.</span>
+      <span>This address is invalid. Please double-check the city, state, and ZIP code.</span></label></p>
+    <p><label>ZIP Code: <input type="text" name="postal"></label></p>
+
+    <!-- Area code and exchange boxes with no length limit (as Kohl's are). -->
+    <p><label>Area Code <input type="text" name="phoneArea"></label>
+       <label>Exchange <input type="text" name="phoneExchange"></label>
+       <label>Extension <input type="text" name="phoneExtension"></label></p>
+  </form>
+</body>
+</html>

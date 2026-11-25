@@ -6,7 +6,7 @@
   "use strict";
 
   const TOKEN_RE = /[^a-z0-9]+/g;
-  const STOP_WORDS = new Set(["a", "an", "and", "field", "input", "of", "or", "the", "your"]);
+  const STOP_WORDS = new Set(["a", "an", "and", "etc", "field", "input", "of", "or", "the", "your"]);
 
   function normalize(value) {
     return String(value || "")
@@ -102,12 +102,12 @@
     // A label outranks the machine name; the name speaks only for unlabeled fields.
     const ownText = names.length ? names.join(" ") : machineTails.join(" ");
     const ownNames = names.join(" ");
-    const hasLine2Name = names.some((name) => /^(?:address line 2|address 2|street 2|(?:apartment|apt|suite|unit|building)(?: (?:apartment|apt|suite|unit|building|or|number|no|optional|etc))*)$/.test(name))
+    const hasLine2Name = names.some((name) => /^(?:address line 2|address ?2|street ?2|(?:apartment|apt|suite|unit|building)(?: (?:apartment|apt|suite|unit|building|or|number|no|optional|etc))*)$/.test(name))
       || /(?:^| )(?:(?:street )?address (?:line )?(?:2|two)|street (?:address )?(?:line )?2|second address line)(?: |$)/.test(ownNames);
     // Machine names often prefix the part ("BillingAddress2", "addrLine2",
     // "address[street2]"), but only count when the label doesn't say otherwise:
     // sites reuse "address2" for a Company field or a second email.
-    const labelAllowsLine = !ownNames || /(?:^| )(?:address|addr|street|line|apt|apartment|suite|unit|building|floor)(?: |$)/.test(ownNames);
+    const labelAllowsLine = !ownNames || /(?:^| )(?:address|addr|street|line|apt|apartment|suite|unit|building|floor)\d?(?: |$)/.test(ownNames);
     const hasLine2MachineName = labelAllowsLine && machineTails.some((name) => /(?:^| |[a-z])(?:address ?(?:line ?)?2|addr ?line ?2|street ?(?:line ?)?2|line ?two)$/.test(name));
     const hasLaterLineName = /(?:^| )(?:address line [3-9]|address [3-9]|street (?:address )?(?:line )?[3-9]|third address line)(?: |$)/.test(ownNames)
       || (labelAllowsLine && machineTails.some((name) => /(?:^| |[a-z])(?:address ?(?:line ?)?[3-9]|addr ?line ?[3-9]|street ?(?:line ?)?[3-9]|line ?three)$/.test(name)));
@@ -115,15 +115,17 @@
     if (hasLaterLineName) return "addressLine3";
     if (hasLine2Name || hasLine2MachineName) return "addressLine2";
     // The field's own words only: a "Mailing address" heading covers city and ZIP too.
-    if (/(?:^| )(?:address line 1|address 1|street address|mailing address)(?: |$)/.test(ownText)) return "addressLine1";
+    if (/(?:^| )(?:address line 1|address ?1|street address|mailing address)(?: |$)/.test(ownText)) return "addressLine1";
     // A field labeled only "Address" is the street line, or the whole street in a text area.
     if (hasExactName("address", "street", "home address", "street line", "shipping address", "billing address") || hasExactTail("address", "street")) return entry?.kind === "textarea" ? "streetAddress" : "addressLine1";
+    // "City / State / Zip" over a row of boxes names the city box first.
+    if (/^(?:city|town)(?: |$)/.test(ownNames) && /(?:^| )(?:state|province|zip|postal code)(?: |$)/.test(ownNames)) return "locality";
     // The four-digit ZIP+4 box, which Umete has no value for.
     if (/(?:^| )(?:zip|zip code|zipcode|postal code)(?: |$)|zipcode/.test(`${ownNames} ${machineNames.join(" ")}`)
         && /(?:^| )(?:ext|extn|extension|suffix|plus 4|4)(?: |$)|zip4|zipcode ext/.test(`${ownNames} ${machineNames.join(" ")}`)) return "postalCodeSuffix";
     if (/(?:^| )(?:postal code|postcode|post code|zip|zip code)(?: |$)/.test(text)) return "postalCode";
     if (hasExactName("city", "town", "locality") || hasExactTail("city", "town") || /(?:^| )(?:address city|shipping city|billing city)(?: |$)/.test(text)) return "locality";
-    if (hasExactName("state", "province", "prefecture", "region") || hasExactTail("state", "province") || /(?:^| )(?:address|shipping|billing) (?:state|province|prefecture|region)(?: |$)/.test(text)) return "administrativeArea";
+    if (hasExactName("state", "province", "prefecture", "region", "state province", "province state", "state region") || hasExactTail("state", "province") || /(?:^| )(?:address|shipping|billing) (?:state|province|prefecture|region)(?: |$)/.test(text)) return "administrativeArea";
     if (hasExactName("country", "country region") || hasExactTail("country")
         || /(?:^| )(?:address|shipping|billing) country(?: |$)/.test(text)
         || /(?:^| )(?:country|region) of residence|residence (?:country|region)(?: |$)/.test(text)) {
@@ -133,6 +135,8 @@
   }
 
   function nameFieldPart(entry) {
+    // Set by the page reader when the label alone doesn't tell ("Name" before "Surname").
+    if (["given", "family", "middle", "full"].includes(entry?.namePart)) return entry.namePart;
     const autocomplete = String(entry?.autocomplete || "").toLowerCase().split(/\s+/);
     if (autocomplete.includes("username") || autocomplete.includes("nickname") || autocomplete.includes("organization")) return "";
     if (autocomplete.includes("given-name")) return "given";
@@ -141,12 +145,21 @@
     if (autocomplete.includes("cc-name") || autocomplete.includes("name")) return "full";
 
     const labels = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder].map(normalize).filter(Boolean);
-    const text = ` ${labels.join(" ")} `;
-    if (/(?:^| )(?:user ?name|login|company|business|organization|file|display|middle)(?: |$)/.test(text)) return "";
-    if (/(?:^| )(?:first name|given name|forename)(?: |$)/.test(text) || labels.some((label) => label === "first" || label === "given")) return "given";
-    if (/(?:^| )(?:last name|family name|surname|last name)(?: |$)/.test(text) || labels.some((label) => label === "last" || label === "family" || label === "surname")) return "family";
-    if (/(?:^| )(?:full name|complete name|legal name|passenger name|traveler name|cardholder name|name on card)(?: |$)/.test(text)) return "full";
-    if (labels.some((label) => label === "name" || label === "your name")) return "full";
+    // Each label is read on its own: joined, "Name (first and last)" twice
+    // would read "…first and last name first…".
+    const anyLabel = (re) => labels.some((label) => re.test(label));
+    if (anyLabel(/(?:^| )(?:user ?name|login|company|business|organization|file|display|middle)(?: |$)/)) return "";
+    if (anyLabel(/(?:^| )first (?:and|&) last(?: |$)/)) return "full";
+    if (anyLabel(/(?:^| )(?:first name|given name|forename)(?: |$)/) || labels.some((label) => label === "first" || label === "given")) return "given";
+    if (anyLabel(/(?:^| )(?:last name|family name|surname)(?: |$)/) || labels.some((label) => label === "last" || label === "family" || label === "surname")) return "family";
+    if (anyLabel(/(?:^| )(?:full name|complete name|legal name|passenger name|traveler name|cardholder name|name on card)(?: |$)/)) return "full";
+    if (labels.some((label) => label === "name" || label === "your name")) {
+      // Sites label a first-name box just "Name" and say so in its name ("dnrfirst").
+      const machine = [entry?.name, entry?.id].filter((value) => value && !looksGenerated(value)).join(" ").toLowerCase();
+      if (/first|given|fname|forename/.test(machine)) return "given";
+      if (/last|surname|family|lname/.test(machine)) return "family";
+      return "full";
+    }
     return "";
   }
 
@@ -549,6 +562,14 @@
     if (addressPart) {
       const addresses = (savedEntries || []).filter((entry) => answerType(entry) === "address" && addressValue(entry, addressPart));
       if (addresses.length) return addresses.length === 1 ? addresses[0] : null;
+    }
+
+    // A first, middle, or last name box takes that part of the person's name,
+    // whatever its label's wording ("Surname" for a saved "Last name").
+    const namePart = contactInfo ? "" : nameFieldPart(field);
+    if (namePart && namePart !== "full") {
+      const part = pickNamePart(savedEntries, field, namePart);
+      if (part) return part;
     }
 
     if (nameFieldPart(field) === "full" && !contactInfo) {

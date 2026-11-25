@@ -337,6 +337,33 @@ test("a remembered ZIP code never fills coupon, captcha, or verification code fi
   assert.equal(bestMatch([zip], entry({ accessibleName: "Postal code", label: "Postal code", name: "postcode" })), zip);
 });
 
+test("older pages' address labels: digits attached, combined rows, and state or province", () => {
+  assert.equal(addressFieldPart(entry({ accessibleName: "Address1:" })), "addressLine1");
+  assert.equal(addressFieldPart(entry({ accessibleName: "Address2:" })), "addressLine2");
+  assert.equal(addressFieldPart(entry({ accessibleName: "City / State / Zip *" })), "locality");
+  assert.equal(addressFieldPart(entry({ accessibleName: "State/Province:", kind: "select" })), "administrativeArea");
+});
+
+test("a bare Name label takes its part from the field's name, and first and last means full", () => {
+  assert.equal(nameFieldPart(entry({ accessibleName: "Name *", name: "dnrfirst" })), "given");
+  assert.equal(nameFieldPart(entry({ accessibleName: "Name:", name: "ShiptoLastName" })), "family");
+  assert.equal(nameFieldPart(entry({ accessibleName: "Name:", name: "name" })), "full");
+  assert.equal(nameFieldPart(entry({ accessibleName: "* Name (first and last):", label: "* Name (first and last):" })), "full");
+  assert.equal(nameFieldPart(entry({ accessibleName: "Name:", namePart: "given" })), "given");
+});
+
+test("first and last name boxes take those parts whatever the label says", () => {
+  const first = entry({ accessibleName: "First name", label: "First name", name: "firstName", value: "Hana" });
+  const last = entry({ accessibleName: "Last name", label: "Last name", name: "lastName", value: "Sato" });
+  assert.equal(bestMatch([first, last], entry({ accessibleName: "Surname:", label: "Surname:", name: "surname" })), last);
+  assert.equal(bestMatch([first, last], entry({ accessibleName: "Name:", label: "Name:", name: "name", namePart: "given" })), first);
+});
+
+test("a shared etc. doesn't match an apartment answer to an unrelated field", () => {
+  const apartment = entry({ accessibleName: "Apartment, suite, etc.", label: "Apartment, suite, etc.", name: "address2", value: "Apt 4B" });
+  assert.equal(bestMatch([apartment], entry({ accessibleName: "Guests | Rooms, etc.", label: "Guests | Rooms, etc.", id: ":1h.ta" })), null);
+});
+
 test("secondary address fallbacks require a dedicated line-two label or name", () => {
   assert.equal(addressFieldPart(entry({ accessibleName: "Apartment, suite, building, etc." })), "addressLine2");
   assert.equal(addressFieldPart(entry({ name: "shippingAddressLine2" })), "addressLine2");

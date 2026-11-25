@@ -42,18 +42,74 @@
   // A label wrapped around a dropdown or text area would otherwise take in
   // every option ("State Select a state Arizona California…") or typed text.
   function labelText(label) {
-    if (!label?.querySelector?.("select, textarea, datalist")) return textOf(label);
+    if (!label) return "";
+    if (!label.querySelector?.("select, textarea, datalist")) return textOf(label);
     const copy = label.cloneNode(true);
     copy.querySelectorAll("select, textarea, datalist").forEach((node) => node.remove());
     return compactText(copy.textContent || "");
   }
 
+  // A label wrapped around its field names it before the field; what follows is
+  // often a validation message ("City <input> Please double-check the city,
+  // state, and ZIP code."). A checkbox's text comes after it.
+  function wrappedLabelText(label, element) {
+    if (!label?.contains?.(element) || element.type === "checkbox" || element.type === "radio") return labelText(label);
+    const range = document.createRange();
+    range.setStart(label, 0);
+    range.setEndBefore(element);
+    const fragment = range.cloneContents();
+    fragment.querySelectorAll?.("select, textarea, datalist").forEach((node) => node.remove());
+    return compactText(fragment.textContent || "") || labelText(label);
+  }
+
+  const SHORT_LABEL_MAX_LENGTH = 40;
+
+  // Older pages put a field's name beside it rather than in a <label>: in the
+  // cell or <div> before its own ("<div>Company</div><div><input></div>"), or as
+  // text just before it ("Company: <input>").
+  function neighborLabel(element) {
+    if (element.type === "checkbox" || element.type === "radio") return "";
+    const short = (text) => {
+      const cleaned = compactText(text).replace(/[\s:*]+$/, "").replace(/^[\s*]+/, "");
+      // "* Indicates a required field" is a note about the form, not a name.
+      if (/required field|indicates (?:a )?required|^required$/i.test(cleaned)) return "";
+      return cleaned && cleaned.length <= SHORT_LABEL_MAX_LENGTH && cleaned.split(" ").length <= 6 ? cleaned : "";
+    };
+    let before = "";
+    for (const node of element.parentElement?.childNodes || []) {
+      if (node === element) break;
+      if (node.nodeType === Node.TEXT_NODE) before += node.textContent;
+      else if (node.nodeType === Node.ELEMENT_NODE) before = node.matches(FORM_CONTROL_SELECTOR) || node.querySelector(FORM_CONTROL_SELECTOR) ? "" : `${before} ${node.textContent}`;
+    }
+    if (short(before)) return short(before);
+    let node = element;
+    for (let depth = 0; node?.parentElement && depth < 3; depth += 1) {
+      let sibling = node.previousElementSibling;
+      while (sibling && !textOf(sibling) && !sibling.matches(FORM_CONTROL_SELECTOR) && !sibling.querySelector(FORM_CONTROL_SELECTOR)) sibling = sibling.previousElementSibling;
+      if (sibling) {
+        if (sibling.matches(`${FORM_CONTROL_SELECTOR}, ${HEADING_SELECTOR}, label`) || sibling.querySelector(FORM_CONTROL_SELECTOR)) return "";
+        // Text right after another field is that field's note ("Street address
+        // or P.O. box" under line 1), not this field's name.
+        let before = sibling.previousElementSibling;
+        while (before && !textOf(before) && !before.matches(FORM_CONTROL_SELECTOR) && !before.querySelector(FORM_CONTROL_SELECTOR)) before = before.previousElementSibling;
+        if (before && (before.matches(FORM_CONTROL_SELECTOR) || before.querySelector(FORM_CONTROL_SELECTOR))) return "";
+        return short(textOf(sibling));
+      }
+      // Climb only while the container holds just this field.
+      const parent = node.parentElement;
+      if (parent.querySelectorAll(FORM_CONTROL_SELECTOR).length > 1) return "";
+      node = parent;
+    }
+    return "";
+  }
+
   function labelFor(element) {
-    if (element.labels?.length) return compactText([...element.labels].map(labelText).filter(Boolean).join(" "));
+    if (element.labels?.length) return compactText([...element.labels].map((label) => wrappedLabelText(label, element)).filter(Boolean).join(" "));
     return referencedText(element, "aria-labelledby")
       || comboboxOwnLabel(element)
       || ariaLabel(element)
-      || labelText(element.closest("label"));
+      || wrappedLabelText(element.closest("label"), element)
+      || neighborLabel(element);
   }
 
   // A dropdown button can carry its title in a <label> inside it, as Delta's do
@@ -269,6 +325,15 @@
     return groupFor(element) || headingFor(element) || element.name || "";
   }
 
+  // A field labeled only "Name" right before a "Surname" field asks for the
+  // first name, not the full name.
+  function givenNameBesideSurname(element, descriptor) {
+    if (UmeMatcher.normalize(descriptor.label || descriptor.accessibleName) !== "name") return false;
+    const controls = [...(element.form || document).querySelectorAll(FORM_CONTROL_SELECTOR)].filter((control) => !BLOCKED_TYPES.has(controlType(control)));
+    const index = controls.indexOf(element);
+    return controls.slice(index + 1, index + 3).some((control) => /^(?:surname|last name|family name)$/.test(UmeMatcher.normalize(labelFor(control))));
+  }
+
   function describe(element) {
     const descriptor = {
       accessibleDescription: descriptionFor(element),
@@ -287,6 +352,7 @@
       tableHeaders: tableHeadersFor(element)
     };
     if (isDropdown(element)) descriptor.optionLabel = optionLabelFor(element);
+    if (givenNameBesideSurname(element, descriptor)) descriptor.namePart = "given";
     const addressPart = UmeMatcher.addressFieldPart(descriptor);
     if (addressPart) descriptor.addressPart = addressPart;
     if (element.type === "radio") {
@@ -445,6 +511,39 @@
       remaining = remaining.slice(box.maxLength);
     }
     return !remaining && parts.length > 1 ? parts : null;
+  }
+
+  function phoneBoxText(element) {
+    return UmeMatcher.normalize([labelFor(element), element.name, element.id, element.placeholder].filter(Boolean).join(" "));
+  }
+
+  // A box for the area code alone ("Area Code", not "Phone (with area code)").
+  function isAreaCodeBox(element) {
+    const text = phoneBoxText(element);
+    const named = UmeMatcher.normalize(element.name || element.id);
+    return (/(?:^| )area ?code(?: |$)|areacode/.test(text) || /(?:^| )area(?: code)?$/.test(named))
+      && !/(?:with|including|incl|plus) (?:the )?area code/.test(text);
+  }
+
+  // An area code box with no length limit takes the area code of a ten-digit
+  // number, and the boxes after it the rest ("Area Code", "Exchange"). Null
+  // when the number can't be laid out that way.
+  function areaCodeSplit(element, digits) {
+    if (digits.length !== 10) return null;
+    const elements = eligibleElements();
+    const start = elements.indexOf(element);
+    if (start < 0) return null;
+    const parts = [{ element, value: digits.slice(0, 3) }];
+    let remaining = digits.slice(3);
+    for (let index = start + 1; index < elements.length && remaining; index += 1) {
+      const box = elements[index];
+      if (!(box instanceof HTMLInputElement) || !PHONE_PART_TYPES.has(box.type) || isCountryCodeField(box)
+          || !closeTogether(elements[index - 1], box) || /(?:^| )(?:ext|extn|extension)(?: |$)/.test(phoneBoxText(box))) break;
+      const take = box.maxLength > 0 ? Math.min(box.maxLength, remaining.length) : remaining.length;
+      parts.push({ element: box, value: remaining.slice(0, take) });
+      remaining = remaining.slice(take);
+    }
+    return remaining ? null : parts;
   }
 
   // The later boxes of a split number, filled along with the first one.
@@ -705,7 +804,15 @@
       }
       value = parts[parts.length - 1];
       const digits = digitsOnly(value);
-      const split = digits ? splitPhoneParts(element, digits) : null;
+      let split = digits ? splitPhoneParts(element, digits) : null;
+      // An area code box never gets the whole number.
+      if (!split && digits && isAreaCodeBox(element)) {
+        split = areaCodeSplit(element, digits);
+        if (!split) {
+          intentionallySkipped.add(element);
+          return false;
+        }
+      }
       // A box too short for the number that isn't part of a split run (an
       // area code box on its own) is left alone rather than given a cut-off number.
       if (!split && element.maxLength > 0 && String(value).length > element.maxLength) {
@@ -774,7 +881,21 @@
     let skippedDuplicates = 0;
     let unmatched = 0;
     let matchedButNotApplied = 0;
+    // The address part of the last address field, to spot a second line 2.
+    let previousLinePart = "";
     for (const element of elements) {
+      // A second "line 2" right after one (an "Apt/Suite" box, then "Address
+      // line 2") would get the apartment again; it's left empty.
+      const linePart = UmeMatcher.addressFieldPart(describe(element));
+      // A site's own autocomplete="address-line2" still counts.
+      const repeatsLine2 = linePart === "addressLine2" && previousLinePart === "addressLine2"
+        && !/(?:^| )address-line2(?: |$)/.test(String(element.autocomplete || "").toLowerCase());
+      if (linePart) previousLinePart = linePart;
+      if (repeatsLine2) {
+        intentionallySkipped.add(element);
+        skippedDuplicates += 1;
+        continue;
+      }
       const isCallingCode = isCountryCodeField(element);
       const resolution = isCallingCode ? countryCodeResolution(savedEntries, element, elements) : null;
       const match = isCallingCode ? resolution.saved : matchForElement(savedEntries, element);
