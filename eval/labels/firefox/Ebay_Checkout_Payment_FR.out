@@ -1,0 +1,6 @@
+Firefox Ebay/Checkout_Payment_FR.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_NUMBER | cardNumber | Numéro de carte |  | firefox cc-number
+CREDIT_CARD_EXP_DATE_4_DIGIT_YEAR | cardExpiryDate | Date d'expiration |  | firefox cc-exp
+CREDIT_CARD_VERIFICATION_CODE | securityCode | Code de sécurité |  | firefox cc-csc
+CREDIT_CARD_NAME_FIRST | cardHolderFirstName | Prénom |  | firefox cc-given-name
+CREDIT_CARD_NAME_LAST | cardHolderLastName | Nom |  | firefox cc-family-name

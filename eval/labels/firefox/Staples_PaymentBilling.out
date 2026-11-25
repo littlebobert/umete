@@ -1,0 +1,3 @@
+Firefox Staples/PaymentBilling.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_NUMBER | hidden | Card Number * Expiration Date * Security Code * Billing addr |  | firefox cc-number
+CREDIT_CARD_EXP_DATE_4_DIGIT_YEAR | expDate | MM/YY |  | firefox cc-exp

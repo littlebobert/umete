@@ -1,0 +1,4 @@
+Firefox NewEgg/Login.html: drafted by firefox-labels.js, then checked by hand.
+EMAIL_ADDRESS | UserName | Newegg ID (Typically your email address) |  | firefox email
+EMAIL_ADDRESS | LoginName | Email Address |  | firefox email
+EMAIL_ADDRESS | LoginName1 | Confirm Email Address |  | firefox email

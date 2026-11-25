@@ -1,0 +1,30 @@
+Firefox CostCo/ShippingAddress.html: drafted by firefox-labels.js, then checked by hand.
+NAME_FIRST | addressFormModalFirstName | FIRST NAME* |  | firefox given-name
+NAME_MIDDLE | addressFormModalMiddleInitial | M.I. |  | firefox additional-name
+NAME_LAST | addressFormModalLastName | LAST NAME* |  | firefox family-name
+COMPANY_NAME | addressFormModalCompany | COMPANY NAME |  | firefox organization
+ADDRESS_HOME_COUNTRY | addressFormModalCountry | COUNTRY* |  | firefox country
+ADDRESS_HOME_LINE1 | addressFormModalAddressLine1 | STREET ADDRESS* |  | firefox address-line1
+ADDRESS_HOME_LINE2 | addressFormModalAddressLine2 | Address Line 2 |  | firefox address-line2
+ADDRESS_HOME_CITY | addressFormModalCity | CITY* |  | firefox address-level2
+ADDRESS_HOME_STATE | addressFormModalState | STATE / PROVINCE* |  | firefox address-level1
+ADDRESS_HOME_ZIP | addressFormModalZip | ZIP / POSTAL CODE* |  | firefox postal-code
+PHONE_HOME_WHOLE_NUMBER | addressFormModalPhoneNumber | PHONE NUMBER* |  | firefox tel
+EMAIL_ADDRESS | addressFormModalEmail | EMAIL* |  | firefox email
+UNKNOWN_TYPE | addressFormModalAddressNickName | ADDRESS NICKNAME* ? The Address Nickname is a short name you |  | firefox address-line1; by hand: an address nickname
+NAME_FIRST | addressFormInlineFirstName | FIRST NAME* |  | firefox given-name
+NAME_MIDDLE | addressFormInlineMiddleInitial | M.I. |  | firefox additional-name
+NAME_LAST | addressFormInlineLastName | LAST NAME* |  | firefox family-name
+COMPANY_NAME | addressFormInlineCompany | COMPANY NAME |  | firefox organization
+ADDRESS_HOME_COUNTRY | addressFormInlineCountry | COUNTRY* |  | firefox country
+ADDRESS_HOME_LINE1 | addressFormInlineAddressLine1 | STREET ADDRESS* |  | firefox address-line1
+ADDRESS_HOME_LINE2 | addressFormInlineAddressLine2 | Address Line 2 |  | firefox address-line2
+ADDRESS_HOME_CITY | addressFormInlineCity | CITY* |  | firefox address-level2
+ADDRESS_HOME_STATE | addressFormInlineState | STATE / PROVINCE* |  | firefox address-level1
+ADDRESS_HOME_ZIP | addressFormInlineZip | ZIP / POSTAL CODE* |  | firefox postal-code
+PHONE_HOME_WHOLE_NUMBER | addressFormInlinePhoneNumber | PHONE NUMBER* |  | firefox tel
+EMAIL_ADDRESS | addressFormInlineEmail | EMAIL* |  | firefox email
+UNKNOWN_TYPE | addressFormInlineAddressNickName | ADDRESS NICKNAME* ? The Address Nickname is a short name you |  | firefox address-line1; by hand: an address nickname
+UNKNOWN_TYPE | billingNickname | overall type: ADDRESS_HOME_STREET_ADDRESS server type: ADDRE |  | firefox address-line2; by hand: an address nickname
+UNKNOWN_TYPE | location | Find a Warehouse |  | firefox postal-code; by hand: warehouse search
+EMAIL_ADDRESS | emailSignUp | Get Email Offers |  | firefox email

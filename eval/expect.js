@@ -1,4 +1,5 @@
-// What the test person's answers should put in a field of each Chromium type.
+// What the test person's answers should put in a field of each type: Chromium's
+// types, which Firefox's labels are converted to as well.
 //
 // Each type is one of:
 //   { accept: [...] }  the field should be filled with one of these values
@@ -76,7 +77,15 @@ function expectations(person) {
     MERCHANT_PROMO_CODE: NONE,
     SEARCH_TERM: NONE,
     PRICE: NONE,
-    LOYALTY_MEMBERSHIP_ID: NONE
+    LOYALTY_MEMBERSHIP_ID: NONE,
+
+    // Firefox's labels. The test person has no birthday saved, and passwords are
+    // never filled.
+    BIRTHDATE_DAY: NONE,
+    BIRTHDATE_MONTH: NONE,
+    BIRTHDATE_4_DIGIT_YEAR: NONE,
+    PASSWORD: SENSITIVE,
+    ACCOUNT_CREATION_PASSWORD: SENSITIVE
   };
 }
 

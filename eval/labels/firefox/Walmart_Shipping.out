@@ -1,0 +1,10 @@
+Firefox Walmart/Shipping.html: drafted by firefox-labels.js, then checked by hand.
+ADDRESS_HOME_ZIP | zip-code |  |  | firefox postal-code
+NAME_FIRST | firstName | First name |  | firefox given-name
+NAME_LAST | lastName | Last name |  | firefox family-name
+PHONE_HOME_WHOLE_NUMBER | phone | Phone number |  | firefox tel
+ADDRESS_HOME_LINE1 | addressLineOne | Street address |  | firefox address-line1
+ADDRESS_HOME_LINE2 | addressLineTwo | Apt, suite, bldg, c/o (optional) |  | firefox address-line2
+ADDRESS_HOME_CITY | city | City |  | firefox address-level2
+ADDRESS_HOME_STATE | state | State* |  | firefox address-level1
+ADDRESS_HOME_ZIP | postalCode | Zip code |  | firefox postal-code

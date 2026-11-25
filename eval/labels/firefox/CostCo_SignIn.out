@@ -1,0 +1,13 @@
+Firefox CostCo/SignIn.html: drafted by firefox-labels.js, then checked by hand. Rewritten by hand: Firefox's sections aren't in page order, and it misses the passwords and membership number.
+SEARCH_TERM | keyword | Search |  | by hand
+UNKNOWN_TYPE | location | Find a Warehouse |  | by hand: warehouse search
+EMAIL_ADDRESS | emailSignUp | Get Email Offers |  | firefox email
+EMAIL_ADDRESS | emailSignUp | Sign up for great offers from Costco.com! |  | firefox email
+EMAIL_ADDRESS | logonId | Email Address* |  | firefox email
+PASSWORD | logonPassword | Password:* |  | firefox password (missed by Firefox)
+EMAIL_ADDRESS | logonId | Email address* |  | firefox email; forgot password
+EMAIL_ADDRESS | email1 | Email Address* |  | firefox email; sign up
+ACCOUNT_CREATION_PASSWORD | logonPassword | Password: |  | by hand
+ACCOUNT_CREATION_PASSWORD | logonPasswordVerify | Confirm Password* |  | by hand
+LOYALTY_MEMBERSHIP_ID | userField2 | Costco Membership Number |  | by hand
+EMAIL_ADDRESS | emailSignUp |  |  | firefox email; footer

@@ -1,0 +1,8 @@
+Firefox Lush/index.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_NAME_FULL | givex.cardHolderName |  |  | firefox cc-name
+CREDIT_CARD_NUMBER | givex.cardNumber |  |  | firefox cc-number
+CREDIT_CARD_NUMBER | card.cardNumber |  |  | firefox cc-number
+CREDIT_CARD_NAME_FULL | card.cardHolderName |  |  | firefox cc-name
+CREDIT_CARD_EXP_MONTH | card.expiryMonth | 01 02 03 04 05 06 07 08 09 10 11 12 / 2020 2021 2022 2023 20 |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | card.expiryYear | 01 02 03 04 05 06 07 08 09 10 11 12 |  | firefox cc-exp-year
+CREDIT_CARD_VERIFICATION_CODE | card.cvcCode | What is CVC/CVV/CID? |  | firefox cc-csc

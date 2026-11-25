@@ -1,0 +1,22 @@
+Firefox NewEgg/BillingInfo.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_NAME_FULL | StoreCard_HolderName | Cardholder Name (exactly as shown on card) |  | firefox cc-name
+CREDIT_CARD_NUMBER | StoreCard_Number | Card Number Card Number |  | firefox cc-number
+CREDIT_CARD_VERIFICATION_CODE | creditCardCVV2 | Security Code (CVV2) |  | firefox cc-csc
+CREDIT_CARD_NAME_FULL | Card_HolderNameNew | Cardholder Name (exactly as shown on card) |  | firefox cc-name
+CREDIT_CARD_NUMBER | Card_CCNUMBERNEW | Card Number |  | firefox cc-number
+CREDIT_CARD_EXP_MONTH | Card_exp_monthNew | Expiration Date |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | Card_exp_yearNew | overall type: CREDIT_CARD_EXP_4_DIGIT_YEAR server type: CRED |  | firefox cc-exp-year
+CREDIT_CARD_VERIFICATION_CODE | cvv2code | Security Code (CVV2) |  | firefox cc-csc
+ADDRESS_HOME_COUNTRY | SCountry_Option | overall type: ADDRESS_HOME_COUNTRY server type: ADDRESS_HOME |  | firefox country
+ADDRESS_HOME_LINE1 | SAddress1 | overall type: ADDRESS_HOME_LINE1 server type: ADDRESS_HOME_L |  | firefox address-line1
+ADDRESS_HOME_LINE2 | SAddress2 | overall type: ADDRESS_HOME_LINE2 server type: ADDRESS_HOME_L |  | firefox address-line2
+ADDRESS_HOME_CITY | SCity | overall type: ADDRESS_HOME_CITY server type: ADDRESS_HOME_CI |  | firefox address-level2
+ADDRESS_HOME_STATE | SState_Option | overall type: ADDRESS_HOME_STATE server type: ADDRESS_HOME_S |  | firefox address-level1
+ADDRESS_HOME_ZIP | SZip | overall type: ADDRESS_HOME_ZIP server type: ADDRESS_HOME_ZIP |  | firefox postal-code
+PHONE_HOME_WHOLE_NUMBER | ShippingPhone | overall type: PHONE_HOME_CITY_AND_NUMBER server type: PHONE_ |  | firefox tel
+CREDIT_CARD_NAME_FULL | Card_HolderName | overall type: CREDIT_CARD_NAME_FULL server type: CREDIT_CARD |  | firefox cc-name
+CREDIT_CARD_NUMBER | Card_Number | overall type: CREDIT_CARD_NUMBER server type: CREDIT_CARD_NU |  | firefox cc-number
+CREDIT_CARD_EXP_MONTH | Card_exp_month | overall type: CREDIT_CARD_EXP_MONTH server type: CREDIT_CARD |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | Card_exp_year | overall type: CREDIT_CARD_EXP_4_DIGIT_YEAR server type: CRED |  | firefox cc-exp-year
+CREDIT_CARD_NAME_FULL | StoreCard_HolderName | Cardholder Name |  | firefox cc-name
+CREDIT_CARD_NUMBER | StoreCard_Number | Card Number |  | firefox cc-number

@@ -1,0 +1,36 @@
+Firefox CostCo/Payment.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_TYPE | payMethodId | Card Type |  | firefox cc-type
+CREDIT_CARD_NUMBER | account | Card number |  | firefox cc-number
+CREDIT_CARD_EXP_MONTH | expire_month | Expiration Date |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | expire_year | overall type: CREDIT_CARD_EXP_4_DIGIT_YEAR server type: CRED |  | firefox cc-exp-year
+CREDIT_CARD_VERIFICATION_CODE | cc_cvc | CVV Code |  | firefox cc-csc
+CREDIT_CARD_NAME_FULL | cc_nameoncard | Cardholder Name |  | firefox cc-name
+CREDIT_CARD_NUMBER | cash_account | Costco Cash Card Number |  | firefox cc-number
+NAME_FIRST | addressFormModalFirstName | FIRST NAME* |  | firefox given-name
+NAME_MIDDLE | addressFormModalMiddleInitial | M.I. |  | firefox additional-name
+NAME_LAST | addressFormModalLastName | LAST NAME* |  | firefox family-name
+COMPANY_NAME | addressFormModalCompany | COMPANY NAME |  | firefox organization
+ADDRESS_HOME_COUNTRY | addressFormModalCountry | COUNTRY* |  | firefox country
+ADDRESS_HOME_LINE1 | addressFormModalAddressLine1 | STREET ADDRESS* |  | firefox address-line1
+ADDRESS_HOME_LINE2 | addressFormModalAddressLine2 | Address Line 2 |  | firefox address-line2
+ADDRESS_HOME_CITY | addressFormModalCity | CITY* |  | firefox address-level2
+ADDRESS_HOME_STATE | addressFormModalState | STATE / PROVINCE* |  | firefox address-level1
+ADDRESS_HOME_ZIP | addressFormModalZip | ZIP / POSTAL CODE* |  | firefox postal-code
+PHONE_HOME_WHOLE_NUMBER | addressFormModalPhoneNumber | PHONE NUMBER* |  | firefox tel
+EMAIL_ADDRESS | addressFormModalEmail | EMAIL* |  | firefox email
+UNKNOWN_TYPE | addressFormModalAddressNickName | ADDRESS NICKNAME* ? The Address Nickname is a short name you |  | firefox address-line1; by hand: an address nickname
+NAME_FIRST | addressFormInlineFirstName | FIRST NAME* |  | firefox given-name
+NAME_MIDDLE | addressFormInlineMiddleInitial | M.I. |  | firefox additional-name
+NAME_LAST | addressFormInlineLastName | LAST NAME* |  | firefox family-name
+COMPANY_NAME | addressFormInlineCompany | COMPANY NAME |  | firefox organization
+ADDRESS_HOME_COUNTRY | addressFormInlineCountry | COUNTRY* |  | firefox country
+ADDRESS_HOME_LINE1 | addressFormInlineAddressLine1 | STREET ADDRESS* |  | firefox address-line1
+ADDRESS_HOME_LINE2 | addressFormInlineAddressLine2 | Address Line 2 |  | firefox address-line2
+ADDRESS_HOME_CITY | addressFormInlineCity | CITY* |  | firefox address-level2
+ADDRESS_HOME_STATE | addressFormInlineState | STATE / PROVINCE* |  | firefox address-level1
+ADDRESS_HOME_ZIP | addressFormInlineZip | ZIP / POSTAL CODE* |  | firefox postal-code
+PHONE_HOME_WHOLE_NUMBER | addressFormInlinePhoneNumber | PHONE NUMBER* |  | firefox tel
+EMAIL_ADDRESS | addressFormInlineEmail | EMAIL* |  | firefox email
+UNKNOWN_TYPE | addressFormInlineAddressNickName | ADDRESS NICKNAME* ? The Address Nickname is a short name you |  | firefox address-line1; by hand: an address nickname
+UNKNOWN_TYPE | location | Find a Warehouse |  | firefox postal-code; by hand: warehouse search
+EMAIL_ADDRESS | emailSignUp | Get Email Offers |  | firefox email

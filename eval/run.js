@@ -6,7 +6,11 @@
 //    content scripts (UME_COLLECT), exactly as Remember my answers does.
 // 2. Each corpus form is opened with network access blocked, the same content
 //    scripts are injected, and UME_FILL runs with those saved answers.
-// 3. Every field Chromium labeled is compared with what the person should get.
+// 3. Every labeled field is compared with what the person should get.
+//
+// Corpora (--corpus): Chromium's autofill corpus (fetch-chromium.sh), Firefox's
+// form autofill test pages (fetch-firefox.sh, with hand-checked labels in
+// labels/firefox), and Umete's own fixtures, which always run.
 //
 // Variants (--variant):
 //   learned     every answer, address included, comes from remembering one form
@@ -20,7 +24,7 @@
 //   openai   the OpenAI Decisions API with OPENAI_API_KEY, as "OpenAI Decisions
 //            (your key)" does; --model overrides the app's default
 //
-// Usage: node run.js [--variant learned|structured|both] [--ai off|dry|openai] [--only 017] [--verbose]
+// Usage: node run.js [--corpus chromium|firefox|all] [--variant learned|structured|both] [--ai off|dry|openai] [--only 017] [--verbose]
 
 const fs = require("node:fs");
 const path = require("node:path");
@@ -30,24 +34,46 @@ const { parseExpected, mapRows } = require("./corpus.js");
 const ai = require("./ai.js");
 const { injectUmete } = require("./inject.js");
 
-const CORPUS = path.join(__dirname, "corpus", "chromium");
-// Umete's own forms with hand-written labels, for cases the corpus lacks.
-const FIXTURES = path.join(__dirname, "fixtures");
+// Each corpus's pages and the .out files that label them, in Chromium's format.
+const CORPORA = {
+  chromium: {
+    pages: path.join(__dirname, "corpus", "chromium"),
+    labels: path.join(__dirname, "corpus", "chromium"),
+    page: (labels, stem) => path.join(labels, stem)
+  },
+  // Pages are corpus/firefox/<Site>/<Page>.html; labels are <Site>_<Page>.out.
+  firefox: {
+    pages: path.join(__dirname, "corpus", "firefox"),
+    labels: path.join(__dirname, "labels", "firefox"),
+    page: (_, stem) => {
+      const [site, ...rest] = stem.split("_");
+      return path.join(__dirname, "corpus", "firefox", site, rest.join("_"));
+    }
+  },
+  // Umete's own forms with hand-written labels, for cases the corpora lack.
+  fixtures: {
+    pages: path.join(__dirname, "fixtures"),
+    labels: path.join(__dirname, "fixtures"),
+    page: (labels, stem) => path.join(labels, stem)
+  }
+};
 const REPORTS = path.join(__dirname, "reports");
 const PERSONA = JSON.parse(fs.readFileSync(path.join(__dirname, "persona", "persona.json"), "utf8"));
 const RULES = expectations(PERSONA);
 const PAGE_TIMEOUT_MS = 15_000;
 
 function parseArgs(argv) {
-  const args = { variant: "both", only: null, verbose: false, ai: "off", model: "" };
+  const args = { corpus: "all", variant: "both", only: null, verbose: false, ai: "off", model: "" };
   for (let i = 0; i < argv.length; i += 1) {
-    if (argv[i] === "--variant") args.variant = argv[++i];
+    if (argv[i] === "--corpus") args.corpus = argv[++i];
+    else if (argv[i] === "--variant") args.variant = argv[++i];
     else if (argv[i] === "--only") args.only = argv[++i];
     else if (argv[i] === "--verbose") args.verbose = true;
     else if (argv[i] === "--ai") args.ai = argv[++i];
     else if (argv[i] === "--model") args.model = argv[++i];
     else throw new Error(`Unknown argument ${argv[i]}`);
   }
+  if (!["chromium", "firefox", "all"].includes(args.corpus)) throw new Error("--corpus is chromium, firefox, or all");
   if (!["learned", "structured", "both"].includes(args.variant)) throw new Error("--variant is learned, structured, or both");
   if (!["off", "dry", "openai"].includes(args.ai)) throw new Error("--ai is off, dry, or openai");
   if (args.ai === "openai" && !process.env.OPENAI_API_KEY) throw new Error("--ai openai needs OPENAI_API_KEY in the environment.");
@@ -256,9 +282,21 @@ function aiSummary(forms) {
   return `AI: ${asked.length} of ${missedLocally.length} local misses asked about · ${changedBy("missed", "correct")} now correct, ${changedBy("missed", "wrong")} now wrong · ${changedBy("correct-skip", "wrong")} wrong and ${changedBy("correct-skip", "review")} for review where nothing belonged · ${requests} requests${characters ? ` (~${Math.round(characters / 4 / 1000)}k input tokens)` : ""}`;
 }
 
+// The totals for each corpus, as extra rows under the overall ones.
+function corpusRows(forms) {
+  const names = [...new Set(forms.map((form) => form.corpus))];
+  if (names.length < 2) return [];
+  return ["", "| Corpus | Forms | Correct | Wrong | Sensitive fills | Missed | Review | Precision | Recall |", "|---|---|---|---|---|---|---|---|---|",
+    ...names.map((name) => {
+      const subset = forms.filter((form) => form.corpus === name);
+      const t = tally(subset);
+      return `| ${name} | ${subset.length} | ${t.correct} | ${t.wrong} | ${t["sensitive-fill"]} | ${t.missed} | ${t.review} | ${pct(t.precision)} | ${pct(t.recall)} |`;
+    })];
+}
+
 function markdownReport(variant, forms, totals, answers, startedAt) {
   const lines = [
-    `# Umete form eval: Chromium corpus, ${variant} answers`,
+    `# Umete form eval: ${[...new Set(forms.map((form) => form.corpus))].join(", ")}, ${variant} answers`,
     "",
     `${startedAt.toISOString()} · ${forms.length} forms · ${answers.length} saved answers`,
     "",
@@ -266,14 +304,16 @@ function markdownReport(variant, forms, totals, answers, startedAt) {
     "|---|---|---|---|---|---|---|",
     `| ${totals.correct} | ${totals.wrong} | ${totals["sensitive-fill"]} | ${totals.missed} | ${totals.review} | ${pct(totals.precision)} | ${pct(totals.recall)} |`,
     "",
+    ...corpusRows(forms),
+    "",
     "Precision is correct ÷ (correct + wrong). Recall is correct ÷ fields the person had an answer for.",
-    "Review counts fills on fields Chromium calls UNKNOWN_TYPE or doesn't label; they may be fine.",
+    "Review counts fills on fields labeled UNKNOWN_TYPE or not labeled; they may be fine.",
     ""
   ];
   const section = (title, outcome) => {
     const rows = forms.flatMap((form) => form.fields.filter((field) => field.outcome === outcome).map((field) => ({ form: form.form, ...field })));
     if (!rows.length) return;
-    lines.push(`## ${title} (${rows.length})`, "", "| Form | Field | Label | Chromium type | Got | Expected |", "|---|---|---|---|---|---|");
+    lines.push(`## ${title} (${rows.length})`, "", "| Form | Field | Label | Type | Got | Expected |", "|---|---|---|---|---|---|");
     for (const row of rows) {
       const cell = (value) => String(value ?? "").replace(/\|/g, "\\|").replace(/\s+/g, " ").slice(0, 60);
       lines.push(`| ${cell(row.form)} | ${cell(row.name)} | ${cell(row.label)} | ${cell(row.type)} | ${cell(row.got)} | ${cell(row.expected)} |`);
@@ -295,19 +335,25 @@ function markdownReport(variant, forms, totals, answers, startedAt) {
 
 async function runVariant(browser, variant, args) {
   const answers = await remember(browser, variant);
-  const entries = [CORPUS, FIXTURES].flatMap((directory) => fs.readdirSync(directory)
-    .filter((file) => file.endsWith(".out"))
-    .map((file) => ({ directory, file: file.slice(0, -4), stem: directory === FIXTURES ? `fixtures/${file.slice(0, -4)}` : file.slice(0, -4) }))
-    .filter(({ stem }) => !args.only || stem.includes(args.only))
-    .sort((left, right) => left.stem.localeCompare(right.stem)));
+  const names = args.corpus === "all" ? Object.keys(CORPORA) : [args.corpus, "fixtures"];
+  const entries = names.filter((name) => fs.existsSync(CORPORA[name].pages) && fs.existsSync(CORPORA[name].labels)).flatMap((name) => {
+    const corpus = CORPORA[name];
+    return fs.readdirSync(corpus.labels)
+      .filter((file) => file.endsWith(".out"))
+      .map((file) => ({ name, corpus, file: file.slice(0, -4), stem: name === "chromium" ? file.slice(0, -4) : `${name}/${file.slice(0, -4)}` }))
+      .filter(({ stem }) => !args.only || stem.includes(args.only))
+      .sort((left, right) => left.stem.localeCompare(right.stem));
+  });
   const forms = [];
-  for (const { directory, file, stem } of entries) {
-    const html = ["html", "htm", "xhtml"].map((ext) => path.join(directory, `${file}.${ext}`)).find((candidate) => fs.existsSync(candidate));
+  for (const { name, corpus, file, stem } of entries) {
+    const base = corpus.page(corpus.labels, file);
+    const html = ["html", "htm", "xhtml"].map((ext) => `${base}.${ext}`).find((candidate) => fs.existsSync(candidate));
     if (!html) continue;
-    const expectedRows = parseExpected(fs.readFileSync(path.join(directory, `${file}.out`), "utf8"));
+    const expectedRows = parseExpected(fs.readFileSync(path.join(corpus.labels, `${file}.out`), "utf8"));
     try {
       const { before, after, local, result, aiInfo } = await fillForm(browser, html, answers, args);
       const scored = scoreForm(stem, expectedRows, before, after, local, aiInfo);
+      scored.corpus = name;
       if (aiInfo) {
         scored.aiRequests = aiInfo.requests;
         scored.aiCharacters = aiInfo.characters;
@@ -319,7 +365,7 @@ async function runVariant(browser, variant, args) {
         console.log(`${stem}: ${counts.correct} correct, ${counts.wrong} wrong, ${counts.missed} missed, ${counts["sensitive-fill"]} sensitive`);
       }
     } catch (error) {
-      forms.push({ form: stem, fields: [], error: error.message.split("\n")[0] });
+      forms.push({ form: stem, corpus: name, fields: [], error: error.message.split("\n")[0] });
       if (args.verbose) console.log(`${stem}: ERROR ${error.message.split("\n")[0]}`);
     }
   }
@@ -328,7 +374,8 @@ async function runVariant(browser, variant, args) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  if (!fs.existsSync(CORPUS)) throw new Error("No corpus yet. Run ./fetch-chromium.sh first.");
+  const missing = ["chromium", "firefox"].filter((name) => (args.corpus === "all" || args.corpus === name) && !fs.existsSync(CORPORA[name].pages));
+  for (const name of missing) console.warn(`No ${name} pages yet; run ./fetch-${name}.sh to include them.`);
   fs.mkdirSync(REPORTS, { recursive: true });
   const startedAt = new Date();
   const stamp = startedAt.toISOString().replace(/[:.]/g, "-").slice(0, 19);
@@ -341,6 +388,7 @@ async function main() {
       const base = path.join(REPORTS, `${stamp}-${variant}`);
       fs.writeFileSync(`${base}.json`, JSON.stringify({ variant, startedAt, answers, totals, forms }, null, 2));
       fs.writeFileSync(`${base}.md`, markdownReport(variant, forms, totals, answers, startedAt));
+      for (const line of corpusRows(forms).slice(3)) console.log(`  ${line}`);
       console.log(`${variant}: ${totals.correct} correct, ${totals.wrong} wrong, ${totals["sensitive-fill"]} sensitive fills, ${totals.missed} missed, ${totals.review} for review · precision ${pct(totals.precision)}, recall ${pct(totals.recall)}`);
       if (args.ai !== "off") console.log(`  ${aiSummary(forms)}`);
       console.log(`  ${path.relative(process.cwd(), base)}.md`);

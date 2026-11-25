@@ -1,0 +1,14 @@
+Firefox HomeDepot/Checkout_ShippingPayment.html: drafted by firefox-labels.js, then checked by hand.
+NAME_FIRST | firstName | First Name |  | firefox given-name
+NAME_LAST | lastName | Last Name |  | firefox family-name
+EMAIL_ADDRESS | emailInput | you@domain.com |  | firefox email
+PHONE_HOME_WHOLE_NUMBER | phone | (___) ___-____ |  | firefox tel; by hand: by id, since the passwords share the name inputField
+ADDRESS_HOME_STREET_ADDRESS | billingAddress | Address Line 1 |  | firefox street-address
+ADDRESS_HOME_ZIP | zip | ZIP Code |  | firefox postal-code
+UNKNOWN_TYPE | pickupLocation |  |  | firefox street-address; by hand: store pickup search
+CREDIT_CARD_EXP_MONTH | expiryMonth |  |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | expiryYear |  |  | firefox cc-exp-year
+CREDIT_CARD_NUMBER | cardNumber | Enter credit card number |  | firefox cc-number
+CREDIT_CARD_EXP_MONTH | ccMonth | Month 01 - January 02 - February 03 - March 04 - April 05 -  |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | ccYear | Year 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027  |  | firefox cc-exp-year
+CREDIT_CARD_VERIFICATION_CODE | cvv | Ã±Ã±Ã± |  | firefox cc-csc

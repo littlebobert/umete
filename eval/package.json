@@ -3,7 +3,7 @@
   "private": true,
   "description": "Replays saved real-world forms against a test person's answers in WebKit and scores what Umete fills.",
   "scripts": {
-    "fetch": "./fetch-chromium.sh",
+    "fetch": "./fetch-chromium.sh && ./fetch-firefox.sh",
     "eval": "node run.js",
     "scenarios": "node scenarios.js"
   },

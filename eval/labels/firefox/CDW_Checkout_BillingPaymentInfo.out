@@ -1,0 +1,15 @@
+Firefox CDW/Checkout_BillingPaymentInfo.html: drafted by firefox-labels.js, then checked by hand.
+NAME_FIRST | ctl00$ctl00$MainContentRoot$Body$ctl00$firstName | First Name (required) |  | firefox given-name
+NAME_LAST | ctl00$ctl00$MainContentRoot$Body$ctl00$lastName | Last Name (required) |  | firefox family-name
+COMPANY_NAME | ctl00$ctl00$MainContentRoot$Body$ctl00$company | Company |  | firefox organization
+ADDRESS_HOME_LINE1 | ctl00$ctl00$MainContentRoot$Body$ctl00$address1 | Address Line 1 (required) |  | firefox address-line1
+ADDRESS_HOME_LINE2 | ctl00$ctl00$MainContentRoot$Body$ctl00$address2 | Address Line 2 |  | firefox address-line2
+ADDRESS_HOME_CITY | ctl00$ctl00$MainContentRoot$Body$ctl00$city | City (required) |  | firefox address-level2
+ADDRESS_HOME_STATE | ctl00$ctl00$MainContentRoot$Body$ctl00$stateProvince | State (required) |  | firefox address-level1
+ADDRESS_HOME_ZIP | ctl00$ctl00$MainContentRoot$Body$ctl00$zipCode | ZIP Code (required) |  | firefox postal-code
+ADDRESS_HOME_ZIP_SUFFIX | ctl00$ctl00$MainContentRoot$Body$ctl00$zipCodeExtn | ZIP Extn |  | firefox postal-code; by hand: the ZIP+4 extension
+CREDIT_CARD_TYPE | ctl00$ctl00$MainContentRoot$Body$creditCardType | Card Type (required) |  | firefox cc-type
+CREDIT_CARD_NUMBER | ctl00$ctl00$MainContentRoot$Body$creditCardNumber | Credit Card Number (req) |  | firefox cc-number
+CREDIT_CARD_EXP_MONTH | ctl00$ctl00$MainContentRoot$Body$expiryMonth | Expiration Date (req) CVV (req) |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | ctl00$ctl00$MainContentRoot$Body$expiryYear | overall type: CREDIT_CARD_EXP_4_DIGIT_YEAR server type: NO_S |  | firefox cc-exp-year
+CREDIT_CARD_VERIFICATION_CODE | ctl00$ctl00$MainContentRoot$Body$CreditCardCvvText | overall type: CREDIT_CARD_VERIFICATION_CODE server type: NO_ |  | firefox cc-csc (missed by Firefox)

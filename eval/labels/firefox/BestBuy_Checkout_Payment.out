@@ -1,0 +1,10 @@
+Firefox BestBuy/Checkout_Payment.html: drafted by firefox-labels.js, then checked by hand.
+EMAIL_ADDRESS | email | GET THE LATEST DEALS & MORE |  | firefox email
+NAME_FIRST | firstName | First Name |  | firefox given-name
+NAME_LAST | lastName | Last Name |  | firefox family-name
+ADDRESS_HOME_STREET_ADDRESS | street | Address |  | firefox street-address
+ADDRESS_HOME_CITY | city |  |  | firefox address-level2
+ADDRESS_HOME_STATE | state | State Select a state AL - Alabama AK - Alaska AP - Armed For |  | firefox address-level1
+ADDRESS_HOME_ZIP | zipcode | ZIP Code |  | firefox postal-code
+EMAIL_ADDRESS | emailAddress | E-mail Address |  | firefox email
+PHONE_HOME_WHOLE_NUMBER | phone | Phone Number |  | firefox tel

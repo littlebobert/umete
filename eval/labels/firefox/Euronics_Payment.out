@@ -1,0 +1,7 @@
+Firefox Euronics/Payment.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_NUMBER | dwfrm_billing_creditCardFields_cardNumber | Numero di carta* |  | firefox cc-number
+CREDIT_CARD_VERIFICATION_CODE | dwfrm_billing_creditCardFields_securityCode | Codice di sicurezza |  | firefox cc-csc
+CREDIT_CARD_EXP_MONTH | dwfrm_billing_creditCardFields_expirationMonth | Mese di scadenza |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | dwfrm_billing_creditCardFields_expirationYear | Anno di scadenza |  | firefox cc-exp-year
+ADDRESS_HOME_COUNTRY | country | Italia |  | firefox country
+COMPANY_NAME | dwfrm_billing_invoiceFields_businessName | Ragione Sociale |  | firefox organization

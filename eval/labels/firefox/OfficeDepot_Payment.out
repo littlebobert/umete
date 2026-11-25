@@ -1,0 +1,21 @@
+Firefox OfficeDepot/Payment.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_EXP_MONTH | paymentFormInfo.payPageFormInfo.creditCardExpMonth | overall type: CREDIT_CARD_EXP_MONTH server type: CREDIT_CARD |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | paymentFormInfo.payPageFormInfo.creditCardExpYear | overall type: CREDIT_CARD_EXP_4_DIGIT_YEAR server type: CRED |  | firefox cc-exp-year
+NAME_FIRST | addrsForm[0].firstName | *First Name: |  | by hand: the draft put Firefox's cc-number (in a payment iframe) here
+NAME_LAST | addrsForm[0].lastName | *Last Name: |  | firefox family-name
+COMPANY_NAME | addrsForm[0].shiptoName | Company Name: |  | firefox organization
+ADDRESS_HOME_LINE1 | addrsForm[0].address1 | *Address: |  | firefox address-line1
+ADDRESS_HOME_LINE2 | addrsForm[0].address2 | Address Line 2: (optional) |  | firefox address-line2
+ADDRESS_HOME_ZIP | addrsForm[0].postalCode1 | *Postal Code: |  | firefox postal-code
+UNKNOWN_TYPE | checkoutCityAndState | *City & State |  | firefox address-level2; by hand: one menu for city and state
+ADDRESS_HOME_CITY | addrsForm[0].city | *City: |  | firefox address-level2
+ADDRESS_HOME_STATE | addrsForm[0].state | *State: |  | firefox address-level1
+PHONE_HOME_CITY_CODE | addrsForm[0].phoneNumber1 | overall type: PHONE_HOME_CITY_CODE server type: PHONE_HOME_C |  | firefox tel-area-code
+PHONE_HOME_NUMBER_PREFIX | addrsForm[0].phoneNumber2 | overall type: PHONE_HOME_NUMBER server type: PHONE_HOME_NUMB |  | firefox tel-local-prefix
+PHONE_HOME_NUMBER_SUFFIX | addrsForm[0].phoneNumber3 | overall type: PHONE_HOME_NUMBER server type: PHONE_HOME_NUMB |  | firefox tel-local-suffix
+PHONE_HOME_EXTENSION | addrsForm[0].phoneNumber4 | Ext |  | firefox tel-extension
+EMAIL_ADDRESS | addrsForm[0].email | *Email Address: |  | firefox email
+LOYALTY_MEMBERSHIP_ID | loyaltyID | overall type: PHONE_HOME_CITY_AND_NUMBER server type: PHONE_ |  | firefox tel; by hand: a loyalty ID, not a phone
+CREDIT_CARD_NUMBER | paymentFormInfo.storedValueCardNumber | Gift card or certificate number |  | by hand: a gift card number, never filled
+CREDIT_CARD_VERIFICATION_CODE | paymentFormInfo.storedValueCardPin | PIN |  | by hand: a gift card PIN, never filled
+MERCHANT_PROMO_CODE | referralCode | Coupon Code: |  | by hand

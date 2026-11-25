@@ -1,0 +1,13 @@
+Firefox QVC/YourInformation.html: drafted by firefox-labels.js, then checked by hand.
+PHONE_HOME_WHOLE_NUMBER | txtPrimaryPhone | Home Phone: |  | firefox tel
+EMAIL_ADDRESS | txtEmailAddress | Email Address: |  | firefox email
+BIRTHDATE_MONTH | dobMonth | Date of Birth: |  | firefox bday-month (missed by Firefox)
+BIRTHDATE_DAY | dobDay | Day of Birth: |  | firefox bday-day (missed by Firefox)
+BIRTHDATE_4_DIGIT_YEAR | dobYear | Year of Birth: |  | firefox bday-year (missed by Firefox)
+CREDIT_CARD_TYPE | NewCardType | Type |  | firefox cc-type
+CREDIT_CARD_NUMBER | NewCardNumber | Number: |  | firefox cc-number
+CREDIT_CARD_EXP_DATE_4_DIGIT_YEAR | selNewCard | Expiration Date: |  | firefox cc-exp
+CREDIT_CARD_VERIFICATION_CODE | SecurityCode | Security Code: |  | firefox cc-csc
+CREDIT_CARD_NUMBER | txtQvcGiftCardNumber | Card Number: |  | firefox cc-number
+EMAIL_ADDRESS | emailAddress1Footer | Get sneak previews of special offers and upcoming events del |  | firefox email
+EMAIL_ADDRESS | emailAddress2Footer | * |  | firefox email

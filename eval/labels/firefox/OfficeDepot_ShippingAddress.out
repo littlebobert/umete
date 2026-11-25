@@ -1,0 +1,15 @@
+Firefox OfficeDepot/ShippingAddress.html: drafted by firefox-labels.js, then checked by hand.
+NAME_FIRST | addrsForm[2].firstName | *First Name: |  | firefox given-name
+NAME_LAST | addrsForm[2].lastName | *Last Name: |  | firefox family-name
+COMPANY_NAME | addrsForm[2].shiptoName | Company Name: |  | firefox organization
+ADDRESS_HOME_LINE1 | addrsForm[2].address1 | *Address: |  | firefox address-line1
+ADDRESS_HOME_LINE2 | addrsForm[2].address2 | Address Line 2: (optional) |  | firefox address-line2
+ADDRESS_HOME_ZIP | addrsForm[2].postalCode1 | *Postal Code: |  | firefox postal-code
+UNKNOWN_TYPE | checkoutCityAndState | * City & State |  | firefox address-level2; by hand: one menu for city and state
+ADDRESS_HOME_CITY | addrsForm[2].city | *City: |  | firefox address-level2
+ADDRESS_HOME_STATE | addrsForm[2].state | *State: |  | firefox address-level1
+PHONE_HOME_CITY_CODE | addrsForm[2].phoneNumber1 | overall type: PHONE_HOME_CITY_CODE server type: PHONE_HOME_C |  | firefox tel-area-code
+PHONE_HOME_NUMBER_PREFIX | addrsForm[2].phoneNumber2 | overall type: PHONE_HOME_NUMBER server type: PHONE_HOME_NUMB |  | firefox tel-local-prefix
+PHONE_HOME_NUMBER_SUFFIX | addrsForm[2].phoneNumber3 | overall type: PHONE_HOME_NUMBER server type: PHONE_HOME_NUMB |  | firefox tel-local-suffix
+PHONE_HOME_EXTENSION | addrsForm[2].phoneNumber4 | Ext |  | firefox tel-extension
+EMAIL_ADDRESS | addrsForm[2].email | *Email Address: |  | firefox email

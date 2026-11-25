@@ -1,0 +1,5 @@
+Firefox GlobalDirectAsda/Payment.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_NUMBER | PaymentData.cardNum | Card number |  | firefox cc-number
+CREDIT_CARD_EXP_MONTH | PaymentData.cardExpiryMonth | Expiry date |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | PaymentData.cardExpiryYear | Year |  | firefox cc-exp-year
+CREDIT_CARD_VERIFICATION_CODE | PaymentData.cvdNumber | Security code |  | firefox cc-csc

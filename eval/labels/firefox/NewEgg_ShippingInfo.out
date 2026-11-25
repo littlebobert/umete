@@ -1,0 +1,11 @@
+Firefox NewEgg/ShippingInfo.html: drafted by firefox-labels.js, then checked by hand.
+NAME_FIRST | SFirstName | overall type: NAME_FIRST server type: NAME_FIRST heuristic t |  | firefox given-name
+NAME_LAST | SLastName | overall type: NAME_LAST server type: NAME_LAST heuristic typ |  | firefox family-name
+ADDRESS_HOME_COUNTRY | SCountry_Option | overall type: ADDRESS_HOME_COUNTRY server type: ADDRESS_HOME |  | firefox country
+ADDRESS_HOME_LINE1 | SAddress1 | overall type: ADDRESS_HOME_LINE1 server type: ADDRESS_HOME_L |  | firefox address-line1
+ADDRESS_HOME_LINE2 | SAddress2 | overall type: ADDRESS_HOME_LINE2 server type: ADDRESS_HOME_L |  | firefox address-line2
+ADDRESS_HOME_CITY | SCity | overall type: ADDRESS_HOME_CITY server type: ADDRESS_HOME_CI |  | firefox address-level2
+ADDRESS_HOME_STATE | SState_Option | overall type: ADDRESS_HOME_STATE server type: ADDRESS_HOME_S |  | firefox address-level1
+ADDRESS_HOME_ZIP | SZip | overall type: ADDRESS_HOME_ZIP server type: ADDRESS_HOME_ZIP |  | firefox postal-code
+PHONE_HOME_WHOLE_NUMBER | ShippingPhone | overall type: PHONE_HOME_CITY_AND_NUMBER server type: PHONE_ |  | firefox tel
+EMAIL_ADDRESS | GuestEmail | overall type: EMAIL_ADDRESS server type: EMAIL_ADDRESS heuri |  | firefox email

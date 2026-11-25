@@ -1,0 +1,5 @@
+Firefox Macys/SignIn.html: drafted by firefox-labels.js, then checked by hand.
+EMAIL_ADDRESS | email | Email address: |  | firefox email
+PASSWORD | password | Password: |  | firefox password (missed by Firefox)
+EMAIL_ADDRESS | passwordRecovery.email | Get started by entering the email address you use to sign in |  | firefox email
+ONE_TIME_CODE | passwordRecovery.securityCode | Please enter the characters shown above and we'll email you |  | firefox cc-csc; by hand: a captcha, not a card code

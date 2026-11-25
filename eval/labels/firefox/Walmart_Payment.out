@@ -1,0 +1,7 @@
+Firefox Walmart/Payment.html: drafted by firefox-labels.js, then checked by hand.
+NAME_FIRST | firstName | First name on card*  |  | firefox given-name
+NAME_LAST | lastName | Last name on card*  |  | firefox family-name
+CREDIT_CARD_NUMBER | creditCard | Card number*  |  | firefox cc-number
+CREDIT_CARD_EXP_MONTH | month-chooser | MM 01 02 03 04 05 06 07 08 09 10 11 12 |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | year-chooser | YY 17 18 19 20 21 22 23 24 25 26 27 |  | firefox cc-exp-year
+CREDIT_CARD_VERIFICATION_CODE | cvv | Security code*  |  | firefox cc-csc (missed by Firefox)

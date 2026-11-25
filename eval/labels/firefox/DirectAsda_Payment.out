@@ -1,0 +1,6 @@
+Firefox DirectAsda/Payment.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_NUMBER | cardNumber |  |  | firefox cc-number
+CREDIT_CARD_NAME_FULL | cardHolder |  |  | firefox cc-name
+CREDIT_CARD_VERIFICATION_CODE | cvv | ? |  | firefox cc-csc
+CREDIT_CARD_EXP_MONTH | month | MM |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | year | YY |  | firefox cc-exp-year

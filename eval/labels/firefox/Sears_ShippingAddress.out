@@ -1,0 +1,25 @@
+Firefox Sears/ShippingAddress.html: drafted by firefox-labels.js, then checked by hand.
+EMAIL_ADDRESS | email |  |  | firefox email
+NAME_FIRST | order.shippingInfo.firstName | First Name * |  | firefox given-name
+NAME_LAST | order.shippingInfo.lastName | Last Name * |  | firefox family-name
+ADDRESS_HOME_LINE1 | order.shippingInfo.address.originalAddress | Street Address * |  | firefox address-line1
+ADDRESS_HOME_LINE2 | order.shippingInfo.address.address2 | Apt. # |  | firefox address-line2
+ADDRESS_HOME_CITY | order.shippingInfo.address.city | City * |  | firefox address-level2
+ADDRESS_HOME_STATE | order.shippingInfo.address.state | overall type: ADDRESS_HOME_STATE server type: ADDRESS_HOME_S |  | firefox address-level1
+ADDRESS_HOME_ZIP | order.shippingInfo.address.zipCode | ZIP Code * |  | firefox postal-code
+PHONE_HOME_WHOLE_NUMBER | order.shippingInfo.dayTimePhone | Phone Number * |  | firefox tel
+PHONE_HOME_EXTENSION | order.shippingInfo.dayTimePhoneExt | Ext. |  | firefox tel-extension
+EMAIL_ADDRESS | order.shippingInfo.email | Email Address * |  | firefox email
+EMAIL_ADDRESS | order.shippingInfo.emailConfirm | Email Address * |  | firefox email
+NAME_FIRST | order.billingInfo.firstName | First Name * |  | firefox given-name
+NAME_LAST | order.billingInfo.lastName | Last Name * |  | firefox family-name
+ADDRESS_HOME_LINE1 | order.billingInfo.address.address1 | Street Address * |  | firefox address-line1
+ADDRESS_HOME_LINE2 | order.billingInfo.address.address2 | Apt. # |  | firefox address-line2
+ADDRESS_HOME_CITY | order.billingInfo.address.city | City * |  | firefox address-level2
+ADDRESS_HOME_STATE | order.billingInfo.address.state | overall type: ADDRESS_HOME_STATE server type: ADDRESS_HOME_S |  | firefox address-level1
+ADDRESS_HOME_ZIP | order.billingInfo.address.zipCode | ZIP Code * |  | firefox postal-code
+PHONE_HOME_WHOLE_NUMBER | order.billingInfo.dayTimePhone | Phone Number * |  | firefox tel
+PHONE_HOME_EXTENSION | order.billingInfo.dayTimePhoneExt | Ext. |  | firefox tel-extension
+ACCOUNT_CREATION_PASSWORD | orderSupport.profilePassword | Password |  | firefox new-password (missed by Firefox)
+EMAIL_ADDRESS | emailAddress | enter email address |  | firefox email
+EMAIL_ADDRESS | loginId | Email |  | firefox email

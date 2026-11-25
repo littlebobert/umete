@@ -1,0 +1,8 @@
+Firefox Staples/Basic.html: drafted by firefox-labels.js, then checked by hand.
+NAME_FIRST | firstName | First Name * |  | firefox given-name; by hand: the draft took the decoy field named "hidden"
+NAME_LAST | lastName | Last Name * |  | firefox family-name
+ADDRESS_HOME_LINE1 | address1 | Shipping Address* |  | firefox address-line1
+EMAIL_ADDRESS | emailId | Email Address * |  | firefox email
+PHONE_HOME_WHOLE_NUMBER | phoneNo | Phone * |  | firefox tel
+PHONE_HOME_EXTENSION | phoneEx | Extn. |  | firefox tel-extension
+COMPANY_NAME | companyName | Company Name (optional) |  | firefox organization

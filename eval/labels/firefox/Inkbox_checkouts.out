@@ -1,0 +1,11 @@
+Firefox Inkbox/checkouts.html: drafted by firefox-labels.js, then checked by hand.
+EMAIL_ADDRESS | email | Email |  | firefox email
+ADDRESS_HOME_COUNTRY | countryCode | Country/Region |  | firefox country
+NAME_FIRST | firstName | First name |  | firefox given-name
+NAME_LAST | lastName | Last name |  | firefox family-name
+COMPANY_NAME | company | Company (optional) |  | firefox organization
+ADDRESS_HOME_LINE1 | address1 | Address |  | firefox address-line1
+ADDRESS_HOME_LINE2 | address2 | Apartment, suite, etc. (optional) |  | firefox address-line2
+ADDRESS_HOME_ZIP | postalCode | Postal code |  | firefox postal-code
+ADDRESS_HOME_CITY | city | City |  | firefox address-level2
+PHONE_HOME_WHOLE_NUMBER | phone | Phone (Required) |  | firefox tel

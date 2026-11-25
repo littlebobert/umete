@@ -1,0 +1,9 @@
+Firefox Lufthansa/Checkout_Payment.html: drafted by firefox-labels.js, then checked by hand.
+CREDIT_CARD_TYPE | ITEM_PAYMENT_FLIGHTS_FLIGHT_CC_TYPES_0 | Select your card type |  | firefox cc-type
+CREDIT_CARD_NUMBER | ITEM_PAYMENT_FLIGHTS_FLIGHT_CC_NUMBER_00 | Enter your card number first four digits block |  | firefox cc-number
+CREDIT_CARD_NUMBER | ITEM_PAYMENT_FLIGHTS_FLIGHT_CC_NUMBER_01 | Enter your card number second four digits block |  | firefox cc-number
+CREDIT_CARD_NUMBER | ITEM_PAYMENT_FLIGHTS_FLIGHT_CC_NUMBER_02 | Enter your card number third four digits block |  | firefox cc-number
+CREDIT_CARD_NUMBER | ITEM_PAYMENT_FLIGHTS_FLIGHT_CC_NUMBER_03 | Enter your card number fourth four digits block |  | firefox cc-number
+CREDIT_CARD_EXP_MONTH | ITEM_PAYMENT_FLIGHTS_FLIGHT_CC_EXPIRY_DATE_EXPIRY_MONTH_0 | Expiry date (month/year) Month Selection |  | firefox cc-exp-month
+CREDIT_CARD_EXP_4_DIGIT_YEAR | ITEM_PAYMENT_FLIGHTS_FLIGHT_CC_EXPIRY_DATE_EXPIRY_YEAR_0 | Expiry date (month/year) Year Selection |  | firefox cc-exp-year
+CREDIT_CARD_VERIFICATION_CODE | ITEM_PAYMENT_FLIGHTS_FLIGHT_CC_SECURITY_CODE_00 | Security Code (CVC/CVS) The security code of your Mastercard |  | firefox cc-csc

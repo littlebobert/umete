@@ -1,0 +1,8 @@
+Firefox Walmart/Checkout.html: drafted by firefox-labels.js, then checked by hand.
+ADDRESS_HOME_ZIP | zip-code |  |  | firefox postal-code
+EMAIL_ADDRESS | email | Email address |  | firefox email
+PASSWORD | password | Password |  | firefox password (missed by Firefox)
+NAME_FIRST | firstName | First name |  | firefox given-name
+NAME_LAST | lastName | Last name |  | firefox family-name
+EMAIL_ADDRESS | email | Email address |  | firefox email
+PASSWORD | password | Your password must be between 6 and 12 characters. |  | firefox password (missed by Firefox)
