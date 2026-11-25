@@ -1,1 +1,2 @@
 A new app icon: Umete's plum, now made of glass. The icon in Safari's toolbar is new too.
+Umete fills more forms correctly. It reads field names on older checkout pages, puts only the area code in an Area Code box, and no longer puts your ZIP code in a coupon or ZIP+4 box, or your apartment in two fields.
