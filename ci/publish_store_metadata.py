@@ -8,6 +8,9 @@ Store Connect, so a language can set only what it needs.
   push  Update the App Store version being prepared (and the app's name and subtitle)
         to match the files. With --dry-run, only print what would change.
   pull  Write the current listing into the files, to start from what's live.
+  submit  Submit the version being prepared for review: rename it to --version if
+        it has another number, wait for that version's build to finish processing,
+        attach it, and submit. With --dry-run, only print what it would do.
 """
 
 from __future__ import annotations
@@ -324,6 +327,100 @@ def push(token: str, app_id: str, metadata_dir: Path, version_string: str | None
         print("Dry run: nothing was changed.")
 
 
+def newest_valid_build(token: str, app_id: str, version_string: str) -> dict | None:
+    """The newest processed, unexpired build of a version (its CFBundleShortVersionString)."""
+    query = urllib.parse.urlencode({
+        "filter[app]": app_id,
+        "filter[preReleaseVersion.version]": version_string,
+        "filter[preReleaseVersion.platform]": "IOS",
+        "sort": "-uploadedDate",
+        "limit": 10,
+    })
+    builds = request_json(f"{APP_STORE_CONNECT_BASE}/builds?{query}", token=token)["data"]
+    valid = [build for build in builds if build["attributes"].get("processingState") == "VALID" and not build["attributes"].get("expired")]
+    return valid[0] if valid else None
+
+
+def submit(new_token, app_id: str, version_string: str, dry_run: bool, wait_minutes: int) -> None:
+    token = new_token()
+    version = find_editable_version(token, app_id, None)
+    current = version["attributes"]["versionString"]
+    print(f"App Store version {current} ({version_state(version)})")
+    if current != version_string:
+        print(f"Rename version {current} to {version_string}")
+        if not dry_run:
+            request_json(
+                f"{APP_STORE_CONNECT_BASE}/appStoreVersions/{version['id']}", token=token, method="PATCH",
+                payload={"data": {"type": "appStoreVersions", "id": version["id"], "attributes": {"versionString": version_string}}},
+            )
+
+    # A build just uploaded takes a while to process; tokens last 15 minutes.
+    deadline = time.time() + wait_minutes * 60
+    build = newest_valid_build(token, app_id, version_string)
+    while build is None and not dry_run and time.time() < deadline:
+        print(f"Waiting for a processed {version_string} build…", flush=True)
+        time.sleep(60)
+        token = new_token()
+        build = newest_valid_build(token, app_id, version_string)
+    if build is None:
+        message = f"No processed build of {version_string} yet"
+        if dry_run:
+            print(f"{message}; a real run waits up to {wait_minutes} minutes for one.")
+            print("Dry run: nothing was changed.")
+            return
+        raise SystemExit(f"{message} after {wait_minutes} minutes. Run again once it has processed.")
+    print(f"Build {build['attributes']['version']} of {version_string} (uploaded {build['attributes'].get('uploadedDate', '?')})")
+
+    attached = request_json(f"{APP_STORE_CONNECT_BASE}/appStoreVersions/{version['id']}/build", token=token).get("data")
+    if not attached or attached["id"] != build["id"]:
+        print(f"Attach build {build['attributes']['version']}")
+        if not dry_run:
+            request_json(
+                f"{APP_STORE_CONNECT_BASE}/appStoreVersions/{version['id']}/relationships/build", token=token, method="PATCH",
+                payload={"data": {"type": "builds", "id": build["id"]}},
+            )
+
+    # Reuse a submission that's open (or came back with issues); else start one.
+    query = urllib.parse.urlencode({
+        "filter[app]": app_id, "filter[platform]": "IOS", "filter[state]": "READY_FOR_REVIEW,UNRESOLVED_ISSUES",
+    })
+    open_submissions = request_json(f"{APP_STORE_CONNECT_BASE}/reviewSubmissions?{query}", token=token)["data"]
+    print(f"Submit {version_string} for review" + (" (in the open review submission)" if open_submissions else ""))
+    if dry_run:
+        print("Dry run: nothing was changed.")
+        return
+    if open_submissions:
+        submission = open_submissions[0]
+    else:
+        submission = request_json(
+            f"{APP_STORE_CONNECT_BASE}/reviewSubmissions", token=token, method="POST",
+            payload={"data": {
+                "type": "reviewSubmissions", "attributes": {"platform": "IOS"},
+                "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
+            }},
+        )["data"]
+    items = request_json(f"{APP_STORE_CONNECT_BASE}/reviewSubmissions/{submission['id']}/items?include=appStoreVersion", token=token)["data"]
+    has_version = any(
+        (item.get("relationships", {}).get("appStoreVersion", {}).get("data") or {}).get("id") == version["id"] for item in items
+    )
+    if not has_version:
+        request_json(
+            f"{APP_STORE_CONNECT_BASE}/reviewSubmissionItems", token=token, method="POST",
+            payload={"data": {
+                "type": "reviewSubmissionItems",
+                "relationships": {
+                    "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission["id"]}},
+                    "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version["id"]}},
+                },
+            }},
+        )
+    submitted = request_json(
+        f"{APP_STORE_CONNECT_BASE}/reviewSubmissions/{submission['id']}", token=token, method="PATCH",
+        payload={"data": {"type": "reviewSubmissions", "id": submission["id"], "attributes": {"submitted": True}}},
+    )["data"]
+    print(f"Submitted for review: {submitted['attributes'].get('state', '?')}")
+
+
 def pull(token: str, app_id: str, metadata_dir: Path) -> None:
     """Writes the newest version's listing, live or not, and the current app info."""
     query = urllib.parse.urlencode({"filter[platform]": "IOS", "limit": 1})
@@ -349,9 +446,10 @@ def pull(token: str, app_id: str, metadata_dir: Path) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("mode", choices=["push", "pull"])
+    parser.add_argument("mode", choices=["push", "pull", "submit"])
     parser.add_argument("--metadata-dir", type=Path, default=Path("AppStoreMetadata"))
-    parser.add_argument("--version", help="The App Store version to update; defaults to the one being prepared.")
+    parser.add_argument("--version", help="push: the App Store version to update; defaults to the one being prepared. submit: the version number to submit (required).")
+    parser.add_argument("--wait-minutes", type=int, default=40, help="submit: how long to wait for the build to finish processing.")
     parser.add_argument("--dry-run", action="store_true", help="Show what push would change without changing it.")
     parser.add_argument("--validate-only", action="store_true", help="Check the files' lengths and URLs, offline.")
     arguments = parser.parse_args(argv)
@@ -369,13 +467,20 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(f"Missing required environment variable: {name}")
         return value
 
-    token = create_app_store_connect_token(
-        require("APP_STORE_CONNECT_KEY_ID"),
-        require("APP_STORE_CONNECT_ISSUER_ID"),
-        require("APP_STORE_CONNECT_PRIVATE_KEY_BASE64"),
-    )
+    def new_token() -> str:
+        return create_app_store_connect_token(
+            require("APP_STORE_CONNECT_KEY_ID"),
+            require("APP_STORE_CONNECT_ISSUER_ID"),
+            require("APP_STORE_CONNECT_PRIVATE_KEY_BASE64"),
+        )
+
+    token = new_token()
     app_id = find_app_id(token, require("BUNDLE_ID"))
-    if arguments.mode == "pull":
+    if arguments.mode == "submit":
+        if not re.fullmatch(r"\d+\.\d+\.\d+", arguments.version or ""):
+            raise SystemExit("submit needs --version, like 0.5.7")
+        submit(new_token, app_id, arguments.version, arguments.dry_run, arguments.wait_minutes)
+    elif arguments.mode == "pull":
         pull(token, app_id, arguments.metadata_dir)
     else:
         push(token, app_id, arguments.metadata_dir, arguments.version or None, arguments.dry_run)

@@ -46,9 +46,19 @@ gh workflow run app-store-metadata.yml -f mode=push -f dry_run=false
 
 To add a language, create its folder; it is created in App Store Connect on the first push.
 
+## Submitting for review
+
+Mode **submit** with a **version** (like `0.5.7`) submits the version being prepared: it renames it to that number if it has another, waits up to 40 minutes for that version's build to finish processing (the release workflow uploads it to TestFlight), attaches the build, and submits the version for review, in a review submission that's already open or a new one. Dry run shows the plan.
+
+```bash
+gh workflow run app-store-metadata.yml -f mode=submit -f version=0.5.7 -f dry_run=true
+gh workflow run app-store-metadata.yml -f mode=submit -f version=0.5.7 -f dry_run=false
+```
+
+Export compliance is answered by `ITSAppUsesNonExemptEncryption` in the app's Info.plist, so builds don't wait on it.
+
 ## What it can't do
 
 - Only versions being prepared or rejected can change. A version in review or live is refused; create the next version first.
 - The name and subtitle go live with the next version you submit.
 - Screenshots and the app preview video aren't included; upload those in App Store Connect.
-- It doesn't submit the version for review.

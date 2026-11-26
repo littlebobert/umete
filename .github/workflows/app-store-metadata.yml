@@ -7,20 +7,21 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "push updates App Store Connect from the files; pull opens a pull request with the current listing."
+        description: "push updates App Store Connect from the files; pull opens a pull request with the current listing; submit renames the version being prepared to the version below, attaches that version's build, and submits it for review."
         required: true
         type: choice
         options:
           - push
           - pull
+          - submit
         default: push
       dry_run:
-        description: "Push only: show what would change without changing anything."
+        description: "Push and submit: show what would change without changing anything."
         required: false
         type: boolean
         default: true
       version:
-        description: "Push only: the App Store version to update. Blank uses the one being prepared."
+        description: "Push: the App Store version to update (blank uses the one being prepared). Submit: the version number to submit, like 0.5.7 (required)."
         required: false
         type: string
         default: ""
@@ -52,10 +53,11 @@ jobs:
         run: python3 ci/publish_store_metadata.py push --validate-only
 
   sync:
-    name: ${{ github.event.inputs.mode == 'pull' && 'Pull listing' || (github.event.inputs.dry_run == 'true' && 'Preview changes' || 'Push listing') }}
+    name: ${{ github.event.inputs.mode == 'pull' && 'Pull listing' || (github.event.inputs.mode == 'submit' && (github.event.inputs.dry_run == 'true' && 'Preview submission' || 'Submit for review')) || (github.event.inputs.dry_run == 'true' && 'Preview changes' || 'Push listing') }}
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Submit may wait for a just-uploaded build to finish processing.
+    timeout-minutes: 50
     # The App Store Connect API key lives in the release environment, as for releases.
     environment: release
     permissions:
@@ -115,5 +117,26 @@ jobs:
             echo ""
             echo '```'
             cat "${RUNNER_TEMP}/changes.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Submit for review
+        if: github.event.inputs.mode == 'submit'
+        env:
+          APP_STORE_CONNECT_PRIVATE_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY_BASE64 }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          set -euo pipefail
+          arguments=(submit --version "$VERSION")
+          if [ "$DRY_RUN" = "true" ]; then arguments+=(--dry-run); fi
+          python3 ci/publish_store_metadata.py "${arguments[@]}" | tee "${RUNNER_TEMP}/submission.txt"
+          {
+            echo "## App Store submission"
+            echo ""
+            echo '```'
+            cat "${RUNNER_TEMP}/submission.txt"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"

@@ -115,6 +115,60 @@ class StoreMetadataTests(unittest.TestCase):
             with patch.object(metadata, "request_json", side_effect=fake_request):
                 metadata.push("token", "app-1", root, None, dry_run=True)
 
+    def fake_store(self, *, open_submissions=(), attached=None):
+        calls = []
+        version = {"id": "v1", "attributes": {"versionString": "0.5.6", "appVersionState": "DEVELOPER_REJECTED"}}
+        build = {"id": "b9", "attributes": {"version": "57", "processingState": "VALID", "expired": False}}
+
+        def fake_request(url, *, token, method="GET", payload=None):
+            calls.append((method, url.replace(BASE, ""), payload))
+            path = url.replace(BASE, "").split("?")[0]
+            if path == "/apps/app/appStoreVersions":
+                return {"data": [version]}
+            if path == "/builds":
+                return {"data": [{"id": "b0", "attributes": {"processingState": "PROCESSING"}}, build]}
+            if path == "/appStoreVersions/v1/build":
+                return {"data": attached}
+            if path == "/reviewSubmissions" and method == "GET":
+                return {"data": list(open_submissions)}
+            if path == "/reviewSubmissions" and method == "POST":
+                return {"data": {"id": "s1", "attributes": {"state": "READY_FOR_REVIEW"}}}
+            if path.endswith("/items"):
+                return {"data": []}
+            if path == "/reviewSubmissions/s1" and method == "PATCH":
+                return {"data": {"id": "s1", "attributes": {"state": "WAITING_FOR_REVIEW"}}}
+            return {"data": {}}
+
+        return calls, fake_request
+
+    def test_submit_renames_attaches_the_processed_build_and_submits(self) -> None:
+        calls, fake_request = self.fake_store()
+        with patch.object(metadata, "request_json", side_effect=fake_request):
+            metadata.submit(lambda: "token", "app", "0.5.7", dry_run=False, wait_minutes=0)
+        changes = [(method, url.split("?")[0], payload["data"]) for method, url, payload in calls if method != "GET"]
+        self.assertEqual(changes[0], ("PATCH", "/appStoreVersions/v1", {"type": "appStoreVersions", "id": "v1", "attributes": {"versionString": "0.5.7"}}))
+        self.assertEqual(changes[1], ("PATCH", "/appStoreVersions/v1/relationships/build", {"type": "builds", "id": "b9"}))
+        self.assertEqual(changes[2][:2], ("POST", "/reviewSubmissions"))
+        self.assertEqual(changes[3][:2], ("POST", "/reviewSubmissionItems"))
+        self.assertEqual(changes[3][2]["relationships"]["appStoreVersion"]["data"]["id"], "v1")
+        self.assertEqual(changes[4], ("PATCH", "/reviewSubmissions/s1", {"type": "reviewSubmissions", "id": "s1", "attributes": {"submitted": True}}))
+        builds_query = next(url for method, url, _ in calls if url.startswith("/builds"))
+        self.assertIn("filter%5BpreReleaseVersion.version%5D=0.5.7", builds_query)
+
+    def test_submit_dry_run_changes_nothing(self) -> None:
+        calls, fake_request = self.fake_store()
+        with patch.object(metadata, "request_json", side_effect=fake_request):
+            metadata.submit(lambda: "token", "app", "0.5.7", dry_run=True, wait_minutes=0)
+        self.assertEqual([method for method, _, _ in calls if method != "GET"], [])
+
+    def test_submit_reuses_an_open_submission(self) -> None:
+        calls, fake_request = self.fake_store(open_submissions=[{"id": "s1"}], attached={"id": "b9"})
+        with patch.object(metadata, "request_json", side_effect=fake_request):
+            metadata.submit(lambda: "token", "app", "0.5.7", dry_run=False, wait_minutes=0)
+        posts = [url for method, url, _ in calls if method == "POST"]
+        self.assertEqual(posts, ["/reviewSubmissionItems"])
+        self.assertNotIn(("PATCH", "/appStoreVersions/v1/relationships/build"), [(m, u) for m, u, _ in calls])
+
     def test_refuses_when_no_version_is_being_prepared(self) -> None:
         live = {"id": "ver-0", "attributes": {"versionString": "0.1", "appVersionState": "READY_FOR_DISTRIBUTION"}}
         with patch.object(metadata, "request_json", return_value={"data": [live]}):
