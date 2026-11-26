@@ -424,11 +424,14 @@
 
   // A field labeled only "Name" right before a "Surname" field asks for the
   // first name, not the full name.
+  // "Name" beside a surname box is the given name: before it ("Name",
+  // "Surname"), or after it, as Korean forms put 이름 after 성.
   function givenNameBesideSurname(element, descriptor) {
     if (UmeMatcher.normalize(descriptor.label || descriptor.accessibleName) !== "name") return false;
     const controls = [...(element.form || document).querySelectorAll(FORM_CONTROL_SELECTOR)].filter((control) => !BLOCKED_TYPES.has(controlType(control)));
     const index = controls.indexOf(element);
-    return controls.slice(index + 1, index + 3).some((control) => /^(?:surname|last name|family name)$/.test(UmeMatcher.normalize(labelFor(control))));
+    const isSurname = (control) => /^(?:surname|last name|family name)$/.test(UmeMatcher.normalize(labelFor(control)));
+    return controls.slice(index + 1, index + 3).some(isSurname) || (index > 0 && isSurname(controls[index - 1]));
   }
 
   function describe(element) {

@@ -36,6 +36,16 @@
     "性別": "gender", "男性": "male", "女性": "female", "男": "male", "女": "female",
     "確認用": "confirm", "確認": "confirm", "必須": "required", "任意": "optional", "など": "etc", "等": "etc",
     "緊急連絡先": "emergency contact", "かかりつけ医": "family doctor", "主治医": "physician",
+    // Japanese: names, their kana readings (振り仮名), and romanized spellings.
+    // セイ, メイ, カナ, and their hiragana count only standing alone ("カナダ"
+    // is Canada).
+    "姓": "last name", "名": "first name", "氏名": "full name", "姓名": "full name", "名前": "name",
+    "フリガナ": "reading", "ふりがな": "reading", "フリカナ": "reading", "よみがな": "reading", "ヨミガナ": "reading",
+    "読み仮名": "reading", "全角カナ": "reading", "全角カタカナ": "reading", "半角カナ": "reading", "半角カタカナ": "reading",
+    "カタカナ": "reading", "ひらがな": "reading", "カナ": "reading", "かな": "reading", "ヨミ": "reading",
+    "セイ": "last name reading", "メイ": "first name reading", "せい": "last name reading", "めい": "first name reading",
+    "ローマ字": "romaji", "英字": "romaji", "半角英字": "romaji", "アルファベット": "romaji", "漢字": "kanji",
+    "会社名": "company name", "会社": "company", "勤務先": "employer", "ユーザー名": "user name", "ニックネーム": "nickname",
     // Korean
     "우편번호": "postal code", "시도": "state", "시군구": "city", "도시": "city", "도로명주소": "street address",
     "상세주소": "address line 2", "주소": "address", "국가": "country", "지역": "region",
@@ -44,7 +54,8 @@
     "생년월일": "date of birth", "년": "year", "월": "month", "일": "day",
     "휴대폰": "mobile", "휴대전화": "mobile phone", "핸드폰": "mobile", "전화번호": "phone", "전화": "phone", "이메일": "email",
     "성별": "gender", "남성": "male", "남자": "male", "여성": "female", "여자": "female",
-    "확인": "confirm", "필수": "required", "비상연락처": "emergency contact", "주치의": "physician"
+    "확인": "confirm", "필수": "required", "비상연락처": "emergency contact", "주치의": "physician",
+    "성": "last name", "이름": "name", "성명": "full name", "영문": "romaji", "회사": "company", "회사명": "company name"
   };
   // Korean labels written with a slash or a space between their parts.
   const LABEL_PHRASES = [
@@ -52,7 +63,10 @@
     [/도로명\s+주소/g, " street address "], [/여권\s+번호/g, " passport number "], [/전화\s+번호/g, " phone "],
     [/발급\s+국가/g, " issuing country "], [/비상\s+연락처/g, " emergency contact "], [/만료\s+날짜/g, " expiration date "]
   ];
-  const LONG_LABEL_WORDS = Object.keys(LABEL_WORDS).filter((word) => word.length > 1).sort((left, right) => right.length - left.length);
+  // Words that mean something else inside a longer word: "カナダ" is Canada,
+  // and "航空会社名" an airline's name, not your company's.
+  const WHOLE_RUN_ONLY = new Set(["セイ", "メイ", "せい", "めい", "カナ", "かな", "ヨミ", "会社名", "会社", "勤務先", "회사", "회사명"]);
+  const LONG_LABEL_WORDS = Object.keys(LABEL_WORDS).filter((word) => word.length > 1 && !WHOLE_RUN_ONLY.has(word)).sort((left, right) => right.length - left.length);
 
   function translateRun(run) {
     if (LABEL_WORDS[run]) return ` ${LABEL_WORDS[run]} `;
@@ -230,9 +244,43 @@
     return "";
   }
 
+  const NAME_PARTS = ["given", "family", "middle", "full"];
+  const READING_PARTS = ["givenReading", "familyReading", "fullReading"];
+  const READING_RE = /(?:^| )(?:reading|furigana|kana)(?: |$)/;
+
+  // A name box's labels, without "required" or "optional" ("お名前（必須）").
+  function nameLabels(entry) {
+    return [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder]
+      .flatMap(labelForms)
+      .map((label) => label.replace(/(?:^| )(?:required|optional)(?= |$)/g, " ").replace(/\s+/g, " ").trim())
+      .filter(Boolean);
+  }
+
+  function isReadingPart(part) {
+    return READING_PARTS.includes(part);
+  }
+
+  // A name box's part: "given", "family", "middle", "full", or, for a box that
+  // asks for a name's kana reading (セイ, メイ, フリガナ, 姓（カナ）),
+  // "givenReading", "familyReading", or "fullReading". A reading box is only
+  // ever filled with a saved reading, never with the name itself.
   function nameFieldPart(entry) {
+    if ([...NAME_PARTS, ...READING_PARTS].includes(entry?.namePart)) return entry.namePart;
+    const labels = nameLabels(entry);
+    if (!labels.some((label) => READING_RE.test(label))) return plainNamePart(entry);
+    const part = plainNamePart(entry);
+    if (part === "given" || part === "family" || part === "full") return `${part}Reading`;
+    // "フリガナ" on its own is the whole name's reading; "会社名フリガナ" or
+    // "住所（フリガナ）" is something else's.
+    // Whole labels only: "会社名フリガナ" without its kanji would read "フリガナ".
+    const whole = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder].map(normalize).filter(Boolean);
+    const others = whole.map((label) => label.split(" ").filter((word) => !/^(?:reading|furigana|kana|name|full|required|optional|confirm)$/.test(word)));
+    return !part && others.some((words) => !words.length) ? "fullReading" : "";
+  }
+
+  function plainNamePart(entry) {
     // Set by the page reader when the label alone doesn't tell ("Name" before "Surname").
-    if (["given", "family", "middle", "full"].includes(entry?.namePart)) return entry.namePart;
+    if (NAME_PARTS.includes(entry?.namePart)) return entry.namePart;
     const autocomplete = String(entry?.autocomplete || "").toLowerCase().split(/\s+/);
     if (autocomplete.includes("username") || autocomplete.includes("nickname") || autocomplete.includes("organization")) return "";
     if (autocomplete.includes("given-name")) return "given";
@@ -240,7 +288,7 @@
     if (autocomplete.includes("additional-name")) return "middle";
     if (autocomplete.includes("cc-name") || autocomplete.includes("name")) return "full";
 
-    const labels = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder].flatMap(labelForms).filter(Boolean);
+    const labels = nameLabels(entry);
     // Each label is read on its own: joined, "Name (first and last)" twice
     // would read "…first and last name first…".
     const anyLabel = (re) => labels.some((label) => re.test(label));
@@ -263,8 +311,26 @@
     return typeof entry?.value === "string" ? entry.value.trim() : "";
   }
 
+  const CJK_TEXT_RE = /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af]/;
+
+  // The writing a name box wants: "latin" for a romanized box (ローマ字, 英字,
+  // 영문) or an English label, "cjk" for a Japanese or Korean label.
+  function wantedNameScript(field) {
+    const labels = [field?.userLabel, field?.accessibleName, field?.label, field?.placeholder].filter(Boolean);
+    if (labels.some((label) => /(?:^| )romaji(?: |$)/.test(normalize(label)))) return "romaji";
+    return labels.some((label) => CJK_TEXT_RE.test(label)) ? "cjk" : "latin";
+  }
+
   function pickNamePart(savedEntries, field, part) {
-    const candidates = (savedEntries || []).filter((entry) => nameFieldPart(entry) === part && namePartValue(entry));
+    let candidates = (savedEntries || []).filter((entry) => nameFieldPart(entry) === part && namePartValue(entry));
+    // With "山田" and "Yamada" both saved, a Japanese box takes the kanji and
+    // an English one the Latin spelling. A romanized box never takes kanji.
+    const wanted = isReadingPart(part) ? "" : wantedNameScript(field);
+    if (wanted) {
+      const isCJK = (entry) => CJK_TEXT_RE.test(namePartValue(entry));
+      const same = candidates.filter((entry) => (wanted === "cjk") === isCJK(entry));
+      if (wanted === "romaji" || same.length) candidates = same;
+    }
     if (candidates.length === 1) return candidates[0];
     if (!candidates.length) return null;
     const fieldContext = contextText(field);
@@ -285,17 +351,68 @@
   }
 
   function familyNameFirst(given, family) {
-    if (/[\u3000-\u9fff]/.test(`${given}${family}`)) return true;
+    if (/[\u3000-\u9fff\uac00-\ud7af]/.test(`${given}${family}`)) return true;
     const language = typeof navigator !== "undefined" ? String(navigator.language || "").toLowerCase() : "";
     return /^(?:ja|zh|ko)(?:-|_|$)/.test(language);
   }
 
+  // Half-width katakana for each full-width one, built from what NFKC maps
+  // each half-width character (and voiced pair, ｶﾞ) to.
+  let halfWidthKana = null;
+
+  function toHalfWidthKana(text) {
+    if (!halfWidthKana) {
+      halfWidthKana = new Map();
+      for (let code = 0xff61; code <= 0xff9f; code += 1) {
+        const half = String.fromCharCode(code);
+        halfWidthKana.set(half.normalize("NFKC"), half);
+        for (const mark of ["\uff9e", "\uff9f"]) {
+          const full = (half + mark).normalize("NFKC");
+          if (full.length === 1) halfWidthKana.set(full, half + mark);
+        }
+      }
+      halfWidthKana.set("\u3000", " ");
+    }
+    return [...text].map((character) => halfWidthKana.get(character) || character).join("");
+  }
+
+  function shiftKana(text, from, to, offset) {
+    return [...text].map((character) => {
+      const code = character.charCodeAt(0);
+      return code >= from && code <= to ? String.fromCharCode(code + offset) : character;
+    }).join("");
+  }
+
+  // A saved reading, written the way the box asks: hiragana for ふりがな or
+  // よみがな, half-width for 半角, katakana otherwise (フリガナ, セイ, カナ).
+  function readingForField(value, field) {
+    const label = [field?.userLabel, field?.accessibleName, field?.label, field?.placeholder].filter(Boolean).join(" ").normalize("NFKC");
+    const katakana = shiftKana(String(value ?? ""), 0x3041, 0x3096, 0x60);
+    if (/半角/.test(label)) return toHalfWidthKana(katakana);
+    if (/ふりがな|よみがな|ひらがな|(?:^|[^\u3041-\u309f])(?:せい|めい)(?:[^\u3041-\u309f]|$)/.test(label)) return shiftKana(katakana, 0x30a1, 0x30f6, -0x60);
+    return katakana;
+  }
+
+  function withReadingForField(saved, field) {
+    const value = readingForField(namePartValue(saved), field);
+    return value === saved.value ? saved : { ...saved, value };
+  }
+
   function composedFullName(savedEntries, field) {
-    const given = pickNamePart(savedEntries, field, "given");
-    const family = pickNamePart(savedEntries, field, "family");
+    const reading = nameFieldPart(field) === "fullReading";
+    const given = pickNamePart(savedEntries, field, reading ? "givenReading" : "given");
+    const family = pickNamePart(savedEntries, field, reading ? "familyReading" : "family");
     const givenValue = namePartValue(given);
     const familyValue = namePartValue(family);
     if (!givenValue || !familyValue) return null;
+    if (reading) {
+      return {
+        accessibleName: "Full name reading",
+        kind: field?.kind || "text",
+        inputType: field?.inputType || "text",
+        value: readingForField(`${familyValue} ${givenValue}`, field)
+      };
+    }
     const middle = namePartValue(pickNamePart(savedEntries, field, "middle"));
     const parts = familyNameFirst(givenValue, familyValue)
       ? [familyValue, givenValue]
@@ -623,6 +740,13 @@
     // A remembered ZIP code only fills a field that asks for one: sharing the word
     // "code" doesn't make a coupon, captcha, or verification code a ZIP code.
     if (savedPart === "postalCode" && !fieldPart) return false;
+    // A kana reading only fills the same reading's box, and a reading box only
+    // takes that reading: never the name in kanji, nor another answer.
+    const savedNamePart = nameFieldPart(saved);
+    const fieldNamePart = nameFieldPart(field);
+    if ((isReadingPart(savedNamePart) || isReadingPart(fieldNamePart)) && savedNamePart !== fieldNamePart) return false;
+    // A romanized name box (ローマ字, 英字, 영문) never takes kanji or Hangul.
+    if (fieldNamePart && wantedNameScript(field) === "romaji" && CJK_TEXT_RE.test(String(saved.value ?? ""))) return false;
     // A person's name never goes into a field for a company, business, username,
     // or login: "Company Name" shares "name" with "First name" but isn't one.
     if (["given", "family", "middle", "full"].includes(nameFieldPart(saved))
@@ -758,9 +882,14 @@
     // A first, middle, or last name box takes that part of the person's name,
     // whatever its label's wording ("Surname" for a saved "Last name").
     const namePart = contactInfo ? "" : nameFieldPart(field);
-    if (namePart && namePart !== "full") {
+    if (namePart && namePart !== "full" && namePart !== "fullReading") {
       const part = pickNamePart(savedEntries, field, namePart);
-      if (part) return part;
+      if (part) return isReadingPart(namePart) ? withReadingForField(part, field) : part;
+    }
+    if (namePart === "fullReading") {
+      const explicit = (savedEntries || []).filter((entry) => nameFieldPart(entry) === "fullReading" && namePartValue(entry));
+      const saved = scoredBestMatch(explicit, field, minimumScore);
+      return saved ? withReadingForField(saved, field) : composedFullName(savedEntries, field);
     }
 
     if (nameFieldPart(field) === "full" && !contactInfo) {

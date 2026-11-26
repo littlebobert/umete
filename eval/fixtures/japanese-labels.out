@@ -1,3 +1,7 @@
+NAME_LAST | n1 | 姓 |  | f1
+NAME_FIRST | n2 | 名 |  | f1
+UNKNOWN_TYPE | n3 | セイ |  | f1
+UNKNOWN_TYPE | n4 | メイ |  | f1
 EMAIL_ADDRESS | q1 | メールアドレス（必須） |  | f1
 PHONE_HOME_WHOLE_NUMBER | q2 | お電話番号 |  | f1
 ADDRESS_HOME_ZIP | q3 | 〒 郵便番号 |  | f1

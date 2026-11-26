@@ -4,9 +4,12 @@
 <body>
   <!-- Umete's own fixture: a Japanese sign-up form. The fields' names say
        nothing, so only the Japanese labels tell what each one is. The kana
-       reading box (カナ) must stay empty. -->
+       reading boxes (セイ, メイ, カナ) must stay empty: the test person saved
+       no readings, and a reading box never takes the name itself. -->
   <form>
     <h2>お客様情報</h2>
+    <p><label for="n1">姓</label> <input id="n1" name="n1"> <label for="n2">名</label> <input id="n2" name="n2"></p>
+    <p><label for="n3">セイ</label> <input id="n3" name="n3"> <label for="n4">メイ</label> <input id="n4" name="n4"></p>
     <p><label for="q1">メールアドレス（必須）</label> <input type="email" id="q1" name="q1"></p>
     <p><label for="q2">お電話番号</label> <input type="tel" id="q2" name="q2"></p>
     <h2>ご住所</h2>

@@ -1091,3 +1091,71 @@ test("a bilingual label reads by its English words; a kana reading box stays a r
   assert.equal(addressFieldPart(entry({ accessibleName: "市区町村（カナ）" })), "");
   assert.equal(addressFieldPart(entry({ accessibleName: "City カナ" })), "");
 });
+
+// Names as Remember saves them from a Japanese form, plus an English one.
+const japaneseNames = () => [
+  entry({ accessibleName: "姓", label: "姓", value: "山田" }),
+  entry({ accessibleName: "名", label: "名", value: "太郎" }),
+  entry({ accessibleName: "セイ", label: "セイ", value: "ヤマダ" }),
+  entry({ accessibleName: "メイ", label: "メイ", value: "たろう" }),
+  entry({ accessibleName: "Last name", label: "Last name", value: "Yamada" }),
+  entry({ accessibleName: "First name", label: "First name", value: "Taro" })
+];
+
+test("Japanese and Korean name labels name their part, and kana reading boxes their reading", () => {
+  for (const [label, part] of [
+    ["姓", "family"], ["名", "given"], ["氏名", "full"], ["お名前（必須）", "full"], ["姓名", "full"],
+    ["セイ", "familyReading"], ["メイ", "givenReading"], ["せい", "familyReading"], ["姓（カナ）", "familyReading"],
+    ["名（ふりがな）", "givenReading"], ["フリガナ", "fullReading"], ["氏名（全角カナ）", "fullReading"], ["Last name (Kana)", "familyReading"],
+    ["姓（ローマ字）", "family"], ["성", "family"], ["성명", "full"],
+    ["会社名", ""], ["会社名フリガナ", ""], ["住所（フリガナ）", ""], ["ユーザー名", ""], ["カナダ", ""], ["メイン", ""]
+  ]) {
+    assert.equal(nameFieldPart(entry({ accessibleName: label, label })), part, label);
+  }
+});
+
+test("Japanese name boxes take the kanji, English ones the Latin spelling, romanized ones never kanji", () => {
+  const saved = japaneseNames();
+  const fill = (label) => bestMatch(saved, entry({ accessibleName: label, label }))?.value ?? null;
+  assert.equal(fill("姓"), "山田");
+  assert.equal(fill("名"), "太郎");
+  assert.equal(fill("氏名"), "山田 太郎");
+  assert.equal(fill("Last name"), "Yamada");
+  assert.equal(fill("Full name"), "Taro Yamada");
+  assert.equal(fill("姓（ローマ字）"), "Yamada");
+  const kanjiOnly = saved.slice(0, 2);
+  assert.equal(bestMatch(kanjiOnly, entry({ accessibleName: "姓（ローマ字）" })), null);
+  // With only the Latin spelling saved, a Japanese box still gets it.
+  assert.equal(bestMatch(saved.slice(4), entry({ accessibleName: "姓" })).value, "Yamada");
+  // Korean names are family-first too.
+  const korean = [entry({ accessibleName: "성", value: "김" }), entry({ accessibleName: "이름", namePart: "given", value: "민준" })];
+  assert.equal(bestMatch(korean, entry({ accessibleName: "성명" })).value, "김 민준");
+});
+
+test("kana readings fill only reading boxes, written in the box's kana", () => {
+  const saved = japaneseNames();
+  const fill = (label) => bestMatch(saved, entry({ accessibleName: label, label }))?.value ?? null;
+  assert.equal(fill("セイ"), "ヤマダ");
+  assert.equal(fill("メイ"), "タロウ");
+  assert.equal(fill("名（ふりがな）"), "たろう");
+  assert.equal(fill("フリガナ"), "ヤマダ タロウ");
+  assert.equal(fill("ふりがな"), "やまだ たろう");
+  assert.equal(fill("フリガナ（半角カナ）"), "ﾔﾏﾀﾞ ﾀﾛｳ");
+  assert.equal(fill("Last name (Kana)"), "ヤマダ");
+  // No saved reading: a reading box stays empty rather than take the kanji,
+  // and a kanji box never takes a reading.
+  const kanjiOnly = saved.slice(0, 2);
+  for (const label of ["セイ", "メイ", "フリガナ", "姓（カナ）"]) {
+    assert.equal(bestMatch(kanjiOnly, entry({ accessibleName: label, label })), null, label);
+  }
+  const readingsOnly = saved.slice(2, 4);
+  for (const label of ["姓", "名", "氏名"]) {
+    assert.equal(bestMatch(readingsOnly, entry({ accessibleName: label, label })), null, label);
+  }
+  // Remembering 姓 and セイ from one box keeps both.
+  const merged = mergeEntries([], [
+    entry({ accessibleName: "姓", label: "姓", group: "お名前", value: "山田" }),
+    entry({ accessibleName: "セイ", label: "セイ", group: "お名前", value: "ヤマダ" })
+  ]);
+  assert.deepEqual(merged.map((answer) => answer.value), ["山田", "ヤマダ"]);
+});
