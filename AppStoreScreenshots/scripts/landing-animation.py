@@ -16,6 +16,12 @@ ICON defaults to the app icon in the asset catalog, OUT_DIR to the site's assets
 --mac to the Mac app's sources, for its About window. --frames also writes a few 512 px
 stills of the cycle, to look at without the video. Needs Pillow (macOS's
 /usr/bin/python3 has it) and ffmpeg.
+
+    /usr/bin/python3 AppStoreScreenshots/scripts/landing-animation.py --header X Y SIZE WIDTH HEIGHT R G B OUT.mp4 [OUT.mp4 …]
+
+is the App Store product page header (scripts/header.mjs runs it): the same cycle drawn
+SIZE px square with its top left at X, Y on a WIDTH×HEIGHT backdrop of the icon's colour
+(R G B), so the icon's edges vanish into it, written as a muted video to each OUT.
 """
 import math
 import shutil
@@ -28,7 +34,8 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageMath
 
 root = Path(__file__).resolve().parents[2]
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
-icon_path = Path(args[0]) if args else root / "Safari/Ume/Shared (App)/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
+HEADER = "--header" in sys.argv
+icon_path = Path(args[0]) if args and not HEADER else root / "Safari/Ume/Shared (App)/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
 default_out = root / "Safari/Ume/macOS (App)" if "--mac" in sys.argv else root.parent / "littlebobert.github.io/assets"
 out_dir = Path(args[1]) if len(args) > 1 else default_out
 PREVIEW = "--frames" in sys.argv  # Also keep a few stills, to look at without the video.
@@ -208,6 +215,40 @@ def frame_at(t):
     return filled((1 - k) ** 2, tilt=0.035 * math.sin(k * 9) * (1 - k), ripple=3 * (1 - k), phase=t * 6,
                   leaf_k=1 - ease(k / 0.3), surface_k=ease(k / 0.12))
 
+
+def header(x, y, size, width, height, colour, outs):
+    """Each frame drawn at `size` px and laid on a `width`×`height` backdrop of the icon's
+    own colour, piped to ffmpeg, then the video copied to each of `outs`. The icon fades
+    out towards its edges, so no square shows."""
+    edge = round(size * 0.04)
+    feather = Image.new("L", (size, size), 0)
+    ImageDraw.Draw(feather).rounded_rectangle((edge, edge, size - edge, size - edge), radius=size // 5, fill=255)
+    feather = feather.filter(ImageFilter.GaussianBlur(edge / 2))
+    backdrop = Image.new("RGB", (width, height), colour)
+    for out in outs:
+        Path(out).parent.mkdir(parents=True, exist_ok=True)
+    encoder = subprocess.Popen([
+        "ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
+        "-s", f"{width}x{height}", "-framerate", str(FPS), "-i", "-",
+        "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p", "-crf", "16", "-preset", "slow",
+        "-movflags", "+faststart", "-an", outs[0],
+    ], stdin=subprocess.PIPE)
+    for i in range(frames):
+        frame = backdrop.copy()
+        frame.paste(frame_at(i / FPS).resize((size, size), Image.LANCZOS), (x, y), feather)
+        encoder.stdin.write(frame.tobytes())
+    encoder.stdin.close()
+    if encoder.wait():
+        sys.exit("ffmpeg failed")
+    for out in outs[1:]:
+        shutil.copyfile(outs[0], out)
+    print(f"{frames} frames, {total:.1f} s: " + ", ".join(outs))
+
+
+if HEADER:
+    x, y, size, width, height, r, g, b = (int(round(float(v))) for v in args[:8])
+    header(x, y, size, width, height, (r, g, b), args[8:])
+    sys.exit()
 
 out_dir.mkdir(parents=True, exist_ok=True)
 work = Path(tempfile.mkdtemp())

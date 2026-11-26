@@ -48,6 +48,16 @@ For social posts, `npm run social` makes `output/social/umete-duo-en-US.mp4` (10
 
 `npm run landing` renders umete.jp's three carousel screens in the closed iPhone Duo, its frame drawn as for the Duo's App Store screenshots, from `captures/duo-closed/`, as `output/landing/umete-landing-<id>.webp` (900×1275, transparent); copy them to the site's `assets/` and bump their `?v=`. The fill capture predates the glass icon, so the app icon is drawn over the old one in Umete's sheet. `npm run landing -- --iphone` renders the iPhone 18 Pro Max versions instead.
 
+## Product page header video
+
+iOS 27's App Store plays a muted, looping video across the top of the product page. Umete's is just the glass plum from umete.jp's header (below), filling up and draining, centered on the icon's own brown backdrop so the glass sits on it as it does in the icon:
+
+```bash
+npm run header
+```
+
+It writes `output/header/<locale>/header.mp4` (3840×1646, 30 fps, a 7.1 s loop), the same video for each locale. Upload it in App Store Connect → Asset Library → Product Page Information → Header. `header.video` in `config.mjs` places the plum inside every device's crop: an iPhone's middle 2480 columns, below its buttons, and an iPad's rows 250–1395. `scripts/header.mjs` works out where, and `landing-animation.py --header` draws it. The still header PNGs from `npm run render` are unchanged.
+
 ## Landing page icon
 
 `npm run landing-animation` renders umete.jp's header icon in the app icon's glass, in the way of Karui's: an empty glass shell fills up with the plum's colour, its surface swaying as it rises, catches the light, and drains back to empty. It's built on the app icon, so the full plum is exactly the icon. It writes `umete-icon-sketch.mp4` (224 px, 7 s, looping), the full plum as `umete-icon-sketch.jpg`, shown with no motion, and the empty first frame as `umete-icon-sketch-first.jpg`, shown while the video starts, into the site's `assets/`; bump the pages' `?v=` cache versions after. `npm run landing-animation -- --mac` writes the same files into `Safari/Ume/macOS (App)/` for the Mac app's About window. Needs ffmpeg and Pillow, which macOS's `/usr/bin/python3` has.

@@ -147,6 +147,20 @@ export const header = Object.freeze({
     { file: "5244x2950.png", width: 5244, height: 2950 },
     { file: "3840x1646.png", width: 3840, height: 1646 },
   ]),
+  // iOS 27's header is a muted, looping video, 3840×1646 (21:9): just the glass plum of
+  // umete.jp's header filling up, centered on the icon's own backdrop so the glass sits
+  // on it exactly as in the icon. Each device crops it (App Store Connect's Device
+  // Preview): an iPhone keeps only the middle 2480 columns, with its back and share
+  // buttons over the top third; an iPad keeps every column but only rows 250–1395, its
+  // tab bar along the top. So the plum sits below the buttons and inside the iPad's
+  // rows. `plum` is where the plum itself (not the icon square) goes.
+  video: Object.freeze({
+    file: "header.mp4",
+    width: 3840,
+    height: 1646,
+    backdrop: Object.freeze([166, 140, 119]), // AppIcon-1024.png's flat backdrop
+    plum: Object.freeze({ top: 440, height: 890 }),
+  }),
 });
 
 // The search results card, the 3:2 image the Search tab shows under the app's row in
