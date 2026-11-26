@@ -331,7 +331,8 @@
   function comboboxListbox(element) {
     for (const attribute of ["aria-controls", "aria-owns"]) {
       for (const id of (element.getAttribute(attribute) || "").split(/\s+/).filter(Boolean)) {
-        const target = elementById(element, id);
+        // The list may sit in another shadow root than its combobox.
+        const target = elementById(element, id) || deepQuerySelectorAll(`[id="${CSS.escape(id)}"]`)[0];
         if (target?.getAttribute("role") === "listbox") return target;
         const nested = target?.querySelector?.("[role='listbox']");
         if (nested) return nested;
@@ -345,6 +346,12 @@
       const lists = ancestor.querySelectorAll("[role='listbox']");
       if (lists.length === 1) return lists[0];
       if (lists.length > 1) return null;
+    }
+    // An open combobox whose list was put at the end of the page, or in a
+    // shadow root: the one list showing.
+    if (element.getAttribute("aria-expanded") === "true") {
+      const showing = deepQuerySelectorAll("[role='listbox']").filter((list) => isUserVisible(list));
+      if (showing.length === 1) return showing[0];
     }
     return null;
   }
@@ -1012,6 +1019,59 @@
     return deepQuerySelectorAll(FORM_CONTROL_SELECTOR).filter(isEligible);
   }
 
+  // A combobox whose options aren't on the page until it's opened (American's
+  // Gender, Title, and Loyalty program). Fill sets these aside, then opens
+  // each, waits for its list, picks the option, and closes it.
+  function optionsAppearOnOpen(element) {
+    return isCustomCombobox(element) && element.getAttribute("aria-expanded") !== "true" && !dropdownOptions(element).length;
+  }
+
+  const pause = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+  function closeCombobox(element) {
+    if (element.getAttribute("aria-expanded") !== "true" && !isUserVisible(comboboxListbox(element))) return;
+    for (const target of [element, document.activeElement].filter(Boolean)) {
+      target.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", bubbles: true, composed: true }));
+    }
+    if (element.getAttribute("aria-expanded") === "true") clickLikeAPerson(element);
+  }
+
+  async function applyWithOptionsOpen(element, value, saved) {
+    clickLikeAPerson(element);
+    for (let waited = 0; waited < 1000 && !dropdownOptions(element).length; waited += 50) await pause(50);
+    const applied = dropdownOptions(element).length ? applyValue(element, value, saved) : false;
+    await pause(0);
+    closeCombobox(element);
+    return applied;
+  }
+
+  function recordApplied(element, applied, counts) {
+    if (applied) {
+      counts.filled += 1;
+      filledByUmete.add(element);
+      failedApplications.delete(element);
+      intentionallySkipped.delete(element);
+    } else if (intentionallySkipped.has(element)) {
+      counts.skippedDuplicates += 1;
+      failedApplications.delete(element);
+    } else {
+      counts.unmatched += 1;
+      counts.matchedButNotApplied += 1;
+      failedApplications.add(element);
+    }
+  }
+
+  // Fill, then the comboboxes it set aside, one at a time.
+  async function fillAnswersAndOpenLists(savedEntries, diagnosticsEnabled = false) {
+    const result = fillAnswers(savedEntries, diagnosticsEnabled);
+    const counts = { filled: result.filled, unmatched: result.unmatched, matchedButNotApplied: result.matchedButNotApplied, skippedDuplicates: result.skippedDuplicates };
+    for (const { element, match } of result.setAside) {
+      recordApplied(element, await applyWithOptionsOpen(element, match.value, match), counts);
+    }
+    const { setAside, ...rest } = result;
+    return { ...rest, ...counts, openedLists: setAside.length };
+  }
+
   function fillAnswers(savedEntries, diagnosticsEnabled = false) {
     const elements = eligibleElements();
     const countryCodeDiagnostics = [];
@@ -1019,6 +1079,7 @@
     let skippedDuplicates = 0;
     let unmatched = 0;
     let matchedButNotApplied = 0;
+    const setAside = [];
     // The address part of the last address field, to spot a second line 2.
     let previousLinePart = "";
     for (const element of elements) {
@@ -1048,6 +1109,10 @@
         }
         continue;
       }
+      if (optionsAppearOnOpen(element)) {
+        setAside.push({ element, match });
+        continue;
+      }
       const selectedBefore = isCallingCode ? optionLabelFor(element) : "";
       const applied = applyValue(element, match.value, match);
       if (isCallingCode && diagnosticsEnabled) {
@@ -1066,21 +1131,12 @@
             : []
         });
       }
-      if (applied) {
-        filled += 1;
-        filledByUmete.add(element);
-        failedApplications.delete(element);
-        intentionallySkipped.delete(element);
-      } else if (intentionallySkipped.has(element)) {
-        skippedDuplicates += 1;
-        failedApplications.delete(element);
-      } else {
-        unmatched += 1;
-        matchedButNotApplied += 1;
-        failedApplications.add(element);
-      }
+      const counts = { filled, unmatched, matchedButNotApplied, skippedDuplicates };
+      recordApplied(element, applied, counts);
+      ({ filled, unmatched, matchedButNotApplied, skippedDuplicates } = counts);
     }
     return {
+      setAside,
       filled,
       unmatched,
       matchedButNotApplied,
@@ -1111,7 +1167,7 @@
     });
   }
 
-  function applyMappings(mappings, values) {
+  async function applyMappings(mappings, values) {
     const elements = eligibleElements();
     const savedByKey = new Map((values || []).map((item) => [item.key, item]));
     let filled = 0;
@@ -1120,7 +1176,10 @@
       const element = elements[index];
       const saved = savedByKey.get(mapping.key);
       if (!element || !saved || ["address", "passport"].includes(UmeMatcher.answerType(saved))) continue;
-      if (applyValue(element, saved.value, saved)) filled += 1;
+      const applied = optionsAppearOnOpen(element)
+        ? await applyWithOptionsOpen(element, saved.value, saved)
+        : applyValue(element, saved.value, saved);
+      if (applied) filled += 1;
     }
     return { filled };
   }
@@ -1128,9 +1187,16 @@
   function handleMessage(message, _sender, sendResponse) {
     if (message?.type === "UME_PING") sendResponse({ ready: true });
     if (message?.type === "UME_COLLECT") sendResponse({ answers: collectAnswers() });
-    if (message?.type === "UME_FILL") sendResponse(fillAnswers(message.answers || [], Boolean(message.diagnostics)));
     if (message?.type === "UME_SCHEMAS") sendResponse({ fields: unmatchedSchemas(message.answers || []) });
-    if (message?.type === "UME_APPLY_MAPPINGS") sendResponse(applyMappings(message.mappings, message.values));
+    // These may open comboboxes and wait for their lists, so they answer later.
+    if (message?.type === "UME_FILL") {
+      fillAnswersAndOpenLists(message.answers || [], Boolean(message.diagnostics)).then(sendResponse, () => sendResponse(undefined));
+      return true;
+    }
+    if (message?.type === "UME_APPLY_MAPPINGS") {
+      applyMappings(message.mappings, message.values).then(sendResponse, () => sendResponse({ filled: 0 }));
+      return true;
+    }
     return false;
   }
 

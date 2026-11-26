@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>American's booking: traveler information</title>
+<style>
+  body { font-family: -apple-system, sans-serif; margin: 2rem; }
+  .row { display: flex; gap: 1rem; margin-bottom: 1rem; }
+  .field-label { display: block; color: #555; margin-bottom: 0.25rem; }
+  .listbox { position: absolute; background: white; border: 1px solid #999; list-style: none; margin: 0; padding: 0; }
+  .listbox li { padding: 0.25rem 0.5rem; }
+</style>
+</head>
+<body>
+<!--
+  Imitates the traveler form of American's booking flow (digital.aa.com,
+  November 2026). Gender, Title, and Loyalty program are comboboxes in a
+  component's shadow root that show no options until clicked: the list is put
+  at the end of the page a moment after the click, and removed again when an
+  option is picked or Escape is pressed.
+-->
+<form>
+  <h2>Personal information</h2>
+  <div class="row">
+    <div><span class="field-label" id="gender-label">Gender</span>
+      <aa-combobox id="gender" labelledby="gender-label" placeholder="Select gender" options="Male|Female|Unspecified (X)|Undisclosed (U)"></aa-combobox>
+      <div>As listed on your photo ID</div></div>
+    <div><span class="field-label" id="title-label">Title</span>
+      <aa-combobox id="title" labelledby="title-label" placeholder="Choose a title" options="Mr|Mrs|Ms|Dr"></aa-combobox></div>
+  </div>
+  <div class="row">
+    <div><label class="field-label" for="firstName">First name (e.g. John)</label><input id="firstName" placeholder="Enter a first name"></div>
+    <div><label class="field-label" for="middleName">Middle name</label><input id="middleName" autocomplete="additional-name" placeholder="Enter a middle name"></div>
+    <div><label class="field-label" for="lastName">Last name (e.g. Smith)</label><input id="lastName" placeholder="Enter a last name"></div>
+  </div>
+  <div class="row">
+    <div><span class="field-label" id="program-label">Loyalty program</span>
+      <aa-combobox id="program" labelledby="program-label" placeholder="Select a program" options="AAdvantage|British Airways Executive Club|Japan Airlines Mileage Bank"></aa-combobox></div>
+  </div>
+</form>
+<script>
+  let openList = null;
+  customElements.define("aa-combobox", class extends HTMLElement {
+    connectedCallback() {
+      if (this.shadowRoot) return;
+      const root = this.attachShadow({ mode: "open" });
+      const button = document.createElement("button");
+      button.type = "button";
+      button.setAttribute("role", "combobox");
+      button.setAttribute("aria-expanded", "false");
+      button.setAttribute("aria-haspopup", "listbox");
+      button.setAttribute("aria-label", document.getElementById(this.getAttribute("labelledby")).textContent);
+      button.textContent = this.getAttribute("placeholder");
+      button.addEventListener("click", () => this.toggle());
+      button.addEventListener("keydown", (event) => { if (event.key === "Escape") this.close(); });
+      root.append(button);
+      this.button = button;
+    }
+    toggle() {
+      if (this.button.getAttribute("aria-expanded") === "true") return this.close();
+      // Rendered a moment later, as a framework would.
+      setTimeout(() => {
+        const list = document.createElement("ul");
+        list.className = "listbox";
+        list.id = `${this.id}-listbox`;
+        list.setAttribute("role", "listbox");
+        for (const text of this.getAttribute("options").split("|")) {
+          const option = document.createElement("li");
+          option.setAttribute("role", "option");
+          option.setAttribute("aria-selected", "false");
+          option.textContent = text;
+          option.addEventListener("click", () => { this.button.textContent = text; this.close(); });
+          list.append(option);
+        }
+        document.body.append(list);
+        openList = list;
+        this.button.setAttribute("aria-controls", list.id);
+        this.button.setAttribute("aria-expanded", "true");
+      }, 30);
+    }
+    close() {
+      document.getElementById(`${this.id}-listbox`)?.remove();
+      this.button.removeAttribute("aria-controls");
+      this.button.setAttribute("aria-expanded", "false");
+    }
+  });
+</script>
+</body>
+</html>

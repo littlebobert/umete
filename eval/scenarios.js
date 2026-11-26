@@ -3,7 +3,7 @@
 // checked field by field. Unlike run.js, which scores the Chromium corpus with
 // page scripts off, these pages imitate one site's widgets closely.
 //
-// Usage: node scenarios.js [--only delta|american|american-passport]
+// Usage: node scenarios.js [--only delta|american-booking|american|american-passport]
 
 const path = require("node:path");
 const { webkit } = require("playwright");
@@ -73,6 +73,23 @@ const SCENARIOS = [
     rememberedPhoneCode: "81"
   },
   {
+    // American's booking form: Gender's options appear only once it's opened,
+    // so Fill opens it, picks Female, and closes it. Title and Loyalty program
+    // have no saved answer and stay closed and unchosen.
+    name: "american-booking",
+    page: "scenarios/aa-booking.html",
+    answers: PERSON,
+    expect: {
+      "#gender": "Female",
+      "#title": "Choose a title",
+      "#firstName": "Kenji",
+      "#middleName": "",
+      "#lastName": "Mori",
+      "#program": "Select a program"
+    },
+    noOpenLists: true
+  },
+  {
     // The date of birth fills its dropdowns, and never the passport's
     // expiration date, though both are named only "month", "day", and "year".
     name: "american",
@@ -135,6 +152,10 @@ async function run(browser, scenario) {
       failures.push({ selector: "remembered phone country code", wanted: scenario.rememberedPhoneCode, actual: phone?.countryCode ?? null });
     }
   }
+  if (scenario.noOpenLists) {
+    const open = await page.evaluate(() => document.querySelectorAll("[role='listbox']").length);
+    if (open) failures.push({ selector: "lists left open", wanted: 0, actual: open });
+  }
   if (scenario.rememberedPassport) {
     const { answers: collected = [] } = await page.evaluate(() => globalThis.__umeEvalSend({ type: "UME_COLLECT" })) || {};
     for (const [existing, name] of [[PERSON, "new"], [[...PERSON, PASSPORT], "updated"]]) {
@@ -159,7 +180,7 @@ async function main() {
   try {
     for (const scenario of SCENARIOS.filter((candidate) => !only || candidate.name === only)) {
       const { result, failures } = await run(browser, scenario);
-      const checks = Object.keys(scenario.expect).length + (scenario.rememberedPhoneCode ? 1 : 0) + (scenario.rememberedPassport ? 2 : 0);
+      const checks = Object.keys(scenario.expect).length + (scenario.rememberedPhoneCode ? 1 : 0) + (scenario.rememberedPassport ? 2 : 0) + (scenario.noOpenLists ? 1 : 0);
       console.log(`${failures.length ? "FAIL" : "ok  "} ${scenario.name}: ${checks - failures.length}/${checks} fields right (filled ${result?.filled}, eligible ${result?.eligibleFieldCount})`);
       for (const failure of failures) console.log(`     ${failure.selector}: wanted ${JSON.stringify(failure.wanted)}, got ${JSON.stringify(failure.actual)}`);
       failed += failures.length ? 1 : 0;
