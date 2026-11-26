@@ -675,10 +675,17 @@
     return scoredBestMatch(savedEntries, field, minimumScore);
   }
 
+  // An address, contact, or passport keeps its parts in an object. A field read
+  // from a page holds one string, so merging it in would replace the whole
+  // answer with that string (and the app then refuses to save it).
+  function isStructured(entry) {
+    return Boolean(entry?.value) && typeof entry.value === "object" && !Array.isArray(entry.value);
+  }
+
   function mergeEntries(existing, incoming) {
     const result = [...(existing || [])];
     for (const next of incoming || []) {
-      const index = result.findIndex((saved) => score(saved, next) >= 85);
+      const index = isStructured(next) ? -1 : result.findIndex((saved) => !isStructured(saved) && score(saved, next) >= 85);
       if (index >= 0) {
         const existing = result[index];
         result[index] = {

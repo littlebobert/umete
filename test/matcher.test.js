@@ -695,6 +695,31 @@ test("your own answers never fill contact fields, and remembered contact answers
   assert.equal(bestMatch([given, family], entry({ accessibleName: "Full name" }))?.value, "Hanako Yamada");
 });
 
+test("remembering a form never replaces a saved address with a field's text", () => {
+  const address = entry({
+    answerID: "home",
+    answerType: "address",
+    userLabel: "Address",
+    accessibleName: "Address",
+    label: "Address",
+    inputType: "",
+    kind: "aggregate",
+    value: { addressLine1: "1-2-3 Jingumae", countryCode: "JP", countryName: "Japan" }
+  });
+  // The same label on the page scores well above the merge threshold.
+  const field = entry({ accessibleName: "Address", label: "Address", value: "9 Elm St" });
+  const merged = mergeEntries([address], [field]);
+  assert.equal(merged.length, 2);
+  assert.deepEqual(merged[0], address);
+  assert.equal(merged[1].value, "9 Elm St");
+  // Plain answers still merge as before.
+  const city = entry({ answerID: "city", accessibleName: "City", label: "City", value: "Tokyo" });
+  const updated = mergeEntries([address, city], [entry({ accessibleName: "City", label: "City", value: "Osaka" })]);
+  assert.equal(updated.length, 2);
+  assert.equal(updated[1].value, "Osaka");
+  assert.equal(updated[1].answerID, "city");
+});
+
 test("contacts flatten into sanitized parts for AI mapping and never merge with remembered answers", () => {
   const [, cardiologist] = doctors();
   const parts = contactParts(cardiologist);
