@@ -2,5 +2,3 @@ Save your passport in Settings, and Umete fills its number, issue and expiration
 Umete reads Japanese and Korean forms: addresses, phone numbers, email, and names, including kana readings in the reading boxes (フリガナ).
 Remember my answers keeps a page's address and passport together as one answer each, and no longer loses your first name on forms that also ask for your last name.
 Umete fills dropdowns whose choices appear only once they're opened, such as Gender on some airline booking forms.
-A new app icon: Umete's plum, now made of glass. The icon in Safari's toolbar is new too.
-Umete fills more forms correctly. It reads field names on older checkout pages, puts only the area code in an Area Code box, and no longer puts your ZIP code in a coupon or ZIP+4 box, or your apartment in two fields.
