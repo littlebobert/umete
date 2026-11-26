@@ -5,17 +5,106 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const TOKEN_RE = /[^a-z0-9]+/g;
+  // Kana, kanji, and Hangul are kept as words; the katakana middle dot (・)
+  // separates them like other punctuation.
+  const CJK = "\\u3040-\\u30fa\\u30fc-\\u30ff\\u31f0-\\u31ff\\u3400-\\u4dbf\\u4e00-\\u9fff\\uf900-\\ufaff\\uac00-\\ud7af";
+  const TOKEN_RE = new RegExp(`[^a-z0-9${CJK}]+`, "g");
+  const CJK_RUN_RE = new RegExp(`[${CJK}]+`, "g");
   const STOP_WORDS = new Set(["a", "an", "and", "etc", "field", "input", "of", "or", "the", "your"]);
 
+  // Japanese and Korean field-label words, read as the English words the
+  // matchers look for. Words of two or more characters are found inside longer
+  // labels ("携帯電話番号"); a single character ("年", "月", "日", "国") counts
+  // only standing alone, so "日本" and "国内" stay as they are.
+  // Names (姓, 名, and their kana readings) are left out: a reading box must
+  // never get the name in kanji.
+  const LABEL_WORDS = {
+    // Japanese: addresses
+    "郵便番号": "postal code", "都道府県": "state", "市区町村": "city", "市町村": "city",
+    "市区郡": "city", "町名": "street address", "町域": "street address", "丁目": "street address", "番地": "street address",
+    "建物名": "building", "マンション名": "building", "ビル名": "building", "部屋番号": "apartment", "住所": "address",
+    "国名": "country", "国": "country", "地域": "region",
+    // Japanese: passports
+    "旅券番号": "passport number", "パスポート番号": "passport number", "旅券": "passport", "パスポート": "passport",
+    "有効期限": "expiration date", "有効期間満了日": "expiration date", "失効日": "expiration date",
+    "発行日": "issue date", "発行年月日": "issue date", "交付日": "issue date", "交付年月日": "issue date", "発給日": "issue date",
+    "発行国": "issuing country", "発給国": "issuing country", "国籍": "nationality",
+    // Japanese: dates, phones, email, gender, and others
+    "生年月日": "date of birth", "誕生日": "birthday", "年": "year", "月": "month", "日": "day",
+    "携帯電話番号": "mobile phone", "携帯電話": "mobile phone", "携帯番号": "mobile phone", "携帯": "mobile",
+    "電話番号": "phone", "電話": "phone", "メールアドレス": "email", "メール": "email",
+    "性別": "gender", "男性": "male", "女性": "female", "男": "male", "女": "female",
+    "確認用": "confirm", "確認": "confirm", "必須": "required", "任意": "optional", "など": "etc", "等": "etc",
+    "緊急連絡先": "emergency contact", "かかりつけ医": "family doctor", "主治医": "physician",
+    // Korean
+    "우편번호": "postal code", "시도": "state", "시군구": "city", "도시": "city", "도로명주소": "street address",
+    "상세주소": "address line 2", "주소": "address", "국가": "country", "지역": "region",
+    "여권번호": "passport number", "여권": "passport", "만료일": "expiration date", "유효기간": "expiration date",
+    "발급일": "issue date", "발행일": "issue date", "발급국가": "issuing country", "발행국": "issuing country", "국적": "nationality",
+    "생년월일": "date of birth", "년": "year", "월": "month", "일": "day",
+    "휴대폰": "mobile", "휴대전화": "mobile phone", "핸드폰": "mobile", "전화번호": "phone", "전화": "phone", "이메일": "email",
+    "성별": "gender", "남성": "male", "남자": "male", "여성": "female", "여자": "female",
+    "확인": "confirm", "필수": "required", "비상연락처": "emergency contact", "주치의": "physician"
+  };
+  // Korean labels written with a slash or a space between their parts.
+  const LABEL_PHRASES = [
+    [/시\s*[/·]\s*도/g, " state "], [/시\s*[/·]\s*군\s*[/·]\s*구/g, " city "], [/상세\s+주소/g, " address line 2 "],
+    [/도로명\s+주소/g, " street address "], [/여권\s+번호/g, " passport number "], [/전화\s+번호/g, " phone "],
+    [/발급\s+국가/g, " issuing country "], [/비상\s+연락처/g, " emergency contact "], [/만료\s+날짜/g, " expiration date "]
+  ];
+  const LONG_LABEL_WORDS = Object.keys(LABEL_WORDS).filter((word) => word.length > 1).sort((left, right) => right.length - left.length);
+
+  function translateRun(run) {
+    if (LABEL_WORDS[run]) return ` ${LABEL_WORDS[run]} `;
+    // An honorific お or ご before a known word ("ご住所", "お電話番号").
+    const plain = /^[おご]/.test(run) && LABEL_WORDS[run.slice(1)] ? run.slice(1) : run;
+    let result = "";
+    let index = 0;
+    while (index < plain.length) {
+      const word = LONG_LABEL_WORDS.find((candidate) => plain.startsWith(candidate, index));
+      if (word) {
+        result += ` ${LABEL_WORDS[word]} `;
+        index += word.length;
+      } else {
+        result += plain[index];
+        index += 1;
+      }
+    }
+    return result;
+  }
+
+  function translateLabelWords(text) {
+    let result = text.replace(/〒/g, " postal code ");
+    for (const [pattern, english] of LABEL_PHRASES) result = result.replace(pattern, english);
+    return result.replace(CJK_RUN_RE, translateRun);
+  }
+
   function normalize(value) {
-    return String(value || "")
+    // NFKC first, so half-width katakana (ﾒｰﾙｱﾄﾞﾚｽ) reads like full-width.
+    return translateLabelWords(String(value || "").normalize("NFKC"))
       .replace(/([a-z])([A-Z])/g, "$1 $2")
       .toLowerCase()
       .normalize("NFKD")
       .replace(/[\u0300-\u036f]/g, "")
+      // Puts back together what NFKD took apart in kana and Hangul.
+      .normalize("NFC")
       .replace(TOKEN_RE, " ")
       .trim();
+  }
+
+  // A label's normalized forms: as written, and for a bilingual label that
+  // pairs Chinese characters with English ("姓名 Name(必填)", "地址 Address"),
+  // its English words alone. A word in kana or Hangul keeps the label whole:
+  // "市区町村（カナ）" asks for the city's reading, not the city.
+  function labelForms(value) {
+    const normalized = normalize(value);
+    const words = normalized.split(" ").filter(Boolean);
+    const latin = words.filter((word) => /^[a-z0-9]+$/.test(word));
+    const others = words.filter((word) => !/^[a-z0-9]+$/.test(word));
+    const hanOnly = others.every((word) => /^[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]+$/.test(word));
+    return others.length && hanOnly && latin.some((word) => /[a-z]/.test(word))
+      ? [normalized, latin.join(" ")]
+      : [normalized];
   }
 
   function tokens(value) {
@@ -92,7 +181,8 @@
     const text = semanticText(entry);
     // "City (required)" is a city; "State* State*" (a label read twice) a state.
     const names = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder]
-      .map((value) => normalize(value).replace(/(?:^| )(?:required|optional)(?= |$)/g, "").replace(/\s+/g, " ").trim().replace(/^(.+) \1$/, "$1"))
+      .flatMap(labelForms)
+      .map((value) => value.replace(/(?:^| )(?:required|optional)(?= |$)/g, "").replace(/\s+/g, " ").trim().replace(/^(.+) \1$/, "$1"))
       .filter(Boolean);
     const machineNames = [entry?.name, entry?.id].filter((value) => value && !looksGenerated(value)).map(normalize);
     // The last segment of a name like "Form$_mailingAddress$_city" says what the field is.
@@ -150,7 +240,7 @@
     if (autocomplete.includes("additional-name")) return "middle";
     if (autocomplete.includes("cc-name") || autocomplete.includes("name")) return "full";
 
-    const labels = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder].map(normalize).filter(Boolean);
+    const labels = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder].flatMap(labelForms).filter(Boolean);
     // Each label is read on its own: joined, "Name (first and last)" twice
     // would read "…first and last name first…".
     const anyLabel = (re) => labels.some((label) => re.test(label));

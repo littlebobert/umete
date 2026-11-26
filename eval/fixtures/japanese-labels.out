@@ -1,0 +1,9 @@
+EMAIL_ADDRESS | q1 | メールアドレス（必須） |  | f1
+PHONE_HOME_WHOLE_NUMBER | q2 | お電話番号 |  | f1
+ADDRESS_HOME_ZIP | q3 | 〒 郵便番号 |  | f1
+ADDRESS_HOME_STATE | q4 | 都道府県 |  | f1
+ADDRESS_HOME_CITY | q5 | 市区町村 |  | f1
+UNKNOWN_TYPE | q9 | 市区町村（カナ） |  | f1
+ADDRESS_HOME_LINE1 | q6 | 町名・番地 |  | f1
+ADDRESS_HOME_LINE2 | q7 | 建物名・部屋番号など |  | f1
+ADDRESS_HOME_COUNTRY | q8 | 国・地域 | 日本 | f1

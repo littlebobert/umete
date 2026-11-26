@@ -1,0 +1,7 @@
+EMAIL_ADDRESS | k1 | 이메일 주소 |  | f1
+PHONE_HOME_WHOLE_NUMBER | k2 | 휴대폰 번호 |  | f1
+ADDRESS_HOME_ZIP | k3 | 우편번호 |  | f1
+ADDRESS_HOME_STATE | k4 | 시/도 |  | f1
+ADDRESS_HOME_CITY | k5 | 시/군/구 |  | f1
+ADDRESS_HOME_LINE1 | k6 | 도로명 주소 |  | f1
+ADDRESS_HOME_LINE2 | k7 | 상세 주소 |  | f1

@@ -989,3 +989,105 @@ test("older and spelled-out address labels name their part", () => {
     assert.equal(addressFieldPart(entry({ accessibleName: label, label })), part, label);
   }
 });
+
+test("Japanese and Korean label words read as the English words matching looks for", () => {
+  for (const [label, words] of [
+    ["郵便番号", "postal code"], ["〒", "postal code"], ["ご住所", "address"], ["住所２", "address 2"], ["国・地域", "country region"],
+    ["建物名・部屋番号など", "building apartment etc"], ["お電話番号（必須）", "phone required"], ["携帯電話番号", "mobile phone"],
+    ["ﾒｰﾙｱﾄﾞﾚｽ", "email"], ["パスポート番号（確認用）", "passport number confirm"], ["1月", "1 month"],
+    ["시/도", "state"], ["상세 주소", "address line 2"], ["이메일 주소", "email address"], ["여권 번호", "passport number"]
+  ]) {
+    assert.equal(normalize(label), words, label);
+  }
+  // Other Japanese and Korean text is kept as it is written, not dropped:
+  // a single character counts only standing alone.
+  assert.equal(normalize("東京都"), "東京都");
+  assert.equal(normalize("日本"), "日本");
+  assert.equal(normalize("国内"), "国内");
+  assert.equal(normalize("서울특별시"), "서울특별시");
+});
+
+test("Japanese and Korean address labels name their part, and a kana reading box is none", () => {
+  for (const [label, part] of [
+    ["郵便番号", "postalCode"], ["〒", "postalCode"], ["都道府県", "administrativeArea"], ["市区町村", "locality"],
+    ["町名・番地", "addressLine1"], ["番地以降", "addressLine1"], ["ご住所", "addressLine1"], ["建物名・部屋番号など", "addressLine2"],
+    ["住所２", "addressLine2"], ["国・地域", "country"], ["市区町村（カナ）", ""], ["住所（フリガナ）", ""],
+    ["우편번호", "postalCode"], ["시/도", "administrativeArea"], ["시/군/구", "locality"], ["도로명 주소", "addressLine1"],
+    ["상세 주소", "addressLine2"], ["국가", "country"]
+  ]) {
+    assert.equal(addressFieldPart(entry({ accessibleName: label, label })), part, label);
+  }
+  const address = entry({
+    answerType: "address", kind: "aggregate", inputType: "",
+    value: { addressLine1: "神宮前1-2-3", addressLine2: "梅ビル405", locality: "渋谷区", administrativeArea: "東京都", postalCode: "150-0001", countryCode: "JP", countryName: "日本" }
+  });
+  assert.equal(addressValue(address, entry({ accessibleName: "市区町村" })), "渋谷区");
+  assert.equal(bestMatch([address], entry({ accessibleName: "建物名・部屋番号" })), address);
+  // A prefecture menu now finds "東京都" among its options.
+  assert.equal(selectOptionIndex([{ text: "選択してください", value: "" }, { text: "大阪府", value: "27" }, { text: "東京都", value: "13" }], "東京都"), 2);
+});
+
+test("Japanese and Korean passport, birth date, phone, and gender labels are recognized", () => {
+  const saved = passport();
+  for (const [label, section, part, extra] of [
+    ["旅券番号", "", "number"], ["パスポート番号（確認用）", "", "number"], ["有効期限", "パスポート情報", "expirationDate"],
+    ["月", "パスポート情報", "expirationDate", { group: "有効期限", kind: "select" }], ["発行年月日", "パスポート情報", "issueDate"],
+    ["発行国", "パスポート情報", "issuingCountry", { kind: "select" }], ["国籍", "", "nationality", { kind: "select" }],
+    ["여권 번호", "", "number"], ["만료일", "여권 정보", "expirationDate"], ["발급일", "여권 정보", "issueDate"], ["국적", "", "nationality", { kind: "select" }]
+  ]) {
+    const field = entry({ accessibleName: label, label, section, ...(extra || {}) });
+    assert.equal(passportFieldPart(field), part, label);
+    assert.equal(bestMatch([saved], field), saved, label);
+  }
+  // A birth date in a passport section is still a birth date.
+  const birthday = entry({ answerType: "date", accessibleName: "Date of birth", value: "1984-07-09" });
+  for (const label of ["生年月日", "생년월일"]) {
+    const field = entry({ accessibleName: label, label, section: "パスポート情報", inputType: "date" });
+    assert.equal(passportFieldPart(field), "", label);
+    assert.equal(bestMatch([saved, birthday], field), birthday, label);
+  }
+  assert.equal(bestMatch([birthday], entry({ accessibleName: "有効期限", section: "パスポート情報", inputType: "date" })), null);
+  const phone = entry({ answerType: "phone", accessibleName: "Phone number", value: "+81 9012345678" });
+  const gender = entry({ answerType: "gender", accessibleName: "Gender", value: "Female" });
+  for (const label of ["電話番号", "お電話番号（必須）", "携帯電話番号", "휴대폰 번호"]) {
+    assert.equal(bestMatch([phone], entry({ accessibleName: label, label, inputType: "tel" })), phone, label);
+  }
+  for (const label of ["性別", "성별"]) {
+    assert.equal(bestMatch([gender], entry({ accessibleName: label, label, kind: "select" })), gender, label);
+  }
+  // An emergency contact's phone isn't yours.
+  for (const label of ["緊急連絡先 電話番号", "비상 연락처 전화번호"]) {
+    assert.equal(bestMatch([phone], entry({ accessibleName: label, label, inputType: "tel" })), null, label);
+  }
+});
+
+test("remembering a Japanese address page saves one address, and tells different Japanese addresses apart", () => {
+  const fields = [
+    entry({ accessibleName: "郵便番号", value: "150-0001" }),
+    entry({ accessibleName: "都道府県", kind: "select", value: "東京都", optionValue: "13" }),
+    entry({ accessibleName: "市区町村", value: "渋谷区" }),
+    entry({ accessibleName: "町名・番地", value: "神宮前1-2-3" }),
+    entry({ accessibleName: "建物名・部屋番号", value: "梅ビル405" }),
+    entry({ accessibleName: "国・地域", kind: "select", value: "日本", optionValue: "JP" })
+  ];
+  const { answers, structured } = rememberAnswers([], fields, { address: "住所" });
+  assert.deepEqual(structured, ["address"]);
+  assert.equal(answers.length, 1);
+  assert.equal(answers[0].userLabel, "住所");
+  assert.equal(answers[0].value.addressLine1, "神宮前1-2-3");
+  assert.equal(answers[0].value.administrativeArea, "東京都");
+  assert.equal(answers[0].value.countryCode, "JP");
+  // Two saved addresses whose street lines share only their numbers are
+  // different addresses: a third page address updates neither.
+  const home = { ...answers[0], answerID: "home" };
+  const osaka = { ...answers[0], answerID: "osaka", value: { ...answers[0].value, addressLine1: "梅田1-2-3", locality: "大阪市北区" } };
+  const other = [entry({ accessibleName: "町名・番地", value: "栄1-2-3" }), entry({ accessibleName: "国・地域", kind: "select", value: "日本", optionValue: "JP" })];
+  assert.deepEqual(rememberAnswers([home, osaka], other).structured, []);
+});
+
+test("a bilingual label reads by its English words; a kana reading box stays a reading box", () => {
+  assert.equal(nameFieldPart(entry({ accessibleName: "姓名 Name(必填)" })), "full");
+  assert.equal(addressFieldPart(entry({ accessibleName: "地址 Address" })), "addressLine1");
+  assert.equal(addressFieldPart(entry({ accessibleName: "市区町村（カナ）" })), "");
+  assert.equal(addressFieldPart(entry({ accessibleName: "City カナ" })), "");
+});
