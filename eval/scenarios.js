@@ -1,9 +1,9 @@
 // Pages that need their own scripts running, filled with answers typed in
-// Settings (a phone with its country code, a date of birth, a gender), and
+// Settings (a phone with its country code, a date of birth, a gender, a passport), and
 // checked field by field. Unlike run.js, which scores the Chromium corpus with
 // page scripts off, these pages imitate one site's widgets closely.
 //
-// Usage: node scenarios.js [--only delta|american]
+// Usage: node scenarios.js [--only delta|american|american-passport]
 
 const path = require("node:path");
 const { webkit } = require("playwright");
@@ -26,6 +26,19 @@ const PERSON = [
   typed("Gender", "Female", "gender"),
   typed("Email address", "kenji.mori@example.com")
 ];
+
+// A passport as Stores.addPassport saves it: one answer whose parts fill their
+// own fields. Dates are yyyy-mm-dd, like a typed date's.
+const PASSPORT = {
+  answerID: "Passport", answerType: "passport", userLabel: "Passport", accessibleName: "Passport", label: "Passport",
+  kind: "aggregate", inputType: "",
+  value: {
+    version: 1, number: "TK1234567",
+    issuingCountryCode: "JP", issuingCountryName: "Japan",
+    nationalityCode: "JP", nationalityName: "Japan",
+    issueDate: "2021-03-15", expirationDate: "2031-03-15"
+  }
+};
 
 // A dropdown button shows its choice in its own text; inputs hold a value.
 // A component's own control sits in its shadow root (American's <adc-select>).
@@ -76,6 +89,26 @@ const SCENARIOS = [
       "#exp-day": "",
       "#exp-year": "",
       "#nationality": ""
+    }
+  },
+  {
+    // With a saved passport, its number, expiration date, and nationality fill
+    // those fields, and the date of birth still goes only to its own.
+    name: "american-passport",
+    page: "scenarios/aa-passport.html",
+    answers: [...PERSON, PASSPORT],
+    expect: {
+      "#firstName": "Kenji",
+      "#lastName": "Mori",
+      "#dob-month": "07",
+      "#dob-day": "09",
+      "#dob-year": "1984",
+      "#passportNumber": "TK1234567",
+      "#confirmPassportNumber": "TK1234567",
+      "#exp-month": "03",
+      "#exp-day": "15",
+      "#exp-year": "2031",
+      "#nationality": "JP"
     }
   }
 ];

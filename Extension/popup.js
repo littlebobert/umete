@@ -112,7 +112,7 @@
     debugLogText.value = existing || t("noDebugEntries");
   }
 
-  // Addresses are matched locally only. Contacts are split into one sanitized
+  // Addresses and passports are matched locally only. Contacts are split into one sanitized
   // entry per part ("Doctor 2, Cardiologist phone") so the AI can place them
   // without seeing their labels, which are often the person's name.
   function aiSavedEntries(answers) {
@@ -125,7 +125,7 @@
     const seen = {};
     return answers.flatMap((answer, index) => {
       const type = UmeMatcher.answerType(answer);
-      if (type === "address") return [];
+      if (type === "address" || type === "passport") return [];
       if (type === "contact") {
         const category = UmeMatcher.contactCategory(answer);
         seen[category] = (seen[category] || 0) + 1;

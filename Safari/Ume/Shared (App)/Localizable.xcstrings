@@ -85,6 +85,22 @@
         }
       }
     },
+    "A date of birth is never filled into these." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生年月日がここに入力されることはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "생년월일은 여기에 입력되지 않습니다."
+          }
+        }
+      }
+    },
     "A key is already saved" : {
       "localizations" : {
         "ja" : {
@@ -1596,6 +1612,22 @@
         }
       }
     },
+    "Edit Passport" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスポートを編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여권 편집"
+          }
+        }
+      }
+    },
     "Edits this answer" : {
       "localizations" : {
         "ja" : {
@@ -1608,6 +1640,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "이 답변을 편집합니다"
+          }
+        }
+      }
+    },
+    "Edits this passport" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このパスポートを編集します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 여권을 편집합니다"
           }
         }
       }
@@ -1917,6 +1965,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "연락처 이름을 입력하세요."
+          }
+        }
+      }
+    },
+    "Enter the passport number." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスポート番号を入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여권 번호를 입력하세요."
+          }
+        }
+      }
+    },
+    "Expiration date" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有効期限"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "만료일"
+          }
+        }
+      }
+    },
+    "Expires %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有効期限 %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "만료 %@"
           }
         }
       }
@@ -2429,6 +2525,38 @@
         }
       }
     },
+    "Issue date" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "発行日"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "발급일"
+          }
+        }
+      }
+    },
+    "Issuing country" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "発行国"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "발급 국가"
+          }
+        }
+      }
+    },
     "Key Deleted" : {
       "localizations" : {
         "ja" : {
@@ -2725,6 +2853,38 @@
         }
       }
     },
+    "Name a second passport after its country or holder." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2冊目のパスポートには、国や名義人がわかるラベルを付けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "두 번째 여권에는 국가나 소지자를 알 수 있는 레이블을 붙이세요."
+          }
+        }
+      }
+    },
+    "Nationality" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国籍"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "국적"
+          }
+        }
+      }
+    },
     "Neighbor" : {
       "comment" : "Suggested relationship of an emergency contact to the user",
       "localizations" : {
@@ -2771,6 +2931,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "새로운 답변"
+          }
+        }
+      }
+    },
+    "New Passport" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいパスポート"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새로운 여권"
           }
         }
       }
@@ -2836,6 +3012,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "저장된 키가 없습니다."
+          }
+        }
+      }
+    },
+    "None" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "없음"
           }
         }
       }
@@ -3147,6 +3339,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "파트너"
+          }
+        }
+      }
+    },
+    "Passport" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスポート"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여권"
+          }
+        }
+      }
+    },
+    "Passport number" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスポート番号"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여권 번호"
+          }
+        }
+      }
+    },
+    "Passport…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスポート…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여권…"
           }
         }
       }
@@ -3530,6 +3770,22 @@
         }
       }
     },
+    "Remove %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 삭제"
+          }
+        }
+      }
+    },
     "Report a Bug…" : {
       "localizations" : {
         "ja" : {
@@ -3672,6 +3928,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "의사 저장"
+          }
+        }
+      }
+    },
+    "Save Passport" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスポートを保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여권 저장"
           }
         }
       }
@@ -4166,6 +4438,22 @@
         }
       }
     },
+    "Text Answer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキストの回答"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "텍스트 답변"
+          }
+        }
+      }
+    },
     "Text Answer…" : {
       "comment" : "Item in the Add menu",
       "localizations" : {
@@ -4227,6 +4515,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "저장된 해당 연락처가 더 이상 존재하지 않습니다."
+          }
+        }
+      }
+    },
+    "That saved passport no longer exists." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのパスポートはもう保存されていません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "해당 여권이 더 이상 존재하지 않습니다."
           }
         }
       }
@@ -4371,6 +4675,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "저장된 연락처가 너무 깁니다."
+          }
+        }
+      }
+    },
+    "The saved passport date was invalid." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存したパスポートの日付が無効です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 여권 날짜가 올바르지 않습니다."
+          }
+        }
+      }
+    },
+    "The saved passport was invalid." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存したパスポートが無効です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 여권 정보가 올바르지 않습니다."
+          }
+        }
+      }
+    },
+    "The saved passport was too long." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存したパスポートが長すぎます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 여권 정보가 너무 깁니다."
           }
         }
       }

@@ -512,7 +512,7 @@ enum AnswerStore {
         guard answer["answerID"] is String else { return false }
         guard let type = answer["answerType"] as? String, aggregateTypes.contains(type) else { return true }
         guard let raw = answer["value"] as? [String: Any] else { return false }
-        return (try? (type == "address" ? validatedAddress(raw) : validatedContact(raw))) != nil
+        return (try? validatedAggregate(type, raw)) != nil
     }
 
     /// Merge answers fetched from iCloud. Local answers that are newer and still
@@ -637,7 +637,50 @@ enum AnswerStore {
     }
 
     static let contactCategories = ["doctor", "emergencyContact"]
-    static let aggregateTypes = ["address", "contact"]
+    static let aggregateTypes = ["address", "contact", "passport"]
+
+    private static func validatedAggregate(_ type: String, _ raw: [String: Any]) throws -> [String: Any] {
+        switch type {
+        case "address": return try validatedAddress(raw)
+        case "passport": return try validatedPassport(raw)
+        default: return try validatedContact(raw)
+        }
+    }
+
+    /// A passport's number, issuing country, nationality, and dates, each filled into
+    /// its own field. Dates are yyyy-MM-dd, which the extension reads like a typed date.
+    private static func validatedPassport(_ raw: [String: Any]) throws -> [String: Any] {
+        let limits = [
+            "number": 32,
+            "issuingCountryCode": 2,
+            "issuingCountryName": 120,
+            "nationalityCode": 2,
+            "nationalityName": 120,
+            "issueDate": 10,
+            "expirationDate": 10
+        ]
+        var passport: [String: Any] = ["version": 1]
+        for (key, limit) in limits {
+            let value = (raw[key] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            guard value.count <= limit else { throw StoreError.message(String(localized: "The saved passport was too long.")) }
+            if !value.isEmpty { passport[key] = value }
+        }
+        guard passport["number"] != nil else { throw StoreError.message(String(localized: "Enter the passport number.")) }
+        for key in ["issuingCountryCode", "nationalityCode"] {
+            guard let code = passport[key] as? String else { continue }
+            guard code.range(of: #"^[A-Za-z]{2}$"#, options: .regularExpression) != nil else {
+                throw StoreError.message(String(localized: "Choose a country or region."))
+            }
+            passport[key] = code.uppercased()
+        }
+        for key in ["issueDate", "expirationDate"] {
+            guard let date = passport[key] as? String else { continue }
+            guard date.range(of: #"^\d{4}-\d{2}-\d{2}$"#, options: .regularExpression) != nil else {
+                throw StoreError.message(String(localized: "The saved passport date was invalid."))
+            }
+        }
+        return passport
+    }
 
     private static func validatedContact(_ raw: [String: Any]) throws -> [String: Any] {
         let limits = [
@@ -695,11 +738,13 @@ enum AnswerStore {
         for index in answers.indices {
             guard let type = answers[index]["answerType"] as? String, aggregateTypes.contains(type) else { continue }
             guard let raw = answers[index]["value"] as? [String: Any] else {
-                throw StoreError.message(type == "address"
-                    ? String(localized: "The saved address was invalid.")
-                    : String(localized: "The saved contact was invalid."))
+                switch type {
+                case "address": throw StoreError.message(String(localized: "The saved address was invalid."))
+                case "passport": throw StoreError.message(String(localized: "The saved passport was invalid."))
+                default: throw StoreError.message(String(localized: "The saved contact was invalid."))
+                }
             }
-            answers[index]["value"] = type == "address" ? try validatedAddress(raw) : try validatedContact(raw)
+            answers[index]["value"] = try validatedAggregate(type, raw)
             answers[index]["kind"] = "aggregate"
             answers[index]["inputType"] = ""
         }
@@ -824,6 +869,88 @@ enum AnswerStore {
         answers[index]["value"] = contact
         answers[index].removeValue(forKey: "countryCode")
         try save(answers)
+    }
+
+    static func addPassport(userLabel: String, value: [String: Any]) throws {
+        let passport = try validatedPassport(value)
+        let label = resolvedPassportLabel(userLabel)
+        var answers = try load()
+        answers.append([
+            "answerID": UUID().uuidString,
+            "answerType": "passport",
+            "userLabel": label,
+            "accessibleName": label,
+            "label": label,
+            "kind": "aggregate",
+            "inputType": "",
+            "value": passport
+        ])
+        try save(answers)
+    }
+
+    static func updatePassport(id: String, userLabel: String, value: [String: Any]) throws {
+        let passport = try validatedPassport(value)
+        let label = resolvedPassportLabel(userLabel)
+        var answers = try load()
+        guard let index = answers.firstIndex(where: { $0["answerID"] as? String == id }) else {
+            throw StoreError.message(String(localized: "That saved passport no longer exists."))
+        }
+        answers[index]["answerType"] = "passport"
+        answers[index]["userLabel"] = label
+        answers[index]["accessibleName"] = label
+        answers[index]["label"] = label
+        answers[index]["kind"] = "aggregate"
+        answers[index]["inputType"] = ""
+        answers[index]["value"] = passport
+        answers[index].removeValue(forKey: "countryCode")
+        try save(answers)
+    }
+
+    /// A passport's label defaults to "Passport"; a second one can say whose or which.
+    private static func resolvedPassportLabel(_ userLabel: String) -> String {
+        let label = userLabel.trimmingCharacters(in: .whitespacesAndNewlines)
+        return label.isEmpty ? String(localized: "Passport", comment: "Default label of a saved passport") : label
+    }
+
+    /// The yyyy-MM-dd text a passport stores its dates as.
+    static func passportDateString(_ date: Date) -> String {
+        passportDateFormatter.string(from: date)
+    }
+
+    static func passportDate(_ text: String?) -> Date? {
+        guard let text, !text.isEmpty else { return nil }
+        return passportDateFormatter.date(from: text)
+    }
+
+    private static let passportDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    /// Every country or region, named in the user's language and sorted, for the
+    /// passport editors' menus.
+    static func regionChoices() -> [(code: String, name: String)] {
+        Locale.isoRegionCodes.compactMap { code -> (code: String, name: String)? in
+            guard let name = Locale.current.localizedString(forRegionCode: code) else { return nil }
+            return (code, name)
+        }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    /// A passport's parts in one line for a list: number, nationality, and when it expires.
+    static func passportSummary(_ passport: [String: Any]) -> String {
+        var parts = [passport["number"] as? String, passport["nationalityName"] as? String].compactMap { $0 }.filter { !$0.isEmpty }
+        if let expiration = passportDate(passport["expirationDate"] as? String) {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .none
+            formatter.timeZone = TimeZone(identifier: "UTC")
+            parts.append(String(localized: "Expires \(formatter.string(from: expiration))", comment: "A saved passport's expiration date in the answer list; the placeholder is a date"))
+        }
+        return parts.joined(separator: " · ")
     }
 
     /// A contact's label defaults to its name so the table stays readable without extra typing.

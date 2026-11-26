@@ -383,6 +383,139 @@ final class AddressEditorViewController: NSViewController {
     }
 }
 
+/// A passport's number, countries, and dates. Dates can be left out with their
+/// checkboxes; a date of birth never fills them.
+final class PassportEditorViewController: NSViewController {
+    var onSave: ((String, [String: Any]) -> Void)?
+
+    private let initialLabel: String
+    private let initialPassport: [String: Any]
+    private let isNew: Bool
+    private let labelField = NSTextField()
+    private let numberField = NSTextField()
+    private let issuingPopup = NSPopUpButton()
+    private let nationalityPopup = NSPopUpButton()
+    private let issueCheckbox = NSButton(checkboxWithTitle: String(localized: "Issue date"), target: nil, action: nil)
+    private let expirationCheckbox = NSButton(checkboxWithTitle: String(localized: "Expiration date"), target: nil, action: nil)
+    private let issuePicker = NSDatePicker()
+    private let expirationPicker = NSDatePicker()
+
+    init(label: String, passport: [String: Any], isNew: Bool) {
+        initialLabel = label
+        initialPassport = passport
+        self.isNew = isNew
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) { nil }
+
+    override func loadView() {
+        view = NSView(frame: NSRect(x: 0, y: 0, width: 480, height: 250))
+        labelField.stringValue = initialLabel
+        labelField.placeholderString = String(localized: "Passport", comment: "Default label of a saved passport")
+        numberField.stringValue = initialPassport["number"] as? String ?? ""
+        numberField.placeholderString = String(localized: "Passport number")
+
+        let regions = AnswerStore.regionChoices()
+        let region = isNew ? (Locale.current.regionCode ?? "") : ""
+        for (popup, key) in [(issuingPopup, "issuingCountryCode"), (nationalityPopup, "nationalityCode")] {
+            popup.addItem(withTitle: String(localized: "None", comment: "No country chosen for a passport"))
+            popup.lastItem?.representedObject = ""
+            for (code, name) in regions {
+                popup.addItem(withTitle: name)
+                popup.lastItem?.representedObject = code
+            }
+            let initialCode = (initialPassport[key] as? String ?? region).uppercased()
+            popup.selectItem(at: popup.itemArray.firstIndex { ($0.representedObject as? String) == initialCode } ?? 0)
+            popup.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        for (checkbox, picker, key) in [(issueCheckbox, issuePicker, "issueDate"), (expirationCheckbox, expirationPicker, "expirationDate")] {
+            picker.datePickerStyle = .textFieldAndStepper
+            picker.datePickerElements = [.yearMonthDay]
+            picker.timeZone = TimeZone(identifier: "UTC")
+            let date = AnswerStore.passportDate(initialPassport[key] as? String)
+            picker.dateValue = date ?? AnswerStore.passportDate(AnswerStore.passportDateString(Date())) ?? Date()
+            picker.isEnabled = date != nil
+            checkbox.state = date != nil ? .on : .off
+            checkbox.target = self
+            checkbox.action = #selector(dateToggled)
+        }
+
+        let grid = NSGridView(views: [
+            [NSTextField(labelWithString: String(localized: "Label", comment: "Name a saved answer is shown under (column header, field label, placeholder)")), labelField],
+            [NSTextField(labelWithString: String(localized: "Passport number")), numberField],
+            [NSTextField(labelWithString: String(localized: "Issuing country")), issuingPopup],
+            [NSTextField(labelWithString: String(localized: "Nationality")), nationalityPopup],
+            [issueCheckbox, issuePicker],
+            [expirationCheckbox, expirationPicker]
+        ])
+        grid.column(at: 0).xPlacement = .trailing
+        grid.rowAlignment = .firstBaseline
+        grid.columnSpacing = 10
+        grid.rowSpacing = 10
+        grid.translatesAutoresizingMaskIntoConstraints = false
+
+        let cancel = NSButton(title: String(localized: "Cancel"), target: self, action: #selector(cancelPressed))
+        cancel.bezelStyle = .rounded
+        let save = NSButton(title: String(localized: "Save Passport"), target: self, action: #selector(savePressed))
+        save.bezelStyle = .rounded
+        save.keyEquivalent = "\r"
+        let buttons = NSStackView(views: [cancel, save])
+        buttons.orientation = .horizontal
+        buttons.spacing = 8
+        buttons.translatesAutoresizingMaskIntoConstraints = false
+
+        for field in [labelField, numberField] {
+            field.translatesAutoresizingMaskIntoConstraints = false
+        }
+        view.addSubview(grid)
+        view.addSubview(buttons)
+        NSLayoutConstraint.activate([
+            grid.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            grid.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            grid.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            labelField.widthAnchor.constraint(equalToConstant: 300),
+            buttons.topAnchor.constraint(equalTo: grid.bottomAnchor, constant: 16),
+            buttons.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            buttons.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -14)
+        ])
+    }
+
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        view.window?.makeFirstResponder(numberField)
+    }
+
+    @objc private func dateToggled() {
+        issuePicker.isEnabled = issueCheckbox.state == .on
+        expirationPicker.isEnabled = expirationCheckbox.state == .on
+    }
+
+    @objc private func cancelPressed() {
+        view.window?.close()
+    }
+
+    @objc private func savePressed() {
+        let number = numberField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !number.isEmpty else {
+            NSSound.beep()
+            view.window?.makeFirstResponder(numberField)
+            return
+        }
+        var passport: [String: Any] = ["version": 1, "number": number]
+        for (popup, key) in [(issuingPopup, "issuingCountry"), (nationalityPopup, "nationality")] {
+            guard let code = popup.selectedItem?.representedObject as? String, !code.isEmpty else { continue }
+            passport["\(key)Code"] = code
+            passport["\(key)Name"] = popup.titleOfSelectedItem ?? code
+        }
+        if issueCheckbox.state == .on { passport["issueDate"] = AnswerStore.passportDateString(issuePicker.dateValue) }
+        if expirationCheckbox.state == .on { passport["expirationDate"] = AnswerStore.passportDateString(expirationPicker.dateValue) }
+        onSave?(labelField.stringValue, passport)
+        view.window?.close()
+    }
+}
+
 final class ContactEditorViewController: NSViewController {
     var onSave: ((String, [String: Any]) -> Void)?
 
@@ -1402,13 +1535,14 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
     private var keyMonitor: Any?
     private var draftEditorObserver: NSObjectProtocol?
     private var remoteChangeObserver: NSObjectProtocol?
-    private static let answerTypes = ["", "address", "contact", "date", "gender", "phone"]
+    private static let answerTypes = ["", "address", "contact", "date", "gender", "passport", "phone"]
     private static let typeTitles = [
         String(localized: "Default", comment: "Answer type: plain text with no special handling"),
         String(localized: "Address", comment: "Answer type"),
         String(localized: "Contact", comment: "Answer type: a doctor or emergency contact"),
         String(localized: "Date", comment: "Answer type"),
         String(localized: "Gender", comment: "Answer type"),
+        String(localized: "Passport", comment: "Answer type"),
         String(localized: "Phone", comment: "Answer type")
     ]
     private static let aggregateTypes = AnswerStore.aggregateTypes
@@ -1459,6 +1593,7 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
             (String(localized: "Emergency Contact…", comment: "Item in the Add menu"), #selector(addEmergencyContact)),
             (String(localized: "Date…", comment: "Item in the Add menu"), #selector(addDate)),
             (String(localized: "Gender…", comment: "Item in the Add menu"), #selector(addGender)),
+            (String(localized: "Passport…", comment: "Item in the Add menu"), #selector(addPassport)),
             (String(localized: "Phone…", comment: "Item in the Add menu"), #selector(addPhone))
         ]
         for (title, action) in addItems {
@@ -1585,6 +1720,8 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
             presentAddressEditor(row: row)
         case "contact":
             presentContactEditor(row: row)
+        case "passport":
+            presentPassportEditor(row: row)
         default:
             startEditing(row: row, column: columnIndex("label"))
         }
@@ -1626,6 +1763,8 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
             presentAddressEditor(row: row)
         } else if identifier == "value", type == "contact" {
             presentContactEditor(row: row)
+        } else if identifier == "value", type == "passport" {
+            presentPassportEditor(row: row)
         } else if identifier == "value", type == "phone" {
             presentPhonePopover(row: row)
         } else if identifier == "value", type == "date" {
@@ -1687,6 +1826,11 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
         if type == "contact" {
             table.reloadData()
             DispatchQueue.main.async { self.presentContactEditor(row: row, category: "doctor") }
+            return
+        }
+        if type == "passport" {
+            table.reloadData()
+            DispatchQueue.main.async { self.presentPassportEditor(row: row) }
             return
         }
         if row == answers.count {
@@ -1776,6 +1920,41 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
                     try AnswerStore.updateAddress(id: id, userLabel: label, value: address)
                 } else {
                     try AnswerStore.addAddress(userLabel: label, value: address)
+                    self.draftAnswer = nil
+                }
+                self.reload()
+                if !self.answers.isEmpty {
+                    let selected = min(row, self.answers.count - 1)
+                    self.table.selectRowIndexes(IndexSet(integer: selected), byExtendingSelection: false)
+                }
+            } catch {
+                self.present(error)
+                self.reload()
+            }
+        }
+        present(controller, row: row)
+    }
+
+    private func presentPassportEditor(row: Int) {
+        guard let answer = answerForRow(row) else { return }
+        let isPassport = (answer["answerType"] as? String) == "passport"
+        var passport = isPassport ? answer["value"] as? [String: Any] ?? [:] : [:]
+        if !isPassport, let text = answer["value"] as? String, !text.isEmpty {
+            // Converting a plain text answer, like a remembered passport number.
+            passport["number"] = text
+        }
+        let existingLabel = answer["userLabel"] as? String
+            ?? (isPassport ? (answer["accessibleName"] as? String ?? answer["label"] as? String) : nil)
+            ?? ""
+        let isNew = !answers.indices.contains(row)
+        let controller = PassportEditorViewController(label: existingLabel, passport: passport, isNew: isNew)
+        controller.onSave = { [weak self] label, passport in
+            guard let self else { return }
+            do {
+                if self.answers.indices.contains(row), let id = self.answers[row]["answerID"] as? String {
+                    try AnswerStore.updatePassport(id: id, userLabel: label, value: passport)
+                } else {
+                    try AnswerStore.addPassport(userLabel: label, value: passport)
                     self.draftAnswer = nil
                 }
                 self.reload()
@@ -2032,6 +2211,9 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
                 .filter { !$0.isEmpty }
                 .joined(separator: ", ")
         }
+        if detectedType(answer) == "passport", let passport = answer["value"] as? [String: Any] {
+            return AnswerStore.passportSummary(passport)
+        }
         if detectedType(answer) == "contact", let contact = answer["value"] as? [String: Any] {
             return ["name", "role", "phone"]
                 .compactMap { contact[$0] as? String }
@@ -2168,6 +2350,23 @@ final class SavedDataViewController: NSViewController, NSTableViewDataSource, NS
         let row = answers.count
         table.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
         DispatchQueue.main.async { self.presentAddressEditor(row: row) }
+    }
+
+    @objc private func addPassport() {
+        if draftAnswer != nil && !commitDraftIfComplete() {
+            focusDraft()
+            return
+        }
+        draftAnswer = [
+            "answerID": UUID().uuidString,
+            "answerType": "passport",
+            "kind": "aggregate",
+            "inputType": ""
+        ]
+        table.reloadData()
+        let row = answers.count
+        table.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+        DispatchQueue.main.async { self.presentPassportEditor(row: row) }
     }
 
     @objc private func addDoctor() {

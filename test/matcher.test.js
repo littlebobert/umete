@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { addressFieldPart, addressValue, answerType, bestMatch, compatible, contactFieldInfo, contactParts, contactValue, looksGenerated, mergeEntries, nameFieldPart, normalize, score, selectOptionIndex } = require("../Extension/lib/matcher.js");
+const { addressFieldPart, addressValue, answerType, bestMatch, compatible, contactFieldInfo, contactParts, contactValue, looksGenerated, mergeEntries, nameFieldPart, normalize, passportCountry, passportFieldPart, passportValue, score, selectOptionIndex } = require("../Extension/lib/matcher.js");
 
 const entry = (overrides = {}) => ({
   accessibleDescription: "",
@@ -231,6 +231,156 @@ test("birth dates never match document expiration or issue dates", () => {
   ]) {
     assert.equal(compatible(birthday, field), false);
     assert.equal(bestMatch([birthday], field), null);
+  }
+});
+
+const passport = () => entry({
+  answerType: "passport",
+  accessibleName: "Passport",
+  inputType: "",
+  kind: "aggregate",
+  value: {
+    number: "TR1234567",
+    issuingCountryCode: "JP",
+    issuingCountryName: "Japan",
+    nationalityCode: "JP",
+    nationalityName: "Japan",
+    issueDate: "2021-03-15",
+    expirationDate: "2031-03-15"
+  }
+});
+
+test("passport number and confirmation fields get the passport number", () => {
+  const saved = passport();
+  for (const field of [
+    entry({ accessibleName: "Passport number", section: "International documents" }),
+    entry({ accessibleName: "Confirm passport number", section: "International documents" }),
+    entry({ name: "passportNumber" }),
+    entry({ accessibleName: "Passport No." }),
+    entry({ accessibleName: "Document number", section: "Passport" })
+  ]) {
+    assert.equal(passportFieldPart(field), "number", field.accessibleName || field.name);
+    assert.equal(bestMatch([saved], field), saved);
+    assert.equal(passportValue(saved, field), "TR1234567");
+  }
+  // Other numbers near a passport are not its number.
+  for (const label of ["Phone number", "Frequent flyer number", "Known traveler number", "Redress number", "Visa number"]) {
+    const field = entry({ accessibleName: label, section: "Passport" });
+    assert.notEqual(passportFieldPart(field), "number", label);
+    assert.equal(bestMatch([saved], field), null, label);
+  }
+  // A bare "Number" with no passport around it is something else.
+  assert.equal(bestMatch([saved], entry({ accessibleName: "Number" })), null);
+});
+
+test("passport dates fill expiration and issue fields only under a passport", () => {
+  const saved = passport();
+  const expiration = [
+    entry({ accessibleName: "Passport expiration date", inputType: "date" }),
+    entry({ accessibleName: "Expiry date", section: "Passport details" }),
+    // American's dropdowns: named only by date part, under an "Expiration date"
+    // label and an "International documents" heading.
+    entry({ accessibleName: "month", label: "month", group: "Expiration date", section: "International documents", kind: "select" }),
+    entry({ accessibleName: "day of birth month", label: "day of birth month", group: "Expiration date", section: "International documents", kind: "select" }),
+    entry({ accessibleName: "year", label: "year", group: "Expiration date", section: "International documents", kind: "select" })
+  ];
+  for (const field of expiration) {
+    assert.equal(passportFieldPart(field), "expirationDate", `${field.accessibleName} ${field.group}`);
+    assert.equal(bestMatch([saved], field), saved);
+    assert.equal(passportValue(saved, field), "2031-03-15");
+  }
+  for (const field of [
+    entry({ accessibleName: "Passport issue date", inputType: "date" }),
+    entry({ accessibleName: "Date of issue", section: "Passport" }),
+    entry({ accessibleName: "month", group: "Issue date", section: "Travel documents", kind: "select" })
+  ]) {
+    assert.equal(passportFieldPart(field), "issueDate", field.accessibleName);
+    assert.equal(passportValue(saved, field), "2021-03-15");
+  }
+  // Without a passport nearby, an expiration date is some other document's.
+  for (const field of [
+    entry({ accessibleName: "Expiration date" }),
+    entry({ accessibleName: "Card expiration date" }),
+    entry({ accessibleName: "Expiry date", section: "Driver's license" })
+  ]) {
+    assert.equal(passportFieldPart(field), "", field.accessibleName);
+    assert.equal(bestMatch([saved], field), null);
+  }
+});
+
+test("a date of birth never takes a passport date, and a passport date never takes a birth date", () => {
+  const saved = passport();
+  const birthday = entry({ answerType: "date", accessibleName: "Date of birth", value: "1984-07-09" });
+  for (const field of [
+    entry({ accessibleName: "Date of birth", section: "Passport details" }),
+    entry({ accessibleName: "month", group: "Date of birth", section: "Passport", kind: "select" }),
+    entry({ accessibleName: "day of birth month", group: "Date of birth", section: "International documents", kind: "select" })
+  ]) {
+    assert.equal(passportFieldPart(field), "", `${field.accessibleName} ${field.group}`);
+    assert.notEqual(bestMatch([saved, birthday], field), saved);
+  }
+  for (const field of [
+    entry({ accessibleName: "month", group: "Expiration date", section: "International documents", kind: "select" }),
+    entry({ accessibleName: "day of birth month", group: "Expiration date", section: "International documents", kind: "select" }),
+    entry({ accessibleName: "Passport issue date", inputType: "date" })
+  ]) {
+    assert.equal(bestMatch([saved, birthday], field), saved);
+    assert.equal(bestMatch([birthday], field), null);
+  }
+});
+
+test("passport nationality and issuing country menus get the passport's countries", () => {
+  const saved = passport();
+  saved.value.issuingCountryCode = "US";
+  saved.value.issuingCountryName = "United States";
+  for (const [label, section, part, value] of [
+    ["Passport nationality", "International documents", "nationality", "Japan"],
+    ["Nationality", "Passport", "nationality", "Japan"],
+    ["Country of citizenship", "", "nationality", "Japan"],
+    ["Issuing country", "Passport", "issuingCountry", "United States"],
+    ["Country of issue", "Passport", "issuingCountry", "United States"],
+    ["Passport issued by", "", "issuingCountry", "United States"],
+    ["Country", "Passport information", "issuingCountry", "United States"]
+  ]) {
+    const field = entry({ accessibleName: label, section, kind: "select", inputType: "select-one" });
+    assert.equal(passportFieldPart(field), part, label);
+    assert.equal(bestMatch([saved], field), saved, label);
+    assert.equal(passportValue(saved, field), value, label);
+  }
+  assert.deepEqual(passportCountry(saved, "nationality"), { code: "JP", name: "Japan" });
+  assert.deepEqual(passportCountry(saved, "issuingCountry"), { code: "US", name: "United States" });
+  // A plain Country menu away from a passport is the address's.
+  assert.equal(passportFieldPart(entry({ accessibleName: "Country", kind: "select" })), "");
+  assert.equal(passportFieldPart(entry({ accessibleName: "Country of birth", section: "Passport" })), "");
+});
+
+test("a nationality answer remembered for the field comes before the passport outside passports", () => {
+  const saved = passport();
+  const remembered = entry({ accessibleName: "Nationality", kind: "select", inputType: "select-one", value: "Japanese" });
+  const field = entry({ accessibleName: "Nationality", kind: "select", inputType: "select-one" });
+  assert.equal(bestMatch([saved, remembered], field), remembered);
+  assert.equal(bestMatch([saved], field), saved);
+  const inPassport = entry({ accessibleName: "Nationality", section: "Passport", kind: "select", inputType: "select-one" });
+  assert.equal(bestMatch([saved, remembered], inPassport), saved);
+});
+
+test("passports are typed, skip empty parts, never merge, and two are ambiguous", () => {
+  const saved = passport();
+  assert.equal(answerType(saved), "passport");
+  saved.value.issueDate = "";
+  const issue = entry({ accessibleName: "Passport issue date", inputType: "date" });
+  assert.equal(compatible(saved, issue), false);
+  assert.equal(bestMatch([saved], issue), null);
+  assert.equal(score(saved, entry({ accessibleName: "Passport number" })), -Infinity);
+  const merged = mergeEntries([passport()], [entry({ accessibleName: "Passport", value: "XX0000000" })]);
+  assert.equal(merged.length, 2);
+  assert.equal(merged[0].value.number, "TR1234567");
+  const second = passport();
+  second.value.number = "AB7654321";
+  assert.equal(bestMatch([passport(), second], entry({ accessibleName: "Passport number" })), null);
+  // Contact, address, and name fields are left to their own answers.
+  for (const label of ["Emergency contact name", "City", "First name", "Email address"]) {
+    assert.equal(passportFieldPart(entry({ accessibleName: label, section: "Passport" })), "", label);
   }
 });
 

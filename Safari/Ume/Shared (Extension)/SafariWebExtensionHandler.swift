@@ -165,7 +165,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             throw MappingError.message(String(localized: "The form mapping request was invalid or too large."))
         }
         let saved = rawSaved
-            .filter { ($0["answerType"] as? String) != "address" }
+            .filter { !["address", "passport"].contains($0["answerType"] as? String ?? "") }
             .compactMap { Self.sanitizedSchema($0, identityKey: "key") }
         let fields = rawFields.compactMap { Self.sanitizedSchema($0, identityKey: "field") }
 

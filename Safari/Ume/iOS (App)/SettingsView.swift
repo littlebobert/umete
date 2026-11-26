@@ -47,6 +47,16 @@ struct SavedAnswer: Identifiable {
     /// contacts, and yes-or-no answers are shown but edited on the Mac.
     let text: String?
     let type: String
+    /// A passport's parts, which the app edits in its own sheet.
+    let passport: [String: Any]?
+}
+
+/// A passport being added or edited; a nil answerID means a new one.
+struct PassportEdit: Identifiable {
+    let answerID: String?
+    let label: String
+    let passport: [String: Any]
+    var id: String { answerID ?? "new-passport" }
 }
 
 /// An answer being added or edited in the sheet; a nil answerID means a new one.
@@ -58,7 +68,8 @@ struct AnswerEdit: Identifiable {
     var id: String { answerID ?? "new" }
 }
 
-/// The types a plain text answer can have; addresses and contacts are added on the Mac.
+/// The types a plain text answer can have; passports have their own sheet, and
+/// addresses and contacts are added on the Mac.
 private let textAnswerTypes = [
     ("", String(localized: "Default", comment: "Answer type: plain text with no special format")),
     ("date", String(localized: "Date", comment: "Answer type")),
@@ -136,7 +147,8 @@ final class SettingsModel: ObservableObject {
                 label: Self.label(of: answer, index: index),
                 value: Self.valueText(of: answer, label: Self.label(of: answer, index: index)),
                 text: answer["value"] as? String,
-                type: answer["answerType"] as? String ?? ""
+                type: answer["answerType"] as? String ?? "",
+                passport: answer["answerType"] as? String == "passport" ? answer["value"] as? [String: Any] : nil
             )
         }
         syncEnabled = CloudSync.isEnabled
@@ -202,6 +214,21 @@ final class SettingsModel: ObservableObject {
                 try AnswerStore.update(id: id, userLabel: label, value: value, answerType: edit.type)
             } else {
                 try AnswerStore.add(userLabel: label, value: value, answerType: edit.type)
+            }
+        } catch {
+            return error.localizedDescription
+        }
+        await load()
+        return nil
+    }
+
+    /// Adds or changes a passport. Returns a message when it could not be saved.
+    func savePassport(answerID: String?, label: String, passport: [String: Any]) async -> String? {
+        do {
+            if let answerID {
+                try AnswerStore.updatePassport(id: answerID, userLabel: label, value: passport)
+            } else {
+                try AnswerStore.addPassport(userLabel: label, value: passport)
             }
         } catch {
             return error.localizedDescription
@@ -284,6 +311,8 @@ final class SettingsModel: ObservableObject {
             return flag
                 ? String(localized: "Yes", comment: "Value of a saved yes-or-no answer")
                 : String(localized: "No", comment: "Value of a saved yes-or-no answer")
+        case let parts as [String: Any] where answer["answerType"] as? String == "passport":
+            return AnswerStore.passportSummary(parts)
         case let parts as [String: Any]:
             let isAddress = answer["answerType"] as? String == "address"
             let keys = isAddress
@@ -468,6 +497,7 @@ struct SavedDataTab: View {
     @EnvironmentObject private var model: SettingsModel
     @State private var confirmsClear = false
     @State private var editing: AnswerEdit?
+    @State private var editingPassport: PassportEdit?
 
     var body: some View {
         NavigationView {
@@ -478,7 +508,14 @@ struct SavedDataTab: View {
                             .foregroundColor(.secondary)
                     }
                     ForEach(model.answers) { answer in
-                        if let text = answer.text {
+                        if let passport = answer.passport {
+                            Button {
+                                editingPassport = PassportEdit(answerID: answer.id, label: answer.label, passport: passport)
+                            } label: {
+                                AnswerRow(answer: answer)
+                            }
+                            .accessibilityHint("Edits this passport")
+                        } else if let text = answer.text {
                             Button {
                                 editing = AnswerEdit(answerID: answer.id, label: answer.label, value: text, type: answer.type)
                             } label: {
@@ -505,14 +542,22 @@ struct SavedDataTab: View {
             }
             .navigationTitle("Saved Data")
             .toolbar {
-                Button {
-                    editing = AnswerEdit(answerID: nil, label: "", value: "")
+                Menu {
+                    Button("Text Answer") {
+                        editing = AnswerEdit(answerID: nil, label: "", value: "")
+                    }
+                    Button("Passport") {
+                        editingPassport = PassportEdit(answerID: nil, label: "", passport: [:])
+                    }
                 } label: {
                     Label("Add Answer", systemImage: "plus")
                 }
             }
             .sheet(item: $editing) { edit in
                 AnswerEditorSheet(edit: edit).environmentObject(model)
+            }
+            .sheet(item: $editingPassport) { edit in
+                PassportEditorSheet(edit: edit).environmentObject(model)
             }
             .refreshable { await model.load() }
             .confirmationDialog(
@@ -674,6 +719,131 @@ struct AnswerEditorSheet: View {
         problem = await model.save(AnswerEdit(answerID: answerID, label: label, value: value, type: type))
         isSaving = false
         if problem == nil { dismiss() }
+    }
+}
+
+/// Adds or edits a passport: its number, countries, and dates, which Fill puts
+/// in a form's passport fields one by one.
+struct PassportEditorSheet: View {
+    @EnvironmentObject private var model: SettingsModel
+    @Environment(\.dismiss) private var dismiss
+    private let answerID: String?
+    @State private var label: String
+    @State private var number: String
+    @State private var issuingCountry: String
+    @State private var nationality: String
+    @State private var issueDate: Date?
+    @State private var expirationDate: Date?
+    @State private var problem: String?
+    @State private var isSaving = false
+    private let regions = AnswerStore.regionChoices()
+
+    init(edit: PassportEdit) {
+        answerID = edit.answerID
+        let passport = edit.passport
+        let region = edit.answerID == nil ? (Locale.current.regionCode ?? "") : ""
+        _label = State(initialValue: edit.label)
+        _number = State(initialValue: passport["number"] as? String ?? "")
+        _issuingCountry = State(initialValue: passport["issuingCountryCode"] as? String ?? region)
+        _nationality = State(initialValue: passport["nationalityCode"] as? String ?? region)
+        _issueDate = State(initialValue: AnswerStore.passportDate(passport["issueDate"] as? String))
+        _expirationDate = State(initialValue: AnswerStore.passportDate(passport["expirationDate"] as? String))
+    }
+
+    private var canSave: Bool {
+        !number.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section {
+                    TextField("Passport", text: $label)
+                } header: {
+                    Text("Label")
+                } footer: {
+                    Text("Name a second passport after its country or holder.")
+                }
+                Section {
+                    TextField("Passport number", text: $number)
+                        .textInputAutocapitalization(.characters)
+                        .autocorrectionDisabled()
+                    countryPicker("Issuing country", selection: $issuingCountry)
+                    countryPicker("Nationality", selection: $nationality)
+                }
+                Section {
+                    OptionalDateRow(title: String(localized: "Issue date"), date: $issueDate)
+                    OptionalDateRow(title: String(localized: "Expiration date"), date: $expirationDate)
+                } footer: {
+                    Text("A date of birth is never filled into these.")
+                }
+                if let problem {
+                    Section { Text(problem).foregroundColor(.red) }
+                }
+            }
+            .navigationTitle(answerID == nil ? String(localized: "New Passport") : String(localized: "Edit Passport"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { Task { await save() } }
+                        .disabled(!canSave || isSaving)
+                }
+            }
+        }
+        .navigationViewStyle(.stack)
+    }
+
+    private func countryPicker(_ title: LocalizedStringKey, selection: Binding<String>) -> some View {
+        Picker(title, selection: selection) {
+            Text("None", comment: "No country chosen for a passport").tag("")
+            ForEach(regions, id: \.code) { Text($0.name).tag($0.code) }
+        }
+    }
+
+    private func save() async {
+        isSaving = true
+        var passport: [String: Any] = ["version": 1, "number": number]
+        for (key, code) in [("issuingCountry", issuingCountry), ("nationality", nationality)] where !code.isEmpty {
+            passport["\(key)Code"] = code
+            passport["\(key)Name"] = regions.first { $0.code == code }?.name ?? code
+        }
+        if let issueDate { passport["issueDate"] = AnswerStore.passportDateString(issueDate) }
+        if let expirationDate { passport["expirationDate"] = AnswerStore.passportDateString(expirationDate) }
+        problem = await model.savePassport(answerID: answerID, label: label, passport: passport)
+        isSaving = false
+        if problem == nil { dismiss() }
+    }
+}
+
+/// A date that may be left out: a button to add it, then a date picker that
+/// can be cleared.
+struct OptionalDateRow: View {
+    let title: String
+    @Binding var date: Date?
+
+    var body: some View {
+        if let current = date {
+            HStack {
+                DatePicker(title, selection: Binding(get: { current }, set: { date = $0 }), displayedComponents: .date)
+                    .environment(\.timeZone, TimeZone(identifier: "UTC")!)
+                Button {
+                    date = nil
+                } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundColor(.secondary)
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel(Text("Remove \(title)", comment: "Clears a passport date; the placeholder is its name, like Issue date"))
+            }
+        } else {
+            Button {
+                date = AnswerStore.passportDate(AnswerStore.passportDateString(Date()))
+            } label: {
+                Label(title, systemImage: "plus.circle")
+            }
+        }
     }
 }
 

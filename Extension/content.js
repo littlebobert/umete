@@ -257,8 +257,13 @@
       if (ancestor.matches("section, article, form, fieldset, li, [role='group'], [role='region']")) {
         const labelled = referencedText(ancestor, "aria-labelledby") || compactText(ancestor.getAttribute("aria-label"));
         if (labelled && labelled !== groupFor(element)) return labelled;
-        const directHeading = [...ancestor.children].find((candidate) => candidate.matches?.(HEADING_SELECTOR));
-        if (directHeading && directHeading !== child) return textOf(directHeading);
+        // In a form with several headings ("Personal information", then
+        // "International documents"), the field's is the last one above it.
+        const children = [...ancestor.children];
+        const isHeading = (candidate) => candidate !== child && candidate.matches?.(HEADING_SELECTOR);
+        const index = children.indexOf(child);
+        const directHeading = (index >= 0 ? children.slice(0, index).reverse().find(isHeading) : null) || children.find(isHeading);
+        if (directHeading) return textOf(directHeading);
       }
 
       let sibling = child.previousElementSibling;
@@ -682,32 +687,52 @@
     return selectOption(element, index >= 0 ? options[index] : null);
   }
 
+  // A country menu lists codes or names ("JP", "Japan", "Japan +81"); a text box
+  // takes the name unless it asks for the code.
+  function applyCountry(element, descriptor, countryCode, countryName) {
+    const code = UmeMatcher.normalize(countryCode);
+    const name = UmeMatcher.normalize(countryName);
+    if (isDropdown(element)) {
+      const option = dropdownOptions(element).find((candidate) => {
+        const optionValue = UmeMatcher.normalize(candidate.value);
+        const optionText = UmeMatcher.normalize(candidate.text);
+        const optionTextWithoutDialingCode = optionText.replace(/ \d{1,3}$/, "");
+        return Boolean((code && (optionValue === code || optionText === code)) || (name && (optionValue === name || optionText === name || optionTextWithoutDialingCode === name)));
+      });
+      return selectOption(element, option);
+    }
+    const autocomplete = String(element.autocomplete || "").toLowerCase().split(/\s+/);
+    const requestsCode = autocomplete.includes("country") || /(?:^| )(?:country code|iso country)(?: |$)/.test(UmeMatcher.normalize([descriptor.label, descriptor.name].join(" ")));
+    const country = requestsCode ? countryCode : (countryName || countryCode);
+    if (!country) return false;
+    setNativeValue(element, country);
+    dispatchValueEvents(element);
+    return valueStuck(element, country);
+  }
+
+  function applyPassport(element, saved) {
+    const descriptor = describe(element);
+    const part = UmeMatcher.passportFieldPart(descriptor);
+    if (part === "issuingCountry" || part === "nationality") {
+      const country = UmeMatcher.passportCountry(saved, part);
+      return Boolean(country) && applyCountry(element, descriptor, country.code, country.name);
+    }
+    const value = UmeMatcher.passportValue(saved, part);
+    if (!value) return false;
+    if (part === "issueDate" || part === "expirationDate") return applyDate(element, { value }, true);
+    if (isDropdown(element)) return false;
+    setNativeValue(element, value);
+    dispatchValueEvents(element);
+    return valueStuck(element, value);
+  }
+
   function applyAddress(element, saved) {
     const descriptor = describe(element);
     const part = UmeMatcher.addressFieldPart(descriptor);
     const address = saved?.value;
     if (!part || !address || typeof address !== "object" || Array.isArray(address)) return false;
 
-    if (part === "country") {
-      const code = UmeMatcher.normalize(address.countryCode);
-      const name = UmeMatcher.normalize(address.countryName);
-      if (isDropdown(element)) {
-        const option = dropdownOptions(element).find((candidate) => {
-          const optionValue = UmeMatcher.normalize(candidate.value);
-          const optionText = UmeMatcher.normalize(candidate.text);
-          const optionTextWithoutDialingCode = optionText.replace(/ \d{1,3}$/, "");
-          return Boolean((code && (optionValue === code || optionText === code)) || (name && (optionValue === name || optionText === name || optionTextWithoutDialingCode === name)));
-        });
-        return selectOption(element, option);
-      }
-      const autocomplete = String(element.autocomplete || "").toLowerCase().split(/\s+/);
-      const requestsCode = autocomplete.includes("country") || /(?:^| )(?:country code|iso country)(?: |$)/.test(UmeMatcher.normalize([descriptor.label, descriptor.name].join(" ")));
-      const country = requestsCode ? address.countryCode : (address.countryName || address.countryCode);
-      if (!country) return false;
-      setNativeValue(element, country);
-      dispatchValueEvents(element);
-      return valueStuck(element, country);
-    }
+    if (part === "country") return applyCountry(element, descriptor, address.countryCode, address.countryName);
 
     const value = part === "streetAddress" && !(element instanceof HTMLTextAreaElement)
       ? address.addressLine1
@@ -816,7 +841,9 @@
     return false;
   }
 
-  function applyDate(element, saved) {
+  // A whole-date box takes a birth date only when it asks for one; a passport
+  // date is placed by the matcher, so `anyWholeDate` skips that check.
+  function applyDate(element, saved, anyWholeDate = false) {
     const parts = parseDateParts(saved?.value);
     if (!parts) return false;
     const part = dateFieldPart(element);
@@ -834,7 +861,7 @@
     if (isDropdown(element)) return false;
     const normalized = UmeMatcher.normalize([labelFor(element), accessibleNameFor(element), element.name, element.id, element.placeholder, element.autocomplete].filter(Boolean).join(" "));
     const isBirthDate = /(?:^| )(?:birth ?day|birth ?date|date of birth|dob)(?: |$)/.test(normalized) || element.autocomplete === "bday";
-    if (!isBirthDate) return false;
+    if (!isBirthDate && !anyWholeDate) return false;
     const value = formatDateParts(parts, [element.placeholder, labelFor(element), accessibleNameFor(element)].filter(Boolean).join(" "), element.type);
     setNativeValue(element, value);
     dispatchValueEvents(element);
@@ -877,6 +904,7 @@
 
     const type = UmeMatcher.answerType(saved);
     if (type === "address") return applyAddress(element, saved);
+    if (type === "passport") return applyPassport(element, saved);
     if (type === "gender") {
       if (isDropdown(element) && applyGenderSelect(element, saved)) return true;
       if (applySegmentedGender(saved)) return true;
@@ -1055,9 +1083,12 @@
 
   function unmatchedSchemas(savedEntries) {
     const hasAddress = (savedEntries || []).some((entry) => UmeMatcher.answerType(entry) === "address");
+    const hasPassport = (savedEntries || []).some((entry) => UmeMatcher.answerType(entry) === "passport");
     return eligibleElements().flatMap((element, index) => {
       const descriptor = describe(element);
       if (hasAddress && UmeMatcher.addressFieldPart(descriptor)) return [];
+      // Passport fields are filled on the device only, like addresses.
+      if (hasPassport && UmeMatcher.passportFieldPart(descriptor)) return [];
       // A ZIP+4 box stays empty: there's no saved answer for it to get.
       if (UmeMatcher.addressFieldPart(descriptor) === "postalCodeSuffix") return [];
       if (intentionallySkipped.has(element) || filledAsPhonePart.has(element) || filledByUmete.has(element)) return [];
@@ -1077,7 +1108,7 @@
       const index = Number(String(mapping.field || "").replace("field-", ""));
       const element = elements[index];
       const saved = savedByKey.get(mapping.key);
-      if (!element || !saved || UmeMatcher.answerType(saved) === "address") continue;
+      if (!element || !saved || ["address", "passport"].includes(UmeMatcher.answerType(saved))) continue;
       if (applyValue(element, saved.value, saved)) filled += 1;
     }
     return { filled };

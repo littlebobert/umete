@@ -401,6 +401,74 @@
     });
   }
 
+  // A passport is an aggregate answer: its number, issuing country, nationality,
+  // and issue and expiration dates ("yyyy-mm-dd") each fill their own field.
+  const PASSPORT_CONTEXT_RE = /(?:^| )(?:passports?|international documents?|travel documents?)(?: |$)/;
+  const EXPIRATION_RE = /(?:^| )(?:expir(?:y|ation|es?|ing)?|exp|valid (?:to|until|thru|through))(?: |$)/;
+  const ISSUE_RE = /(?:^| )(?:issue|issued|issuance|issuing)(?: |$)/;
+  const BIRTH_RE = /(?:^| )(?:birth ?day|birth ?date|date of birth|d o b|dob)(?: |$)/;
+
+  function passportFieldPart(entry) {
+    if (!entry || typeof entry !== "object" || entry.kind === "checkbox" || entry.kind === "radio") return "";
+    const machine = [entry.name, entry.id].filter((value) => value && !looksGenerated(value));
+    const names = [entry.userLabel, entry.accessibleName, entry.label, entry.placeholder].map(withoutConfirmation).filter(Boolean);
+    const own = names.length ? names.join(" ") : withoutConfirmation(machine.join(" "));
+    // Not the form's title: a "Passport application" form has a home address too.
+    const context = normalize([entry.group, entry.section, ...(entry.tableHeaders || [])].filter(Boolean).join(" "));
+    const ownPassport = PASSPORT_CONTEXT_RE.test(own) || /(?:^| )passport/.test(normalize(machine.join(" ")));
+    const inPassport = ownPassport || PASSPORT_CONTEXT_RE.test(context);
+    if (!inPassport) {
+      // Nationality is the same anywhere; everything else needs a passport nearby.
+      return /(?:^| )(?:nationality|citizenship|country of citizenship|citizen of)(?: |$)/.test(own) ? "nationality" : "";
+    }
+    if (/(?:^| )(?:nationality|citizenship|citizen of)(?: |$)/.test(own)) return "nationality";
+    if (/(?:^| )(?:issuing (?:country|state|nation)|country (?:of issue|of issuance|issued|issuing)|issued (?:by|in)(?: country)?|passport country|country of passport)(?: |$)/.test(own)
+        || (!ownPassport && /^(?:country|country region|country of issue)$/.test(own))) return "issuingCountry";
+    // A document date reads as one from its own words or the label over its run
+    // ("Expiration date" above "month", "day", "year"). A birth date never does;
+    // American's "day of birth month" is a day, whatever date it's under.
+    const dateText = normalize(`${own} ${entry.group || ""}`);
+    const isDate = semanticCategory(entry) === "document-date" || /(?:^| )(?:date|month|day|year|mm|dd|yyyy|yy)(?: |$)/.test(dateText);
+    if (isDate) {
+      if (BIRTH_RE.test(own.replace(/(?:^| )day of birth month(?= |$)/, " "))) return "";
+      if (EXPIRATION_RE.test(dateText)) return "expirationDate";
+      if (ISSUE_RE.test(dateText)) return "issueDate";
+      return "";
+    }
+    if (entry.kind === "select") return "";
+    if (/(?:^| )(?:passport (?:number|no|num|nr|#)|passport|document (?:number|no)|number|no)(?: |$)/.test(own)
+        && !/(?:^| )(?:phone|telephone|mobile|fax|frequent|loyalty|member|redress|known traveler|ktn|visa|card|license|licence)(?: |$)/.test(own)) return "number";
+    return "";
+  }
+
+  function passportObject(saved) {
+    const passport = saved?.value;
+    return passport && typeof passport === "object" && !Array.isArray(passport) ? passport : null;
+  }
+
+  function passportValue(saved, field) {
+    const passport = passportObject(saved);
+    if (!passport) return "";
+    const part = typeof field === "string" ? field : passportFieldPart(field);
+    const text = (key) => typeof passport[key] === "string" ? passport[key].trim() : "";
+    if (part === "issuingCountry") return text("issuingCountryName") || text("issuingCountryCode");
+    if (part === "nationality") return text("nationalityName") || text("nationalityCode");
+    if (["number", "issueDate", "expirationDate"].includes(part)) return text(part);
+    return "";
+  }
+
+  // The country code and name for a passport's country part, for menus that
+  // list either.
+  function passportCountry(saved, part) {
+    const passport = passportObject(saved);
+    if (!passport) return null;
+    const prefix = part === "issuingCountry" ? "issuingCountry" : part === "nationality" ? "nationality" : "";
+    if (!prefix) return null;
+    const code = typeof passport[`${prefix}Code`] === "string" ? passport[`${prefix}Code`].trim() : "";
+    const name = typeof passport[`${prefix}Name`] === "string" ? passport[`${prefix}Name`].trim() : "";
+    return code || name ? { code, name } : null;
+  }
+
   // "Owner of Phone", "Phone holder", "Name of phone owner": these ask for a
   // person, not a number. Only the field's own label is checked, because the
   // surrounding group (often "Phone No.") would otherwise look like a number.
@@ -431,7 +499,7 @@
     return "";
   }
 
-  const VALID_TYPES = new Set(["address", "contact", "date", "gender", "phone"]);
+  const VALID_TYPES = new Set(["address", "contact", "date", "gender", "passport", "phone"]);
   const FIELD_CATEGORIES = { date: "date", gender: "gender", phone: "phone" };
 
   function answerType(entry) {
@@ -450,6 +518,7 @@
       return Boolean(fieldContact) && field.kind !== "checkbox" && fieldContact.category === contactCategory(saved) && Boolean(contactValue(saved, fieldContact.part));
     }
     if ((fieldContact?.category || "") !== (contactFieldInfo(saved)?.category || "")) return false;
+    if (savedType === "passport") return Boolean(passportValue(saved, field));
     if (savedType === "address") return fieldCategory === "address" && Boolean(addressValue(saved, field));
     // A remembered street line never fills line 2, and so on.
     const savedPart = addressFieldPart(saved);
@@ -509,7 +578,7 @@
 
   function score(saved, field) {
     const savedType = answerType(saved);
-    if (savedType === "contact" || !compatible(saved, field)) return -Infinity;
+    if (savedType === "contact" || savedType === "passport" || !compatible(saved, field)) return -Infinity;
     if (saved.inputType && field.inputType && saved.inputType !== field.inputType) {
       const compatibleTextTypes = new Set(["", "email", "search", "tel", "text", "url"]);
       const compatibleTextInput = compatibleTextTypes.has(saved.inputType) && compatibleTextTypes.has(field.inputType);
@@ -572,6 +641,18 @@
       if (contacts.length) return pickContact(contacts, contactInfo);
     }
 
+    // A saved passport fills its parts. Nationality alone is asked outside
+    // passports too, where an answer remembered for it comes first.
+    const passportPart = passportFieldPart(field);
+    if (passportPart) {
+      const passports = (savedEntries || []).filter((entry) => answerType(entry) === "passport" && passportValue(entry, passportPart));
+      if (passports.length) {
+        const passport = passports.length === 1 ? passports[0] : null;
+        if (passportPart !== "nationality" || PASSPORT_CONTEXT_RE.test(semanticText(field))) return passport;
+        return scoredBestMatch(savedEntries, field, minimumScore) || passport;
+      }
+    }
+
     const addressPart = addressFieldPart(field);
     if (addressPart) {
       const addresses = (savedEntries || []).filter((entry) => answerType(entry) === "address" && addressValue(entry, addressPart));
@@ -613,5 +694,5 @@
     return result;
   }
 
-  return { addressFieldPart, addressValue, answerType, bestMatch, composedFullName, compatible, contactCategory, contactFieldInfo, contactParts, contactValue, looksGenerated, mergeEntries, nameFieldPart, normalize, overlap, score, selectOptionIndex };
+  return { addressFieldPart, addressValue, answerType, bestMatch, composedFullName, compatible, contactCategory, contactFieldInfo, contactParts, contactValue, looksGenerated, mergeEntries, nameFieldPart, normalize, overlap, passportCountry, passportFieldPart, passportValue, score, selectOptionIndex };
 });
