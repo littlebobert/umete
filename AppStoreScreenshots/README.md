@@ -58,6 +58,29 @@ npm run header
 
 It writes `output/header/<locale>/header.mp4` (3840×1646, 30 fps, a 7.1 s loop), the same video for each locale. Upload it in App Store Connect → Asset Library → Product Page Information → Header. `header.video` in `config.mjs` places the plum inside every device's crop: an iPhone's middle 2480 columns, below its buttons, and an iPad's rows 250–1395. `scripts/header.mjs` works out where, and `landing-animation.py --header` draws it. The still header PNGs from `npm run render` are unchanged.
 
+## Search result video
+
+The search results card can also be a muted, looping video (3:2, 5–30 s). Umete's is the still card set in motion, from `captures/scene-1-fill.mp4`: the camera pushes in on Umete's sheet for the tap on **Fill this form**, pans up to the fields as they fill, and pulls back, while the headline goes from "Autofill complete web forms." to "Your answers stay private." (フォームをまるごと自動入力。 and 回答は、あなただけのもの。 in Japanese):
+
+```bash
+npm run search
+```
+
+It writes `output/search/<locale>/search.mp4` (3840×2560, 30 fps, a 10 s loop). The headlines are `search.video` in `config.mjs`; the script stops if one would run under the phone. `scripts/search.mjs` draws the paper and headlines with Playwright, and `scripts/search-video.py` moves the camera and encodes. The recorder skipped the wait while Umete matched answers, so the tap, "Matching saved answers…" and the filled form are held frames, chosen by time at the top of `search-video.py`; take a new recording and those times change. The zoom stops short of the sheet's Debug Logs button, which the Debug build shows.
+
+## Uploading the header and search videos
+
+With `asc` signed in, upload each video to the Asset Library, then make it the version's placement for each language (`PRODUCT_PAGE_HEADER_ASSET` or `APP_STORE_SEARCH_RESULTS_ASSET`). A swap only replaces like with like, so an image placement is deleted first; the image stays in the library.
+
+```bash
+asc asset-library videos upload --library-id LIBRARY_ID --file output/search/en-US/search.mp4 --time-code 00:00:05:00
+asc localizations placements list --localization-id LOCALIZATION_ID --placement-type APP_STORE_SEARCH_RESULTS_ASSET
+asc localizations placements delete --id OLD_PLACEMENT_ID --confirm
+asc localizations placements create --localization-id LOCALIZATION_ID --video-id VIDEO_ID --placement-type APP_STORE_SEARCH_RESULTS_ASSET
+```
+
+The library ID is the app's ID; `asc localizations list --app APP_ID` gives the editable version's localization IDs. Nothing goes live until the version, or the assets on their own, pass review.
+
 ## Landing page icon
 
 `npm run landing-animation` renders umete.jp's header icon in the app icon's glass, in the way of Karui's: an empty glass shell fills up with the plum's colour, its surface swaying as it rises, catches the light, and drains back to empty. It's built on the app icon, so the full plum is exactly the icon. It writes `umete-icon-sketch.mp4` (224 px, 7 s, looping), the full plum as `umete-icon-sketch.jpg`, shown with no motion, and the empty first frame as `umete-icon-sketch-first.jpg`, shown while the video starts, into the site's `assets/`; bump the pages' `?v=` cache versions after. `npm run landing-animation -- --mac` writes the same files into `Safari/Ume/macOS (App)/` for the Mac app's About window. Needs ffmpeg and Pillow, which macOS's `/usr/bin/python3` has.

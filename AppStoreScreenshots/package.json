@@ -11,7 +11,8 @@
     "landing": "node scripts/landing.mjs",
     "social": "node scripts/social.mjs",
     "landing-animation": "/usr/bin/python3 scripts/landing-animation.py",
-    "header": "node scripts/header.mjs"
+    "header": "node scripts/header.mjs",
+    "search": "node scripts/search.mjs"
   },
   "devDependencies": {
     "playwright": "^1.63.0"

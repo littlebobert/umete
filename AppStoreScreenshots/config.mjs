@@ -174,6 +174,24 @@ export const search = Object.freeze({
   // Short lines, big, since the card is shown about 280 points wide in the list.
   hero: { "en-US": "Fill any form<br>in Safari<br>with one tap.", ja: "Safariの<br>フォームを、<br>ワンタップで<br>埋める。" },
   device: Object.freeze({ width: 1520, top: 280 }),
+  // iOS 27 also takes a muted, looping video here (3:2, 5–30 s). Umete's is the still
+  // card set in motion, from the fill recording: the camera pushes in on Umete's sheet
+  // for the tap on Fill this form, pans up to the fields as they fill, and pulls back,
+  // while the headline goes from what it does to why to trust it. Two lines at most,
+  // big, for the size the card is shown at.
+  video: Object.freeze({
+    file: "search.mp4",
+    clip: "captures/scene-1-fill.mp4",
+    lines: {
+      "en-US": ["Autofill<br>complete<br>web forms.", "Your answers<br>stay private."],
+      ja: ["フォームを<br>まるごと<br>自動入力。", "回答は、<br>あなただけの<br>もの。"],
+    },
+    fontSize: { "en-US": 230, ja: 220 },
+    // The headline's room: from the page's left margin to clear of the phone, which
+    // comes this far left at its closest.
+    margin: 260,
+    textRight: 1640,
+  }),
 });
 
 // The App Preview: three Simulator recordings (captures/scene-<n>-*.mp4, see
