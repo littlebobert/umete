@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>American's profile: date of birth and passport</title>
+<style>
+  body { font-family: -apple-system, sans-serif; margin: 2rem; }
+  .row { display: flex; gap: 0.5rem; }
+  .field-label { display: block; color: #555; margin: 1rem 0 0.25rem; }
+</style>
+</head>
+<body>
+<!--
+  Imitates American's profile editor (aa.com, November 2026): every dropdown is
+  a <select> inside an <adc-select> component's shadow root, named only by its
+  date part, and the label that says which date sits outside, above all three.
+  The expiration day is named "day of birth month", as on the real page.
+-->
+<form>
+  <h2>Personal information</h2>
+  <label class="field-label" for="firstName">First name</label>
+  <input id="firstName" name="firstName">
+  <label class="field-label" for="lastName">Last name</label>
+  <input id="lastName" name="lastName">
+
+  <div class="date-field">
+    <span class="field-label">Date of birth</span>
+    <div class="row">
+      <adc-select id="dob-month" label="month" options="months"></adc-select>
+      <adc-select id="dob-day" label="day of birth month" options="days"></adc-select>
+      <adc-select id="dob-year" label="year" options="years"></adc-select>
+    </div>
+  </div>
+
+  <h2>International documents</h2>
+  <div class="row">
+    <div>
+      <label class="field-label" for="passportNumber">Passport number</label>
+      <input id="passportNumber" name="passportNumber">
+    </div>
+    <div>
+      <label class="field-label" for="confirmPassportNumber">Confirm passport number</label>
+      <input id="confirmPassportNumber" name="confirmPassportNumber">
+    </div>
+  </div>
+  <div class="row">
+    <div class="date-field">
+      <span class="field-label">Expiration date</span>
+      <div class="row">
+        <adc-select id="exp-month" label="month" options="months"></adc-select>
+        <adc-select id="exp-day" label="day of birth month" options="days"></adc-select>
+        <adc-select id="exp-year" label="year" options="future-years"></adc-select>
+      </div>
+    </div>
+    <div>
+      <span class="field-label">Passport nationality</span>
+      <adc-select id="nationality" label="Passport nationality" options="countries"></adc-select>
+    </div>
+  </div>
+</form>
+<script>
+  const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const OPTIONS = {
+    months: [["", "Month"], ...MONTHS.map((name, index) => [String(index + 1).padStart(2, "0"), name])],
+    days: [["", "Day"], ...Array.from({ length: 31 }, (_, index) => String(index + 1).padStart(2, "0")).map((day) => [day, day])],
+    years: [["", "Year"], ...Array.from({ length: 107 }, (_, index) => String(2026 - index)).map((year) => [year, year])],
+    "future-years": [["", "Year"], ...Array.from({ length: 11 }, (_, index) => String(2026 + index)).map((year) => [year, year])],
+    countries: [["", "Select a country"], ["JP", "Japan"], ["US", "United States"]]
+  };
+
+  customElements.define("adc-select", class extends HTMLElement {
+    connectedCallback() {
+      if (this.shadowRoot) return;
+      const root = this.attachShadow({ mode: "open" });
+      const wrapper = document.createElement("div");
+      wrapper.className = "adc-select";
+      const select = document.createElement("select");
+      select.setAttribute("aria-label", this.getAttribute("label"));
+      for (const [value, text] of OPTIONS[this.getAttribute("options")]) select.add(new Option(text, value));
+      wrapper.append(select);
+      root.append(wrapper);
+    }
+  });
+</script>
+</body>
+</html>

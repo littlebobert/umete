@@ -3,7 +3,7 @@
 // checked field by field. Unlike run.js, which scores the Chromium corpus with
 // page scripts off, these pages imitate one site's widgets closely.
 //
-// Usage: node scenarios.js [--only delta]
+// Usage: node scenarios.js [--only delta|american]
 
 const path = require("node:path");
 const { webkit } = require("playwright");
@@ -28,9 +28,11 @@ const PERSON = [
 ];
 
 // A dropdown button shows its choice in its own text; inputs hold a value.
+// A component's own control sits in its shadow root (American's <adc-select>).
 function shown(selector) {
-  const element = document.querySelector(selector);
+  let element = document.querySelector(selector);
   if (!element) return null;
+  element = element.shadowRoot?.querySelector("select, input, button") || element;
   if (element.matches("button")) return element.querySelector(".dropdown__placeholder--text")?.textContent.trim() ?? element.textContent.trim();
   return element.value;
 }
@@ -56,6 +58,25 @@ const SCENARIOS = [
     },
     // Remember my answers afterwards keeps the phone's country code.
     rememberedPhoneCode: "81"
+  },
+  {
+    // The date of birth fills its dropdowns, and never the passport's
+    // expiration date, though both are named only "month", "day", and "year".
+    name: "american",
+    page: "scenarios/aa-passport.html",
+    answers: PERSON,
+    expect: {
+      "#firstName": "Kenji",
+      "#lastName": "Mori",
+      "#dob-month": "07",
+      "#dob-day": "09",
+      "#dob-year": "1984",
+      "#passportNumber": "",
+      "#exp-month": "",
+      "#exp-day": "",
+      "#exp-year": "",
+      "#nationality": ""
+    }
   }
 ];
 

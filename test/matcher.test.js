@@ -222,7 +222,12 @@ test("birth dates never match document expiration or issue dates", () => {
     entry({ accessibleName: "Document expiration date", inputType: "date" }),
     entry({ accessibleName: "Passport expiry month", kind: "select" }),
     entry({ name: "documentExpirationYear", kind: "select" }),
-    entry({ accessibleName: "Document issue date", inputType: "date" })
+    entry({ accessibleName: "Document issue date", inputType: "date" }),
+    // American's passport expiration dropdowns, named only by date part, under
+    // an "Expiration date" label and an "International documents" heading.
+    entry({ accessibleName: "month", label: "month", group: "Expiration date", section: "International documents", kind: "select" }),
+    entry({ accessibleName: "day of birth month", label: "day of birth month", group: "Expiration date", kind: "select" }),
+    entry({ accessibleName: "year", label: "year", section: "International documents", kind: "select" })
   ]) {
     assert.equal(compatible(birthday, field), false);
     assert.equal(bestMatch([birthday], field), null);

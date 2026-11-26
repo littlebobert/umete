@@ -184,23 +184,75 @@
       || placeholderFor(element);
   }
 
+  // The parent, stepping out of a shadow root to its host. American's dropdowns
+  // are <select>s inside <adc-select> components, while the fieldset, label, or
+  // heading that names them sits outside.
+  function composedParent(node) {
+    return node.parentElement || node.parentNode?.host || null;
+  }
+
+  function composedClosest(element, selector) {
+    for (let node = element; node; node = composedParent(node)) {
+      if (node.matches?.(selector)) return node;
+    }
+    return null;
+  }
+
   function namedContainer(element, selector) {
-    const container = element.closest(selector);
+    const container = composedClosest(element, selector);
     if (!container) return "";
     return referencedText(container, "aria-labelledby")
       || compactText(container.getAttribute("aria-label"));
   }
 
   function groupFor(element) {
-    const fieldset = element.closest("fieldset");
+    const fieldset = composedClosest(element, "fieldset");
     const legend = fieldset?.querySelector(":scope > legend");
     if (legend) return textOf(legend);
-    return namedContainer(element, "[role='group'], [role='radiogroup']");
+    return namedContainer(element, "[role='group'], [role='radiogroup']") || dateRunLabel(element);
+  }
+
+  const DATE_PART_NAME = /(?:^| )(?:month|mm|day|dd|year|yyyy|yy)(?: |$)/;
+
+  function visibleFieldsIn(node) {
+    return deepQuerySelectorAll(VISIBLE_FIELD_SELECTOR, { children: [node] }).filter((field) => isUserVisible(field)).length;
+  }
+
+  // Month, day, and year dropdowns often share one label above them
+  // ("Expiration date") while each is named only "month" or "day" (American's
+  // passport expiration day is even named "day of birth month"). The label is
+  // short text just before the smallest box around the two or three of them.
+  function dateRunLabel(element) {
+    const own = UmeMatcher.normalize(labelFor(element) || element.name);
+    if (!DATE_PART_NAME.test(own) || own.split(" ").length > 4) return "";
+    let run = null;
+    for (let node = composedParent(element), depth = 0; node && node !== document.body && depth < 8; node = composedParent(node), depth += 1) {
+      const count = visibleFieldsIn(node);
+      if (count > 3) break;
+      if (count >= 2) run = node;
+    }
+    if (!run) return "";
+    const label = (text) => {
+      const cleaned = compactText(text).replace(/[\s:*]+$/, "").replace(/^[\s*]+/, "");
+      return cleaned && cleaned.length <= SHORT_LABEL_MAX_LENGTH && cleaned.split(" ").length <= 6 ? cleaned : "";
+    };
+    // Text inside the box, before its first field.
+    let inside = "";
+    for (const child of run.children) {
+      if (visibleFieldsIn(child)) break;
+      if (!child.matches(HEADING_SELECTOR)) inside += ` ${textOf(child)}`;
+    }
+    if (label(inside)) return label(inside);
+    // Or the text just before the box.
+    let sibling = run.previousElementSibling;
+    while (sibling && !textOf(sibling) && !visibleFieldsIn(sibling)) sibling = sibling.previousElementSibling;
+    if (!sibling || visibleFieldsIn(sibling) || sibling.matches(HEADING_SELECTOR)) return "";
+    return label(textOf(sibling));
   }
 
   function headingFor(element) {
     let child = element;
-    let ancestor = element.parentElement;
+    let ancestor = composedParent(element);
     for (let depth = 0; ancestor && depth < 5; depth += 1) {
       if (ancestor.matches("section, article, form, fieldset, li, [role='group'], [role='region']")) {
         const labelled = referencedText(ancestor, "aria-labelledby") || compactText(ancestor.getAttribute("aria-label"));
@@ -215,7 +267,9 @@
         sibling = sibling.previousElementSibling;
       }
       child = ancestor;
-      ancestor = ancestor.parentElement;
+      // Stepping out of a component's shadow root to its host doesn't count.
+      if (!ancestor.parentElement && ancestor.parentNode?.host) depth -= 1;
+      ancestor = composedParent(ancestor);
     }
     return "";
   }
@@ -737,6 +791,10 @@
     // "Birth day" is the whole date, not the day part, so drop that phrase first.
     const text = UmeMatcher.normalize([labelFor(element), element.name, element.id, element.placeholder].filter(Boolean).join(" "))
       .replace(/(?:^| )birth ?day(?= |$)/g, " ");
+    // "Day of birth month" (American's) asks for the day: the part before "of"
+    // is what the field wants.
+    const headed = text.match(/(?:^| )(month|day|year) of /);
+    if (headed) return headed[1];
     if (/(?:^| )(?:month|mm)(?: |$)/.test(text)) return "month";
     if (/(?:^| )(?:year|yyyy|yy)(?: |$)/.test(text)) return "year";
     if (/(?:^| )(?:day|dd)(?: |$)/.test(text)) return "day";

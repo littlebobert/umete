@@ -18,7 +18,7 @@ npm run eval      # writes reports/<time>-<variant>.md and .json
 
 ### Scenarios
 
-`node scenarios.js` fills pages that imitate one site's widgets closely, with their own scripts running, using answers typed in Settings (a phone with its country code, a date of birth, a gender), and checks each field. [scenarios/delta-passenger.html](scenarios/delta-passenger.html) is Delta's passenger form, whose dropdowns are `<button role="combobox">` lists. It exits non-zero on any wrong field.
+`node scenarios.js` fills pages that imitate one site's widgets closely, with their own scripts running, using answers typed in Settings (a phone with its country code, a date of birth, a gender), and checks each field. [scenarios/delta-passenger.html](scenarios/delta-passenger.html) is Delta's passenger form, whose dropdowns are `<button role="combobox">` lists. [scenarios/aa-passport.html](scenarios/aa-passport.html) is American's profile, whose dropdowns sit in `<adc-select>` shadow roots and are named only "month", "day", and "year", with a date of birth and a passport expiration date that must stay empty. It exits non-zero on any wrong field.
 
 ## How it works
 
