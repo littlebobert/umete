@@ -131,6 +131,21 @@
       }
     }
   },
+  "rememberedAddress": {
+    "message": "주소는 하나의 답변으로 저장했습니다."
+  },
+  "rememberedPassport": {
+    "message": "여권은 하나의 답변으로 저장했습니다."
+  },
+  "rememberedAddressAndPassport": {
+    "message": "주소와 여권은 각각 하나의 답변으로 저장했습니다."
+  },
+  "newAddressLabel": {
+    "message": "주소"
+  },
+  "newPassportLabel": {
+    "message": "여권"
+  },
   "errRead": {
     "message": "이 페이지를 읽을 수 없습니다."
   },

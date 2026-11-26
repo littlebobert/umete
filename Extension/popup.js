@@ -250,13 +250,20 @@
       const result = await sendMessage(tab.id, { type: "UME_COLLECT" });
       const incoming = result?.answers || [];
       if (!incoming.length) throw new Error(t("errNoFields"));
-      const merged = UmeMatcher.mergeEntries(cachedAnswers, incoming);
+      // A page's address and passport go into one saved answer each.
+      const { answers: merged, structured } = UmeMatcher.rememberAnswers(cachedAnswers, incoming, {
+        address: t("newAddressLabel"),
+        passport: t("newPassportLabel")
+      });
       const saved = await sendNative({ type: "UME_SAVE_ANSWERS", answers: merged });
       if (!saved?.ok) throw new Error(saved?.error || t("errSave"));
       cachedAnswers = merged;
       api.runtime.sendMessage({ type: "UME_ANSWERS_CHANGED" }).catch(() => {});
       api.tabs.sendMessage(tab.id, { type: "UME_REPORT_FIELDS" }, { frameId: 0 }).catch(() => {});
-      show(plural("remembered", incoming.length));
+      const note = structured.length === 2 ? t("rememberedAddressAndPassport")
+        : structured[0] === "address" ? t("rememberedAddress")
+          : structured[0] === "passport" ? t("rememberedPassport") : "";
+      show([plural("remembered", incoming.length), note].filter(Boolean).join(" "));
     } catch (error) {
       show(error.message || t("errRead"), true);
     } finally {

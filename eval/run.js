@@ -3,7 +3,8 @@
 // local matching fills.
 //
 // 1. The test person "remembers" persona/learn-full.html with the real
-//    content scripts (UME_COLLECT), exactly as Remember my answers does.
+//    content scripts (UME_COLLECT) and rememberAnswers, exactly as Remember
+//    my answers does: the form's address becomes one structured answer.
 // 2. Each corpus form is opened with network access blocked, the same content
 //    scripts are injected, and UME_FILL runs with those saved answers.
 // 3. Every labeled field is compared with what the person should get.
@@ -14,6 +15,7 @@
 //
 // Variants (--variant):
 //   learned     every answer, address included, comes from remembering one form
+//               (the address as Remember folds it from the form's fields)
 //   structured  name, email, phone, company learned; the address is a
 //               structured address answer, as entered in the app
 //
@@ -33,6 +35,7 @@ const { expectations, matches } = require("./expect.js");
 const { parseExpected, mapRows } = require("./corpus.js");
 const ai = require("./ai.js");
 const { injectUmete } = require("./inject.js");
+const { rememberAnswers } = require("../Extension/lib/matcher.js");
 
 // Each corpus's pages and the .out files that label them, in Chromium's format.
 const CORPORA = {
@@ -114,8 +117,10 @@ async function remember(browser, variant) {
   await page.goto(`file://${path.join(__dirname, "persona", "learn-full.html")}`);
   if (variant === "structured") await page.evaluate(() => document.querySelector("fieldset.address").remove());
   await injectUmete(page);
-  const { answers } = await page.evaluate(() => globalThis.__umeEvalSend({ type: "UME_COLLECT" }));
+  const { answers: collected } = await page.evaluate(() => globalThis.__umeEvalSend({ type: "UME_COLLECT" }));
   await context.close();
+  // As the popup does: the form's address becomes one structured answer.
+  const { answers } = rememberAnswers([], collected);
   if (variant === "structured") {
     const { houseNumber, streetName, administrativeAreaName, ...value } = PERSONA.address;
     answers.push({

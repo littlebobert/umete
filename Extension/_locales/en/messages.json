@@ -131,6 +131,21 @@
       }
     }
   },
+  "rememberedAddress": {
+    "message": "Your address is saved as one answer."
+  },
+  "rememberedPassport": {
+    "message": "Your passport is saved as one answer."
+  },
+  "rememberedAddressAndPassport": {
+    "message": "Your address and passport are each saved as one answer."
+  },
+  "newAddressLabel": {
+    "message": "Address"
+  },
+  "newPassportLabel": {
+    "message": "Passport"
+  },
   "errRead": {
     "message": "Umete could not read this page."
   },

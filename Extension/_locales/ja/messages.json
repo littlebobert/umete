@@ -131,6 +131,21 @@
       }
     }
   },
+  "rememberedAddress": {
+    "message": "住所は1つの回答として保存しました。"
+  },
+  "rememberedPassport": {
+    "message": "パスポートは1つの回答として保存しました。"
+  },
+  "rememberedAddressAndPassport": {
+    "message": "住所とパスポートは、それぞれ1つの回答として保存しました。"
+  },
+  "newAddressLabel": {
+    "message": "住所"
+  },
+  "newPassportLabel": {
+    "message": "パスポート"
+  },
   "errRead": {
     "message": "このページを読み取れませんでした。"
   },

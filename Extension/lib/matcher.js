@@ -90,7 +90,10 @@
     }
 
     const text = semanticText(entry);
-    const names = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder].map(normalize).filter(Boolean);
+    // "City (required)" is a city; "State* State*" (a label read twice) a state.
+    const names = [entry?.userLabel, entry?.accessibleName, entry?.label, entry?.placeholder]
+      .map((value) => normalize(value).replace(/(?:^| )(?:required|optional)(?= |$)/g, "").replace(/\s+/g, " ").trim().replace(/^(.+) \1$/, "$1"))
+      .filter(Boolean);
     const machineNames = [entry?.name, entry?.id].filter((value) => value && !looksGenerated(value)).map(normalize);
     // The last segment of a name like "Form$_mailingAddress$_city" says what the field is.
     const machineTails = [entry?.name, entry?.id]
@@ -102,7 +105,7 @@
     // A label outranks the machine name; the name speaks only for unlabeled fields.
     const ownText = names.length ? names.join(" ") : machineTails.join(" ");
     const ownNames = names.join(" ");
-    const hasLine2Name = names.some((name) => /^(?:address line 2|address ?2|street ?2|(?:apartment|apt|suite|unit|building)(?: (?:apartment|apt|suite|unit|building|or|number|no|optional|etc))*)$/.test(name))
+    const hasLine2Name = names.some((name) => /^(?:address line 2|address ?2|street ?2|(?:apartment|apt|suite|unit|building)(?: (?:apartment|apt|suite|unit|building|floor|or|number|no|optional|etc))*)$/.test(name))
       || /(?:^| )(?:(?:street )?address (?:line )?(?:2|two)|street (?:address )?(?:line )?2|second address line)(?: |$)/.test(ownNames);
     // Machine names often prefix the part ("BillingAddress2", "addrLine2",
     // "address[street2]"), but only count when the label doesn't say otherwise:
@@ -115,7 +118,7 @@
     if (hasLaterLineName) return "addressLine3";
     if (hasLine2Name || hasLine2MachineName) return "addressLine2";
     // The field's own words only: a "Mailing address" heading covers city and ZIP too.
-    if (/(?:^| )(?:address line 1|address ?1|street address|mailing address)(?: |$)/.test(ownText)) return "addressLine1";
+    if (/(?:^| )(?:address line 1|address ?1|street address|mailing address|(?:house )?number and street|street and (?:house )?number|(?:residential|residence|permanent|current) address|address of residence)(?: |$)/.test(ownText)) return "addressLine1";
     // A field labeled only "Address" is the street line, or the whole street in a text area.
     if (hasExactName("address", "street", "home address", "street line", "shipping address", "billing address") || hasExactTail("address", "street")) return entry?.kind === "textarea" ? "streetAddress" : "addressLine1";
     // "City / State / Zip" over a row of boxes names the city box first.
@@ -124,8 +127,11 @@
     if (/(?:^| )(?:zip|zip code|zipcode|postal code)\d?(?: |$)|zipcode/.test(`${ownNames} ${machineNames.join(" ")}`)
         && /(?:^| )(?:ext|extn|extension|suffix|plus 4|4)(?: |$)|zip4|zipcode ext/.test(`${ownNames} ${machineNames.join(" ")}`)) return "postalCodeSuffix";
     if (/(?:^| )(?:postal code|postcode|post code|zip|zip code)(?: |$)/.test(text)) return "postalCode";
-    if (hasExactName("city", "town", "locality") || hasExactTail("city", "town") || /(?:^| )(?:address city|shipping city|billing city)(?: |$)/.test(text)) return "locality";
-    if (hasExactName("state", "province", "prefecture", "region", "state province", "province state", "state region") || hasExactTail("state", "province") || /(?:^| )(?:address|shipping|billing) (?:state|province|prefecture|region)(?: |$)/.test(text)) return "administrativeArea";
+    // "Town / City", "Suburb/City", "City or APO/FPO" (US military mail).
+    if (names.some((name) => /^(?:city|town|suburb|locality)(?: (?:or )?(?:city|town|suburb|locality|apo|fpo|dpo))*$/.test(name))
+        || hasExactTail("city", "town") || /(?:^| )(?:address city|shipping city|billing city)(?: |$)/.test(text)) return "locality";
+    if (names.some((name) => /^(?:state|province|prefecture|region|territory)(?: (?:or )?(?:state|province|prefecture|region|territory))*$/.test(name))
+        || hasExactTail("state", "province") || /(?:^| )(?:address|shipping|billing) (?:state|province|prefecture|region)(?: |$)/.test(text)) return "administrativeArea";
     if (hasExactName("country", "country region") || hasExactTail("country")
         || /(?:^| )(?:address|shipping|billing) country(?: |$)/.test(text)
         || /(?:^| )(?:country|region) of residence|residence (?:country|region)(?: |$)/.test(text)) {
@@ -682,13 +688,45 @@
     return Boolean(entry?.value) && typeof entry.value === "object" && !Array.isArray(entry.value);
   }
 
+  // Fields that are plainly different things, however alike their labels and
+  // surroundings: "First name" and "Last name" in one "Your details" box.
+  function differentFields(saved, next) {
+    const savedName = nameFieldPart(saved);
+    const nextName = nameFieldPart(next);
+    if (savedName && nextName && savedName !== nextName) return true;
+    const savedTokens = String(saved?.autocomplete || "").toLowerCase().trim();
+    const nextTokens = String(next?.autocomplete || "").toLowerCase().trim();
+    return Boolean(savedTokens && nextTokens && savedTokens !== nextTokens);
+  }
+
+  // Merges a page's fields into the saved answers. A field updates the saved
+  // answer it matches best; each saved answer takes at most one field, and
+  // fields from the same page never merge with each other (they're different
+  // fields, even when "First name" and "Last name" look alike).
   function mergeEntries(existing, incoming) {
     const result = [...(existing || [])];
-    for (const next of incoming || []) {
-      const index = isStructured(next) ? -1 : result.findIndex((saved) => !isStructured(saved) && score(saved, next) >= 85);
-      if (index >= 0) {
-        const existing = result[index];
-        result[index] = {
+    const pairs = [];
+    (incoming || []).forEach((next, nextIndex) => {
+      if (isStructured(next)) return;
+      result.forEach((saved, savedIndex) => {
+        if (isStructured(saved) || differentFields(saved, next)) return;
+        const pairScore = score(saved, next);
+        if (pairScore >= 85) pairs.push({ nextIndex, savedIndex, pairScore });
+      });
+    });
+    pairs.sort((left, right) => right.pairScore - left.pairScore || left.nextIndex - right.nextIndex);
+    const targetOf = new Map();
+    const taken = new Set();
+    for (const { nextIndex, savedIndex } of pairs) {
+      if (targetOf.has(nextIndex) || taken.has(savedIndex)) continue;
+      targetOf.set(nextIndex, savedIndex);
+      taken.add(savedIndex);
+    }
+    (incoming || []).forEach((next, nextIndex) => {
+      if (targetOf.has(nextIndex)) {
+        const savedIndex = targetOf.get(nextIndex);
+        const existing = result[savedIndex];
+        result[savedIndex] = {
           ...existing,
           ...next,
           ...(existing.answerID ? { answerID: existing.answerID } : {}),
@@ -697,9 +735,306 @@
       } else {
         result.push({ answerID: next.answerID || crypto.randomUUID(), ...next });
       }
-    }
+    });
     return result;
   }
 
-  return { addressFieldPart, addressValue, answerType, bestMatch, composedFullName, compatible, contactCategory, contactFieldInfo, contactParts, contactValue, looksGenerated, mergeEntries, nameFieldPart, normalize, overlap, passportCountry, passportFieldPart, passportValue, score, selectOptionIndex };
+  // --- Remember my answers: a page's address and passport fields become (or
+  // update) one structured answer each, instead of a loose answer per field.
+
+  // The app's limits (Stores.swift); a longer part is left out rather than
+  // making the whole save fail.
+  const ADDRESS_LIMITS = { addressLine1: 240, addressLine2: 240, locality: 120, administrativeArea: 120, postalCode: 32, countryName: 120 };
+  const PASSPORT_LIMITS = { number: 32, issuingCountryName: 120, nationalityName: 120 };
+  const COUNTRY_ALIASES = {
+    "usa": "US", "u s a": "US", "united states of america": "US", "us": "US", "america": "US",
+    "uk": "GB", "u k": "GB", "great britain": "GB", "britain": "GB", "england": "GB",
+    "south korea": "KR", "korea republic of": "KR", "republic of korea": "KR", "korea south": "KR",
+    "viet nam": "VN", "russian federation": "RU", "czech republic": "CZ", "holland": "NL"
+  };
+
+  function userLanguage() {
+    return typeof navigator !== "undefined" && navigator.language ? navigator.language : "en";
+  }
+
+  let regionIndex = null;
+
+  // Every region code, and its English and local names, built once.
+  function regions() {
+    if (regionIndex) return regionIndex;
+    const codes = new Set();
+    const byName = new Map(Object.entries(COUNTRY_ALIASES));
+    let displays = [];
+    try {
+      // The app's languages, and the person's own.
+      displays = [...new Set(["en", "ja", "ko", userLanguage()])].map((language) => new Intl.DisplayNames([language], { type: "region", fallback: "none" }));
+    } catch (_error) {
+      displays = [];
+    }
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (const first of letters) {
+      for (const second of letters) {
+        const code = first + second;
+        if (code === "ZZ") continue;
+        for (const display of displays) {
+          let name;
+          try { name = display.of(code); } catch (_error) { name = undefined; }
+          if (!name || name === code) continue;
+          codes.add(code);
+          // Names in other scripts ("日本") normalize to nothing; they're kept as written.
+          const key = normalize(name) || name.trim().toLowerCase();
+          if (!byName.has(key)) byName.set(key, code);
+        }
+      }
+    }
+    regionIndex = { codes, byName };
+    return regionIndex;
+  }
+
+  function regionName(code) {
+    try {
+      return new Intl.DisplayNames([userLanguage()], { type: "region", fallback: "none" }).of(code) || code;
+    } catch (_error) {
+      return code;
+    }
+  }
+
+  // A country from a menu's option value ("JP"), or its text ("Japan",
+  // "Japan +81", "United States of America"). Nationalities written as
+  // demonyms ("Japanese") aren't recognized and are left out.
+  function countryFromField(entry) {
+    const { codes, byName } = regions();
+    for (const raw of [entry?.optionValue, entry?.value]) {
+      const text = String(raw ?? "").trim();
+      if (/^[A-Za-z]{2}$/.test(text) && codes.has(text.toUpperCase())) return text.toUpperCase();
+    }
+    const name = normalize(entry?.value);
+    const written = String(entry?.value ?? "").trim().toLowerCase();
+    const candidates = name
+      ? [name, name.replace(/ \d{1,4}$/, ""), name.replace(/ [a-z]{2,3}$/, "")]
+      : [written, written.replace(/\s*[(（]?\+?\d{1,4}[)）]?$/, "")];
+    for (const candidate of candidates) {
+      if (candidate && byName.has(candidate)) return byName.get(candidate);
+    }
+    return "";
+  }
+
+  function twoDigitYear(year) {
+    return year.length === 2 ? `20${year}` : year;
+  }
+
+  // "yyyy-mm-dd" from year, month, and day, if they make a real date.
+  function isoDate(year, month, day) {
+    const y = Number(year);
+    const m = Number(month);
+    const d = Number(day);
+    if (!(y >= 1900 && y <= 2100 && m >= 1 && m <= 12 && d >= 1 && d <= 31)) return "";
+    const date = new Date(Date.UTC(y, m - 1, d));
+    if (date.getUTCMonth() !== m - 1) return "";
+    return `${String(y).padStart(4, "0")}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  }
+
+  const MONTH_WORDS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
+  function monthNumber(text) {
+    const normalized = normalize(text);
+    const digits = normalized.match(/^0?(\d{1,2})(?: |$)/) || normalized.match(/(?:^| )(\d{1,2})(?: |$)/);
+    if (digits) return digits[1];
+    const index = MONTH_WORDS.findIndex((word) => normalized.split(" ").some((token) => token.startsWith(word)));
+    return index >= 0 ? String(index + 1) : "";
+  }
+
+  // A whole date typed in one box. Day and month written as two numbers of 12
+  // or less could be either way round, so that date is left out.
+  function wholeDate(text) {
+    const value = String(text ?? "").trim();
+    let match = value.match(/^(\d{4})\D(\d{1,2})\D(\d{1,2})$/);
+    if (match) return isoDate(match[1], match[2], match[3]);
+    match = value.match(/^(\d{1,2})\D(\d{1,2})\D(\d{2}|\d{4})$/);
+    if (match) {
+      const [first, second] = [Number(match[1]), Number(match[2])];
+      const year = twoDigitYear(match[3]);
+      if (first > 12 && second <= 12) return isoDate(year, second, first);
+      if (second > 12 && first <= 12) return isoDate(year, first, second);
+      return first === second ? isoDate(year, first, second) : "";
+    }
+    match = normalize(value).match(/^(?:(\d{1,2}) ([a-z]+)|([a-z]+) (\d{1,2})) (\d{4})$/);
+    if (match) {
+      const month = monthNumber(match[2] || match[3]);
+      return month && !/^\d/.test(match[2] || match[3]) ? isoDate(match[5], month, match[1] || match[4]) : "";
+    }
+    return "";
+  }
+
+  function fitsLimit(value, limit) {
+    return value && (!limit || value.length <= limit);
+  }
+
+  // Collects one part's values; two different values make the part unknown
+  // (billing and shipping addresses that differ, two travelers' passports).
+  function partCollector() {
+    const values = {};
+    const conflicts = new Set();
+    return {
+      add(part, value) {
+        if (!value) return;
+        if (values[part] !== undefined && normalize(values[part]) !== normalize(value)) conflicts.add(part);
+        else if (values[part] === undefined) values[part] = value;
+      },
+      result() {
+        const clean = {};
+        for (const [part, value] of Object.entries(values)) if (!conflicts.has(part)) clean[part] = value;
+        return { values: clean, conflicts };
+      }
+    };
+  }
+
+  function isLooseField(entry) {
+    return entry && !isStructured(entry) && typeof entry.value === "string" && entry.kind !== "checkbox" && entry.kind !== "radio"
+      && !contactFieldInfo(entry);
+  }
+
+  function addressFromFields(incoming) {
+    const parts = partCollector();
+    const fields = [];
+    for (const entry of incoming || []) {
+      if (!isLooseField(entry)) continue;
+      const part = addressFieldPart(entry);
+      if (!part || part === "postalCodeSuffix") continue;
+      const value = entry.value.trim();
+      if (!value) continue;
+      fields.push(entry);
+      if (part === "country") {
+        const code = countryFromField(entry);
+        if (code) parts.add("countryCode", code);
+      } else if (part === "streetAddress") {
+        const [line1, ...rest] = value.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+        parts.add("addressLine1", line1);
+        if (rest.length) parts.add("addressLine2", rest.join(", "));
+      } else if (part === "addressLine3") {
+        parts.add("addressLine3", value);
+      } else {
+        parts.add(part, value);
+      }
+    }
+    const { values, conflicts } = parts.result();
+    // Two different street lines are two addresses; which is the person's?
+    if (conflicts.has("addressLine1") || !fields.length) return null;
+    if (values.addressLine3) {
+      values.addressLine2 = [values.addressLine2, values.addressLine3].filter(Boolean).join(", ");
+      delete values.addressLine3;
+    }
+    const address = {};
+    for (const [part, value] of Object.entries(values)) {
+      if (part === "countryCode" || fitsLimit(value, ADDRESS_LIMITS[part])) address[part] = value;
+    }
+    if (address.countryCode) address.countryName = regionName(address.countryCode);
+    return Object.keys(address).length ? { value: address, fields } : null;
+  }
+
+  function passportFromFields(incoming) {
+    const parts = partCollector();
+    const dateParts = { issueDate: partCollector(), expirationDate: partCollector() };
+    const fields = [];
+    for (const entry of incoming || []) {
+      if (!isLooseField(entry)) continue;
+      const part = passportFieldPart(entry);
+      if (!part) continue;
+      const value = entry.value.trim();
+      if (!value) continue;
+      fields.push(entry);
+      if (part === "number") {
+        parts.add("number", value.replace(/\s+/g, ""));
+      } else if (part === "issuingCountry" || part === "nationality") {
+        const code = countryFromField(entry);
+        if (code) parts.add(`${part}Code`, code);
+      } else if (["month", "day", "year"].includes(entry.datePart)) {
+        const text = entry.datePart === "month" ? monthNumber(value) : (value.match(/\d+/) || [""])[0];
+        dateParts[part].add(entry.datePart, entry.datePart === "year" ? twoDigitYear(text) : String(Number(text) || ""));
+      } else {
+        parts.add(part, wholeDate(value));
+      }
+    }
+    for (const part of ["issueDate", "expirationDate"]) {
+      const { values } = dateParts[part].result();
+      parts.add(part, isoDate(values.year, values.month, values.day));
+    }
+    const { values, conflicts } = parts.result();
+    // Two passport numbers: two travelers, and no telling which is the person.
+    if (conflicts.has("number") || !fields.length) return null;
+    const passport = {};
+    for (const [part, value] of Object.entries(values)) {
+      if (fitsLimit(value, PASSPORT_LIMITS[part])) passport[part] = value;
+    }
+    if (values.number && !passport.number) return null;
+    for (const key of ["issuingCountry", "nationality"]) {
+      if (passport[`${key}Code`]) passport[`${key}Name`] = regionName(passport[`${key}Code`]);
+    }
+    return Object.keys(passport).length ? { value: passport, fields } : null;
+  }
+
+  function sameText(left, right) {
+    return Boolean(left) && Boolean(right) && normalize(left).replace(/ /g, "") === normalize(right).replace(/ /g, "");
+  }
+
+  // The saved answer a page's parts update: the only one of that type, or
+  // the one with the same street line or passport number. Null when there's
+  // none, or no telling which.
+  function structuredTarget(saved, type, parts) {
+    const candidates = saved.filter((entry) => answerType(entry) === type && isStructured(entry));
+    if (candidates.length <= 1) return { target: candidates[0] || null, ambiguous: false };
+    const key = type === "address" ? "addressLine1" : "number";
+    const same = candidates.filter((entry) => sameText(entry.value[key], parts[key]));
+    return same.length === 1 ? { target: same[0], ambiguous: false } : { target: null, ambiguous: true };
+  }
+
+  // A new street line or passport number is a new address or passport: its
+  // other parts start over, except the country (and for a passport, its
+  // countries), which a page often doesn't ask again.
+  function foldedValue(type, old, parts) {
+    const key = type === "address" ? "addressLine1" : "number";
+    const kept = type === "address" ? ["countryCode", "countryName"] : ["issuingCountryCode", "issuingCountryName", "nationalityCode", "nationalityName"];
+    const replaced = parts[key] && !sameText(parts[key], old[key]);
+    const base = replaced ? Object.fromEntries(kept.filter((part) => old[part]).map((part) => [part, old[part]])) : { ...old };
+    return { ...base, ...parts, version: 1 };
+  }
+
+  function isComplete(type, value) {
+    return type === "address" ? Boolean(value.addressLine1 && value.countryCode) : Boolean(value.number);
+  }
+
+  // Remember my answers: merges a page's fields into the saved answers, with
+  // its address and passport fields going into one structured answer each.
+  // Returns the answers and which structured types were updated or added.
+  // `labels` names new ones ({ address: "Address", passport: "Passport" }).
+  function rememberAnswers(existing, incoming, labels = {}) {
+    let result = [...(existing || [])];
+    const folded = new Set();
+    const structured = [];
+    for (const [type, found] of [["address", addressFromFields(incoming)], ["passport", passportFromFields(incoming)]]) {
+      if (!found) continue;
+      const { target, ambiguous } = structuredTarget(result, type, found.value);
+      if (ambiguous) continue;
+      const value = target ? foldedValue(type, target.value, found.value) : { ...found.value, version: 1 };
+      if (!isComplete(type, value)) continue;
+      if (target) {
+        result = result.map((entry) => entry === target ? { ...target, value } : entry);
+      } else {
+        const label = labels[type] || (type === "address" ? "Address" : "Passport");
+        result.push({
+          answerID: crypto.randomUUID(), answerType: type, userLabel: label, accessibleName: label, label,
+          kind: "aggregate", inputType: "", value
+        });
+      }
+      found.fields.forEach((field) => folded.add(field));
+      structured.push(type);
+    }
+    const loose = (incoming || []).filter((entry) => !folded.has(entry)).map((entry) => {
+      const { optionValue, datePart, ...rest } = entry;
+      return rest;
+    });
+    return { answers: mergeEntries(result, loose), structured };
+  }
+
+  return { addressFieldPart, addressValue, answerType, bestMatch, composedFullName, compatible, contactCategory, contactFieldInfo, contactParts, contactValue, looksGenerated, mergeEntries, nameFieldPart, normalize, overlap, passportCountry, passportFieldPart, passportValue, rememberAnswers, score, selectOptionIndex };
 });

@@ -484,6 +484,14 @@
       const value = readValue(element);
       if (value === "" || value == null) continue;
       const answer = { ...descriptor, value };
+      // For Remember to fold a page's address and passport into one answer
+      // each: a menu's option value is often the country code ("JP"), and a
+      // passport date's dropdowns each hold one part of it.
+      if (element instanceof HTMLSelectElement && element.value) answer.optionValue = element.value;
+      if (["issueDate", "expirationDate"].includes(UmeMatcher.passportFieldPart(descriptor))) {
+        const part = dateFieldPart(element);
+        if (part) answer.datePart = part;
+      }
       if (UmeMatcher.answerType(descriptor) === "phone") {
         const codeElement = relatedCountryCodeElement(element, elements);
         const code = selectedCountryCode(codeElement);

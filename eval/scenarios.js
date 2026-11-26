@@ -109,7 +109,10 @@ const SCENARIOS = [
       "#exp-day": "15",
       "#exp-year": "2031",
       "#nationality": "JP"
-    }
+    },
+    // Remember my answers on the filled page gives back one passport: a new
+    // one without a saved passport, the same one updated with it.
+    rememberedPassport: { number: "TK1234567", expirationDate: "2031-03-15", nationalityCode: "JP" }
   }
 ];
 
@@ -132,6 +135,18 @@ async function run(browser, scenario) {
       failures.push({ selector: "remembered phone country code", wanted: scenario.rememberedPhoneCode, actual: phone?.countryCode ?? null });
     }
   }
+  if (scenario.rememberedPassport) {
+    const { answers: collected = [] } = await page.evaluate(() => globalThis.__umeEvalSend({ type: "UME_COLLECT" })) || {};
+    for (const [existing, name] of [[PERSON, "new"], [[...PERSON, PASSPORT], "updated"]]) {
+      const { answers } = await page.evaluate(([saved, incoming]) => globalThis.UmeMatcher.rememberAnswers(saved, incoming), [existing, collected]);
+      const passports = answers.filter((answer) => answer.answerType === "passport");
+      const value = passports[0]?.value || {};
+      const wrong = Object.entries(scenario.rememberedPassport).filter(([key, wanted]) => value[key] !== wanted);
+      if (passports.length !== 1 || wrong.length || (name === "updated" && passports[0].answerID !== PASSPORT.answerID)) {
+        failures.push({ selector: `remembered passport (${name})`, wanted: scenario.rememberedPassport, actual: passports.map((answer) => ({ answerID: answer.answerID, ...answer.value })) });
+      }
+    }
+  }
   await context.close();
   return { result, failures };
 }
@@ -144,7 +159,7 @@ async function main() {
   try {
     for (const scenario of SCENARIOS.filter((candidate) => !only || candidate.name === only)) {
       const { result, failures } = await run(browser, scenario);
-      const checks = Object.keys(scenario.expect).length + (scenario.rememberedPhoneCode ? 1 : 0);
+      const checks = Object.keys(scenario.expect).length + (scenario.rememberedPhoneCode ? 1 : 0) + (scenario.rememberedPassport ? 2 : 0);
       console.log(`${failures.length ? "FAIL" : "ok  "} ${scenario.name}: ${checks - failures.length}/${checks} fields right (filled ${result?.filled}, eligible ${result?.eligibleFieldCount})`);
       for (const failure of failures) console.log(`     ${failure.selector}: wanted ${JSON.stringify(failure.wanted)}, got ${JSON.stringify(failure.actual)}`);
       failed += failures.length ? 1 : 0;

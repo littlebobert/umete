@@ -18,11 +18,11 @@ npm run eval      # writes reports/<time>-<variant>.md and .json
 
 ### Scenarios
 
-`node scenarios.js` fills pages that imitate one site's widgets closely, with their own scripts running, using answers typed in Settings (a phone with its country code, a date of birth, a gender), and checks each field. [scenarios/delta-passenger.html](scenarios/delta-passenger.html) is Delta's passenger form, whose dropdowns are `<button role="combobox">` lists. [scenarios/aa-passport.html](scenarios/aa-passport.html) is American's profile, whose dropdowns sit in `<adc-select>` shadow roots and are named only "month", "day", and "year", with a date of birth and a passport expiration date. It runs twice: with typed answers only, the expiration date must stay empty; with a saved passport too, its number, expiration date, and nationality fill, and the date of birth still goes only to its own dropdowns. It exits non-zero on any wrong field.
+`node scenarios.js` fills pages that imitate one site's widgets closely, with their own scripts running, using answers typed in Settings (a phone with its country code, a date of birth, a gender), and checks each field. [scenarios/delta-passenger.html](scenarios/delta-passenger.html) is Delta's passenger form, whose dropdowns are `<button role="combobox">` lists. [scenarios/aa-passport.html](scenarios/aa-passport.html) is American's profile, whose dropdowns sit in `<adc-select>` shadow roots and are named only "month", "day", and "year", with a date of birth and a passport expiration date. It runs twice: with typed answers only, the expiration date must stay empty; with a saved passport too, its number, expiration date, and nationality fill, and the date of birth still goes only to its own dropdowns. Then Remember my answers on the filled page must give back one passport, new or updated in place. It exits non-zero on any wrong field.
 
 ## How it works
 
-1. A fictional person ([persona/persona.json](persona/persona.json)) remembers [persona/learn-full.html](persona/learn-full.html) through the real content scripts (`UME_COLLECT`), as **Remember my answers** does.
+1. A fictional person ([persona/persona.json](persona/persona.json)) remembers [persona/learn-full.html](persona/learn-full.html) through the real content scripts (`UME_COLLECT`) and `rememberAnswers`, as **Remember my answers** does: the form's address fields become one structured address answer.
 2. Each corpus page opens with its own scripts and all network access off. The content scripts are injected and `UME_FILL` runs with those saved answers.
 3. Each labeled field is compared with what the person should get ([expect.js](expect.js)).
 
@@ -34,7 +34,7 @@ npm run eval      # writes reports/<time>-<variant>.md and .json
 
 Besides the corpora, [fixtures/](fixtures) holds Umete's own small forms with hand-written labels (split phone boxes, dropdowns inside labels, and older layouts: labels in the cell beside a field, validation messages inside a label, area code and exchange boxes, "Name" before "Surname", an apartment box before a second address line, labels in a row above their fields, and starting values that name a field). They're committed and always run.
 
-There are two variants. **learned** gets every answer from that one remembered form. **structured** learns name, email, phone, and company, and uses a structured address as entered in the app.
+There are two variants. **learned** gets every answer from that one remembered form, its address folded into one structured answer as Remember does. **structured** learns name, email, phone, and company, and uses a structured address as entered in the app.
 
 ## Outcomes
 

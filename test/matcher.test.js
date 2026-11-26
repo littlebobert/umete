@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { addressFieldPart, addressValue, answerType, bestMatch, compatible, contactFieldInfo, contactParts, contactValue, looksGenerated, mergeEntries, nameFieldPart, normalize, passportCountry, passportFieldPart, passportValue, score, selectOptionIndex } = require("../Extension/lib/matcher.js");
+const { addressFieldPart, addressValue, answerType, bestMatch, compatible, contactFieldInfo, contactParts, contactValue, looksGenerated, mergeEntries, nameFieldPart, normalize, passportCountry, passportFieldPart, passportValue, rememberAnswers, score, selectOptionIndex } = require("../Extension/lib/matcher.js");
 
 const entry = (overrides = {}) => ({
   accessibleDescription: "",
@@ -804,4 +804,188 @@ test("area code and numbered phone boxes are phone fields, never ZIP codes", () 
   const phone = entry({ answerType: "phone", accessibleName: "Phone number", label: "Phone number", name: "phone", autocomplete: "tel", inputType: "tel", value: "4155550142" });
   assert.equal(bestMatch([zip, phone], entry({ accessibleName: "Area code", label: "Area code", name: "eveningAreaCode", inputType: "tel" })), phone);
   assert.equal(bestMatch([zip, phone], entry({ name: "dayPhone1", tableHeaders: ["Day phone:"] })), phone);
+});
+
+// Fields as Remember reads them from American's profile after it's filled in.
+const americanFields = (overrides = {}) => [
+  entry({ accessibleName: "First name", label: "First name", section: "Personal information", value: "Kenji" }),
+  entry({ accessibleName: "month", label: "month", group: "Date of birth", section: "Personal information", kind: "select", inputType: "select-one", value: "July", optionValue: "07" }),
+  entry({ accessibleName: "Passport number", label: "Passport number", section: "International documents", value: overrides.number || "TK1234567" }),
+  entry({ accessibleName: "Confirm passport number", label: "Confirm passport number", section: "International documents", value: overrides.number || "TK1234567" }),
+  entry({ accessibleName: "month", label: "month", group: "Expiration date", section: "International documents", kind: "select", inputType: "select-one", value: "March", optionValue: "03", datePart: "month" }),
+  entry({ accessibleName: "day of birth month", label: "day of birth month", group: "Expiration date", section: "International documents", kind: "select", inputType: "select-one", value: "15", optionValue: "15", datePart: "day" }),
+  entry({ accessibleName: "year", label: "year", group: "Expiration date", section: "International documents", kind: "select", inputType: "select-one", value: "2031", optionValue: "2031", datePart: "year" }),
+  entry({ accessibleName: "Passport nationality", label: "Passport nationality", section: "International documents", kind: "select", inputType: "select-one", value: "Japan", optionValue: "JP" })
+];
+
+test("remembering a passport page saves one passport answer, not a field each", () => {
+  const { answers, structured } = rememberAnswers([], americanFields(), { passport: "パスポート" });
+  assert.deepEqual(structured, ["passport"]);
+  const passports = answers.filter((answer) => answer.answerType === "passport");
+  assert.equal(passports.length, 1);
+  assert.equal(passports[0].userLabel, "パスポート");
+  assert.equal(passports[0].kind, "aggregate");
+  assert.equal(passports[0].value.number, "TK1234567");
+  assert.equal(passports[0].value.expirationDate, "2031-03-15");
+  assert.equal(passports[0].value.nationalityCode, "JP");
+  assert.ok(passports[0].value.nationalityName);
+  // The first name and the birth month stay answers of their own, and no
+  // passport field is left over as one.
+  assert.deepEqual(answers.filter((answer) => answer.answerType !== "passport").map((answer) => answer.value), ["Kenji", "July"]);
+  assert.ok(answers.every((answer) => answer.optionValue === undefined && answer.datePart === undefined));
+  // What was remembered fills the page again.
+  const saved = passports[0];
+  assert.equal(bestMatch(answers, entry({ accessibleName: "month", group: "Expiration date", section: "International documents", kind: "select" })), saved);
+});
+
+test("remembering updates the saved passport in place, and a new number starts its dates over", () => {
+  const saved = passport();
+  saved.answerID = "mine";
+  saved.userLabel = "My passport";
+  const same = rememberAnswers([saved], americanFields({ number: "TR1234567" })).answers;
+  assert.equal(same.length, 3);
+  const updated = same.find((answer) => answer.answerType === "passport");
+  assert.equal(updated.answerID, "mine");
+  assert.equal(updated.userLabel, "My passport");
+  assert.equal(updated.value.issueDate, "2021-03-15");
+  assert.equal(updated.value.expirationDate, "2031-03-15");
+  // A renewed passport: its old issue date goes, its countries stay.
+  const renewed = rememberAnswers([saved], americanFields({ number: "TZ7654321" })).answers.find((answer) => answer.answerType === "passport");
+  assert.equal(renewed.answerID, "mine");
+  assert.equal(renewed.value.number, "TZ7654321");
+  assert.equal(renewed.value.issueDate, undefined);
+  assert.equal(renewed.value.issuingCountryCode, "JP");
+});
+
+test("two travelers' passports, or two saved passports with neither number, stay as they were", () => {
+  const second = [
+    entry({ accessibleName: "Passport number", section: "Traveler 2 passport", value: "AB0000001" })
+  ];
+  const { answers, structured } = rememberAnswers([], [...americanFields(), ...second]);
+  assert.deepEqual(structured, []);
+  assert.ok(answers.some((answer) => answer.value === "AB0000001"));
+  assert.ok(answers.every((answer) => answer.answerType !== "passport"));
+  const other = passport();
+  other.value.number = "XX1111111";
+  const result = rememberAnswers([passport(), other], americanFields({ number: "TZ7654321" }));
+  assert.deepEqual(structured, []);
+  assert.deepEqual(result.structured, []);
+  assert.equal(result.answers.filter((answer) => answer.answerType === "passport").length, 2);
+});
+
+const addressFields = (line1 = "1200 Market Street", extra = []) => [
+  entry({ autocomplete: "address-line1", accessibleName: "Street address", value: line1 }),
+  entry({ autocomplete: "address-line2", accessibleName: "Apartment, suite, etc.", value: "Apt 4B" }),
+  entry({ autocomplete: "address-level2", accessibleName: "City", value: "San Francisco" }),
+  entry({ autocomplete: "address-level1", accessibleName: "State", kind: "select", inputType: "select-one", value: "California", optionValue: "CA" }),
+  entry({ autocomplete: "postal-code", accessibleName: "ZIP code", value: "94102" }),
+  entry({ autocomplete: "country", accessibleName: "Country", kind: "select", inputType: "select-one", value: "United States", optionValue: "US" }),
+  ...extra
+];
+
+test("remembering an address page saves one address answer that fills the page again", () => {
+  const { answers, structured } = rememberAnswers([], [entry({ accessibleName: "Email", inputType: "email", value: "kenji@example.com" }), ...addressFields()]);
+  assert.deepEqual(structured, ["address"]);
+  assert.equal(answers.length, 2);
+  const address = answers.find((answer) => answer.answerType === "address");
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(address.value).filter(([key]) => key !== "countryName")),
+    { addressLine1: "1200 Market Street", addressLine2: "Apt 4B", locality: "San Francisco", administrativeArea: "California", postalCode: "94102", countryCode: "US", version: 1 }
+  );
+  assert.equal(address.userLabel, "Address");
+  assert.equal(bestMatch(answers, entry({ autocomplete: "postal-code" })), address);
+  // Shipping and billing that agree are one address; country names in any
+  // of the app's languages, or with a dialing code, are recognized.
+  const billing = addressFields().map((field) => ({ ...field, autocomplete: `billing ${field.autocomplete}` }));
+  assert.deepEqual(rememberAnswers([], [...addressFields(), ...billing]).structured, ["address"]);
+  for (const country of ["日本", "Japan +81", "Japan"]) {
+    const fields = [
+      entry({ autocomplete: "address-line1", value: "1-2-3 Jingumae" }),
+      entry({ autocomplete: "country", kind: "select", value: country })
+    ];
+    assert.equal(rememberAnswers([], fields).answers[0].value.countryCode, "JP", country);
+  }
+});
+
+test("an address isn't folded when it can't be saved or it's unclear whose it is", () => {
+  // No country and no saved address to take one from.
+  const noCountry = addressFields().filter((field) => field.autocomplete !== "country");
+  assert.deepEqual(rememberAnswers([], noCountry).structured, []);
+  assert.equal(rememberAnswers([], noCountry).answers.length, noCountry.length);
+  // Shipping and billing that differ.
+  const billing = addressFields("9 Elm St").map((field) => ({ ...field, autocomplete: `billing ${field.autocomplete}` }));
+  assert.deepEqual(rememberAnswers([], [...addressFields(), ...billing]).structured, []);
+  // An emergency contact's address is the contact's.
+  const contact = [entry({ accessibleName: "Emergency contact street address", value: "5 Oak Ave" })];
+  assert.deepEqual(rememberAnswers([], contact).structured, []);
+});
+
+test("remembering updates the saved address: a new street line clears the old apartment", () => {
+  const home = entry({
+    answerID: "home", answerType: "address", userLabel: "Home", accessibleName: "Home", label: "Home", inputType: "", kind: "aggregate",
+    value: { addressLine1: "1-2-3 Jingumae", addressLine2: "Room 405", locality: "Shibuya", countryCode: "JP", countryName: "Japan" }
+  });
+  const moved = [
+    entry({ autocomplete: "address-line1", value: "4-5-6 Ebisu" }),
+    entry({ autocomplete: "address-level2", value: "Shibuya" })
+  ];
+  const { answers, structured } = rememberAnswers([home], moved);
+  assert.deepEqual(structured, ["address"]);
+  assert.equal(answers.length, 1);
+  assert.equal(answers[0].answerID, "home");
+  assert.deepEqual(answers[0].value, { addressLine1: "4-5-6 Ebisu", locality: "Shibuya", countryCode: "JP", countryName: "Japan", version: 1 });
+  // The same street line only fills in what's new.
+  const zip = rememberAnswers([home], [entry({ autocomplete: "address-line1", value: "1-2-3 Jingumae" }), entry({ autocomplete: "postal-code", value: "150-0001" })]).answers[0];
+  assert.equal(zip.value.addressLine2, "Room 405");
+  assert.equal(zip.value.postalCode, "150-0001");
+  // With two saved addresses, the one with the same street line is updated;
+  // a third street line is no telling which, so the fields stay loose.
+  const work = { ...home, answerID: "work", value: { addressLine1: "7-8-9 Marunouchi", countryCode: "JP" } };
+  const both = rememberAnswers([home, work], [entry({ autocomplete: "address-line1", value: "7-8-9 Marunouchi" }), entry({ autocomplete: "postal-code", value: "100-0005" })]).answers;
+  assert.equal(both.find((answer) => answer.answerID === "work").value.postalCode, "100-0005");
+  assert.equal(both.find((answer) => answer.answerID === "home").value.postalCode, undefined);
+  assert.deepEqual(rememberAnswers([home, work], moved).structured, []);
+});
+
+test("remembered passport dates: whole dates are read only when unambiguous, and long parts are left out", () => {
+  const field = (value, label = "Passport expiration date") => entry({ accessibleName: label, value });
+  const date = (value) => rememberAnswers([], [field("TK1234567", "Passport number"), field(value)]).answers[0].value.expirationDate;
+  assert.equal(date("2031-03-15"), "2031-03-15");
+  assert.equal(date("15/03/2031"), "2031-03-15");
+  assert.equal(date("03/15/2031"), "2031-03-15");
+  assert.equal(date("15 Mar 2031"), "2031-03-15");
+  assert.equal(date("March 15 2031"), "2031-03-15");
+  assert.equal(date("04/05/2031"), undefined);
+  assert.equal(date("2031-02-30"), undefined);
+  assert.deepEqual(rememberAnswers([], [field("X".repeat(40), "Passport number")]).structured, []);
+});
+
+test("remembering a form keeps first and last name apart, on the page and against saved answers", () => {
+  const field = (label, autocomplete, value) => entry({ accessibleName: label, label, name: label.toLowerCase().replace(" ", "_"), autocomplete, group: "Your details", value });
+  const first = field("First name", "given-name", "Hana");
+  const last = field("Last name", "family-name", "Sato");
+  // They score above the merge threshold, but they're different fields.
+  assert.ok(score(first, last) >= 85);
+  assert.deepEqual(mergeEntries([], [first, last]).map((answer) => answer.value), ["Hana", "Sato"]);
+  const saved = mergeEntries([], [first, last]);
+  const again = mergeEntries(saved, [field("First name", "given-name", "Hanako"), field("Last name", "family-name", "Sato")]);
+  assert.deepEqual(again.map((answer) => answer.value), ["Hanako", "Sato"]);
+  assert.deepEqual(again.map((answer) => answer.answerID), saved.map((answer) => answer.answerID));
+  // Without names or autocomplete to tell them apart, each saved answer
+  // still takes only the field that matches it best.
+  const city = entry({ accessibleName: "City", label: "City", value: "Tokyo" });
+  const merged = mergeEntries([city], [entry({ accessibleName: "City", label: "City", value: "Osaka" }), entry({ accessibleName: "City", label: "City", section: "Billing", value: "Kyoto" })]);
+  assert.deepEqual(merged.map((answer) => answer.value), ["Osaka", "Kyoto"]);
+});
+
+test("older and spelled-out address labels name their part", () => {
+  for (const [label, part] of [
+    ["Town/City*", "locality"], ["• City or APO/FPO:", "locality"], ["* Suburb/City:", "locality"], ["City (required)", "locality"],
+    ["State* State*", "administrativeArea"], ["State (required)", "administrativeArea"], ["State or province", "administrativeArea"],
+    ["*House Number and Street", "addressLine1"], ["Address of residence", "addressLine1"],
+    ["Apartment, Building, Floor, Etc", "addressLine2"],
+    ["City or Town of Birth:", ""], ["Country of Birth:", ""]
+  ]) {
+    assert.equal(addressFieldPart(entry({ accessibleName: label, label })), part, label);
+  }
 });
