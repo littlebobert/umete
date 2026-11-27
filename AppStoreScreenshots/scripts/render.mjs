@@ -23,6 +23,18 @@ function dataURL(relative) {
 
 const bezelURL = dataURL(bezel.file);
 
+// The fill captures predate the app icon's umber backdrop (the iPhone's and iPad's, the
+// glass icon too): Umete's sheet in them still shows an older icon, so the app's icon is
+// drawn over that tile. Its left, top and size in the capture's pixels; the sheet's own
+// colour goes under it first, so none of the old tile's corners show round the new one.
+const appIconURL = dataURL("../Safari/Ume/Shared (App)/Assets.xcassets/AppIcon.appiconset/AppIcon-256.png");
+const sheetColour = "rgb(255 250 246)";
+const iconPatches = {
+  "captures/fill-sheet.png": { x: 90, y: 1633, size: 141 },
+  "captures/ipad-fill.png": { x: 926, y: 224, size: 97 },
+  "captures/duo-closed/fill-sheet.png": { x: 92, y: 1130, size: 138 },
+};
+
 // The phone: the capture in the bezel's screen opening, rounded to it so its corners
 // stay under the bezel, at `width` pixels wide.
 function phone(capture, width, style) {
@@ -149,9 +161,29 @@ async function shoot(markup, width, height, file) {
   console.log(`Wrote ${file}`);
 }
 
+// A capture as a data URL, with the app's icon drawn into it where `iconPatches` has it.
+async function captureURL(relative) {
+  const patch = iconPatches[relative];
+  if (!patch) return dataURL(relative);
+  const { x, y, size } = patch;
+  await page.setContent(`<!doctype html><html><body style="margin: 0;">
+    <div id="capture" style="position: relative; width: max-content;">
+      <img src="${dataURL(relative)}" style="display: block;">
+      <div style="position: absolute; left: ${x - 1}px; top: ${y - 1}px; width: ${size + 2}px; height: ${size + 2}px; background: ${sheetColour};"></div>
+      <img src="${appIconURL}" style="position: absolute; left: ${x}px; top: ${y}px; width: ${size}px; height: ${size}px; border-radius: ${size * 0.225}px;">
+    </div></body></html>`);
+  const { width, height } = await page.evaluate(() => {
+    const capture = document.querySelector("#capture img");
+    return { width: capture.naturalWidth, height: capture.naturalHeight };
+  });
+  await page.setViewportSize({ width, height });
+  const png = await page.screenshot({ type: "png", clip: { x: 0, y: 0, width, height } });
+  return `data:image/png;base64,${png.toString("base64")}`;
+}
+
 for (const locale of locales) {
   for (const [index, slide] of slides.entries()) {
-    const capture = dataURL(slide.capture);
+    const capture = await captureURL(slide.capture);
     for (const size of screenshot.sizes) {
       await shoot(
         html({ width: size.width, height: size.height, hero: slide.hero[locale], capture, locale }),
@@ -173,7 +205,7 @@ for (const locale of locales) {
 for (const locale of locales) {
   for (const [index, slide] of slides.entries()) {
     await shoot(
-      ipadHTML({ hero: slide.hero[locale], capture: dataURL(ipad.captures[slide.id]), locale }),
+      ipadHTML({ hero: slide.hero[locale], capture: await captureURL(ipad.captures[slide.id]), locale }),
       ipad.width, ipad.height, join(here, "output", `${locale}-${ipad.suffix}`, `${index + 1}-${slide.id}.png`),
     );
   }
@@ -182,7 +214,7 @@ for (const locale of locales) {
 for (const locale of locales) {
   for (const [index, slide] of slides.entries()) {
     await shoot(
-      duoHTML({ hero: slide.hero[locale], capture: dataURL(duo.captures[slide.id]), locale }),
+      duoHTML({ hero: slide.hero[locale], capture: await captureURL(duo.captures[slide.id]), locale }),
       duo.width, duo.height, join(here, "output", `${locale}-${duo.suffix}`, `${index + 1}-${slide.id}.png`),
     );
   }

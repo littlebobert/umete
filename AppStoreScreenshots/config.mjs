@@ -158,7 +158,7 @@ export const header = Object.freeze({
     file: "header.mp4",
     width: 3840,
     height: 1646,
-    backdrop: Object.freeze([166, 140, 119]), // AppIcon-1024.png's flat backdrop
+    backdrop: Object.freeze([70, 52, 44]), // AppIcon-1024.png's flat backdrop
     plum: Object.freeze({ top: 440, height: 890 }),
   }),
 });

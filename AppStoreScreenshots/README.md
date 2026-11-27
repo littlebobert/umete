@@ -32,6 +32,8 @@ All on the **iPhone 18 Pro Max** Simulator, whose 1320×2868 screen fills the be
    Turn Umete on once through Safari's page menu → Manage Extensions.
 4. Open Umete from the page menu and tap **Fill this form**. It should fill all 9 fields on the device, without AI matching. Capture `captures/fill-sheet.png` with the sheet open, then close the sheet and capture `captures/filled-form.png` (used by the search card).
 
+The fill captures (iPhone, iPad and Duo) predate the icon's umber backdrop, so `render.mjs` draws the app icon over the older one in Umete's sheet, at the places in its `iconPatches`. After retaking a fill capture, remove its entry.
+
 ## iPhone Duo
 
 `output/<locale>-duo-closed/` holds the closed Duo's screenshots (1398×2034), and `output/preview/<locale>-duo.mp4` its preview (886×1920): whole screen recordings of the closed Duo under a caption, with no device frame, since the display is wider than App Store Connect's size. Fold the Duo in DeviceHub first, since scripted taps reached only the closed display, then take the captures and recordings above on it, adding `--display=1` to `simctl io`, into `captures/duo-closed/` under the names in `config.mjs`.
@@ -46,7 +48,7 @@ For social posts, `npm run social` makes `output/social/umete-duo-en-US.mp4` (10
 
 ## Landing page carousel
 
-`npm run landing` renders umete.jp's three carousel screens in the closed iPhone Duo, its frame drawn as for the Duo's App Store screenshots, from `captures/duo-closed/`, as `output/landing/umete-landing-<id>.webp` (900×1275, transparent); copy them to the site's `assets/` and bump their `?v=`. The fill capture predates the glass icon, so the app icon is drawn over the old one in Umete's sheet. `npm run landing -- --iphone` renders the iPhone 18 Pro Max versions instead.
+`npm run landing` renders umete.jp's three carousel screens in the closed iPhone Duo, its frame drawn as for the Duo's App Store screenshots, from `captures/duo-closed/`, as `output/landing/umete-landing-<id>.webp` (900×1275, transparent); copy them to the site's `assets/` and bump their `?v=`. The fill capture predates the icon's umber backdrop, so the app icon is drawn over the taupe one in Umete's sheet. `npm run landing -- --iphone` renders the iPhone 18 Pro Max versions instead.
 
 ## Product page header video
 
