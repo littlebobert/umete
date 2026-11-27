@@ -1,4 +1,1 @@
-Save your passport in Settings, and Umete fills its number, issue and expiration dates, issuing country, and nationality. A date of birth never goes into a passport date.
-Umete reads Japanese and Korean forms: addresses, phone numbers, email, and names, including kana readings in the reading boxes (フリガナ).
-Remember my answers keeps a page's address and passport together as one answer each, and no longer loses your first name on forms that also ask for your last name.
-Umete fills dropdowns whose choices appear only once they're opened, such as Gender on some airline booking forms.
+A darker app icon that's easier to spot.
